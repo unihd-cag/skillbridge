@@ -4,11 +4,30 @@ python:
   - "3.6"
   - "3.7"
 
-install:
+before_install:
   - pip install -r dev-requirements.txt
-  - pip install -e .
+  - pip install codecov
+
+install:
+  - pip install .
 
 script:
   - flake8
   - mypy --strict skillbridge --show-error-context
   - pytest
+
+after_success:
+  - codecov
+  - cd doc
+  - make html
+  - touch _build/html/.nojekyll
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  on:
+    branch: master
+  local_dir: doc/_build/html
+
