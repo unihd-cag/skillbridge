@@ -1,7 +1,5 @@
 # Python-Skill Bridge
 
-![coverage](https://cag.extoll.de/asic/skill-bridge/badges/initial/coverage.svg)
-
 ### Features
 
 - Run Virtuoso's Skill functions from Python
