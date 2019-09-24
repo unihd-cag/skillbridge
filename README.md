@@ -10,3 +10,67 @@
   - object attributes
   - global function list
   - methods
+
+Read more in the [full documentation](#).
+
+### Installation
+
+```bash
+pip install skillbridge
+```
+
+Before you can use the Skill bridge you must generate the function definitions from
+Virtuoso via the Skill console.
+
+1. Open Virtuoso
+2. Type these commands into the Skill console
+  - `load("<PATH-TO-IPC-SERVER>")`
+  - `dumpFunctionDefinitions "<install>"`
+
+The `PATH-TO-IPC-SERVER` can be obtained by running
+
+```bash
+python -m skillbridge
+```
+
+**_Note:_** Generating the function definitions is very slow and will take several
+minutes. Don't cancel the command.
+
+### Examples
+
+**_Note:_** All these examples assume that the Skill server is running. You can
+start it by typing the following command into the Skill console.
+
+```lisp
+load("<PATH-TO-IPC-SERVER>")
+```
+
+##### Connecting to the server
+
+```python
+from skillbridge import Workspace
+
+ws = Workspace.default()
+```
+
+##### Accessing the currently open edit cell view
+
+```python
+cell_view = ws.ge.get_edit_cell_view()
+```
+
+##### Inspecting available properties
+
+```python
+>>> dir(cell_view)
+['DBUPerUU', 'any_inst_count', 'area_boundaries', 'assoc_text_displays', 'b_box', ...]
+```
+
+or type `cell_view.<TAB>` in jupyter/ipython
+
+##### Reading properties
+
+```python
+>>> print(cell_view.b_box)
+[[0, 10], [2, 8]]
+```
