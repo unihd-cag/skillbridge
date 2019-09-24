@@ -24,7 +24,7 @@ Virtuoso via the Skill console.
 
 1. Open Virtuoso
 2. Type these commands into the Skill console
-  - `load("<PATH-TO-IPC-SERVER>")`
+  - `load("PATH-TO-IPC-SERVER")`
   - `dumpFunctionDefinitions "<install>"`
 
 The `PATH-TO-IPC-SERVER` can be obtained by running
