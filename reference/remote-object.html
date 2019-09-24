@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Remote Objects &#8212; Python-Skill Bridge  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="The Python Server" href="../usage/server.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="remote-objects">
+<h1>Remote Objects<a class="headerlink" href="#remote-objects" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skillbridge.client.objects.RemoteObject">
+<em class="property">class </em><code class="sig-prename descclassname">skillbridge.client.objects.</code><code class="sig-name descname">RemoteObject</code><a class="headerlink" href="#skillbridge.client.objects.RemoteObject" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#skillbridge.client.objects.RemoteObject" title="skillbridge.client.objects.RemoteObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteObject</span></code></a> instances represent any object in Skill that is neither of the
+following types:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">nil</span></code></p></li>
+</ul>
+<dl class="method">
+<dt id="skillbridge.client.objects.RemoteObject.__getattr__">
+<code class="sig-name descname">__getattr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Skill properties can be accessed like normal python attributes, provided the property
+exists on the Skill object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
+<span class="go">[[0, 10], [0, 10]]</span>
+</pre></div>
+</div>
+<p>Properties of Skill objects can again be <a class="reference internal" href="#skillbridge.client.objects.RemoteObject" title="skillbridge.client.objects.RemoteObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteObject</span></code></a> instances:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">cell_view</span>
+<span class="go">&lt;remote object db:0xHHHHHH @....&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="skillbridge.client.objects.RemoteObject.__setattr__">
+<code class="sig-name descname">__setattr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>It is also possible to change the Skill properties using normal python attribute
+access. If the property does not exist on the skill side, it will be created.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">123</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">x</span>
+<span class="go">123</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Changes to list are not synchronized with the Skill side at the moment</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">data</span>
+<span class="go">[1, 2, 3]</span>
+</pre></div>
+</div>
+<p>To work around this, you must manually assign the list back to the object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">data</span>
+<span class="go">[1, 2, 3, 4]</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Creating new boolean properties on the Skill side show a strange behaviour</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">new_bool_property</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">new_bool_property</span>
+<span class="go">&quot;TRUE&quot;  # instead of t</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">new_bool_property</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">new_bool_property</span>
+<span class="go">&quot;FALSE&quot;  # instead of nil</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="skillbridge.client.objects.RemoteObject.__dir__">
+<code class="sig-name descname">__dir__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__dir__" title="Permalink to this definition">¶</a></dt>
+<dd><p>All available Skill properties can be listed using this method. It looks up the
+properties inside skill using the expression <code class="docutils literal notranslate"><span class="pre">__var</span> <span class="pre">-&gt;</span> <span class="pre">?</span></code> and returns the
+property names as a list</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+<span class="go">[&#39;DBUPerUU&#39;, &#39;any_inst_count&#39;, &#39;area_boundaries&#39;, &#39;assoc_text_displays&#39;, ...]</span>
+</pre></div>
+</div>
+<p>Inside Jupyter/IPython this method is used to provide tab completion</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.&lt;</span><span class="n">TAB</span><span class="o">&gt;</span>
+<span class="go"># Shows a dropdown menu containing [&#39;DBUPerUU&#39;, &#39;any_inst_count&#39;, ...]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; cell?
+# Shows a window containing [&#39;DBUPerUU&#39;, &#39;any_inst_count&#39;, ...]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="skillbridge.client.objects.RemoteObject.__eq__">
+<code class="sig-name descname">__eq__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares two <a class="reference internal" href="#skillbridge.client.objects.RemoteObject" title="skillbridge.client.objects.RemoteObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteObject</span></code></a> and returns whether they are considered equal.
+They are considered equal if the Skill identifiers are equal.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cell</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>  <span class="c1"># dbobject:0xHHHHHHH</span>
+<span class="n">another</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>  <span class="c1"># dbobject:0xHHHHHH</span>
+
+<span class="k">assert</span> <span class="n">cell</span> <span class="o">==</span> <span class="n">another</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="skillbridge.client.objects.RemoteObject.__ne__">
+<code class="sig-name descname">__ne__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares two <a class="reference internal" href="#skillbridge.client.objects.RemoteObject" title="skillbridge.client.objects.RemoteObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteObject</span></code></a> and returns whether they are consideren unequal.
+This is the opposite of the <a class="reference internal" href="#skillbridge.client.objects.RemoteObject.__eq__" title="skillbridge.client.objects.RemoteObject.__eq__"><code class="xref py py-func docutils literal notranslate"><span class="pre">__eq__()</span></code></a> method.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python-Skill Bridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/server.html">The Python Server</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Remote Objects</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../usage/server.html" title="previous chapter">The Python Server</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Niels Buwen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/remote-object.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

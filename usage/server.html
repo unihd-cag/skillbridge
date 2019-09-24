@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>The Python Server &#8212; Python-Skill Bridge  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Remote Objects" href="../reference/remote-object.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="the-python-server">
+<span id="server"></span><h1>The Python Server<a class="headerlink" href="#the-python-server" title="Permalink to this headline">¶</a></h1>
+<p>Initially the server must be started by loading the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>.</p>
+<p>After that, these management commands are available in the Skill console.</p>
+<dl class="function">
+<dt id="killPythonServer">
+<code class="sig-name descname">killPythonServer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#killPythonServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This terminates the python subprocess and thus, kills the server.
+After that, no connections from the client side can be made anymore
+and active connections will result in a <code class="xref py py-class docutils literal notranslate"><span class="pre">BrokenPipe</span></code> exception
+the next time they are used.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="reloadPythonServer">
+<code class="sig-name descname">reloadPythonServer</code><span class="sig-paren">(</span><em class="sig-param">level=&quot;WARNING&quot;</em><span class="sig-paren">)</span><a class="headerlink" href="#reloadPythonServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This calls <a class="reference internal" href="#killPythonServer" title="killPythonServer"><code class="xref py py-func docutils literal notranslate"><span class="pre">killPythonServer()</span></code></a> and reloads the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>
+Skill script. With this function you can effectively restart the python
+server in case it crashes.</p>
+<p>The client library will attempt to reconnect, but the success is not guaranteed.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">level</span></code> can be used to set the log level, the default is <code class="docutils literal notranslate"><span class="pre">&quot;WARNING&quot;</span></code>.
+Other values are <code class="docutils literal notranslate"><span class="pre">&quot;DEBUG&quot;</span></code> to print absolutely everything, <code class="docutils literal notranslate"><span class="pre">&quot;INFO&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;WARNING&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ERROR&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;FATAL&quot;</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The loglevels <code class="docutils literal notranslate"><span class="pre">&quot;DEBUG&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;INFO&quot;</span></code> are not recommended, because then
+the time for a round-trip between the client and the server is effectively
+two to three times as long!</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="showPythonLog">
+<code class="sig-name descname">showPythonLog</code><span class="sig-paren">(</span><em class="sig-param">numberOfLines=10</em><span class="sig-paren">)</span><a class="headerlink" href="#showPythonLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for debugging. This shows the logging output from the
+python server. The parameter <code class="docutils literal notranslate"><span class="pre">numberOfLines</span></code> controlls
+how many lines will be printed. It always refers to the <strong>last</strong>
+<code class="docutils literal notranslate"><span class="pre">numberOfLines</span></code> lines.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dumpFunctionDefinitions">
+<code class="sig-name descname">dumpFunctionDefinitions</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#dumpFunctionDefinitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>This dumps all function names, parameters and documentations into the file
+given by <code class="docutils literal notranslate"><span class="pre">filename</span></code>. These function definitions are used by the python
+module to generate the mapping of the global functions.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">filename</span></code> is set to the special value <code class="docutils literal notranslate"><span class="pre">&quot;&lt;install&gt;&quot;</span></code> then the file
+will be placed inside the python module ready to be used. This command
+must be executed once before you can use the python module.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python-Skill Bridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Python Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/remote-object.html">Remote Objects</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="quickstart.html" title="previous chapter">Quickstart</a></li>
+      <li>Next: <a href="../reference/remote-object.html" title="next chapter">Remote Objects</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Niels Buwen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/usage/server.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
