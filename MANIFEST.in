@@ -1,0 +1,9 @@
+include skillbridge/client/definitions.txt
+include skillbridge/server/python_server.il
+include skillbridge/cparser/generated/lexer.c
+include skillbridge/cparser/generated/lexer.h
+include skillbridge/cparser/generated/parser.c
+include skillbridge/cparser/generated/parser.h
+include skillbridge/cparser/parser.c
+include skillbridge/cparser/skill.l
+include skillbridge/cparser/skill.y
