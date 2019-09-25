@@ -7,7 +7,8 @@ from hypothesis.strategies import lists, integers, floats, none, text, booleans
 from skillbridge.client.translator import snake_to_camel, camel_to_snake,\
     python_value_to_skill, skill_value_to_python, call_assign,\
     skill_setattr, skill_help, skill_help_to_list, skill_literal_to_value,\
-    skill_getattr, Var, check_function, build_python_path, ParseError, call
+    skill_getattr, Var, check_function, build_python_path
+from skillbridge import ParseError
 
 
 floats = floats(allow_infinity=False, allow_nan=False)
@@ -132,6 +133,11 @@ def test_object_to_python():
     assert python[0][:3] == [1, 2, 3]
     assert python[0][3] == ['prefix', 0, 3, 'dbobject:123']
     assert python[1][0] == ['prefix', 1, 0, 'dbobject:234']
+
+
+def test_object_with_upper_case_id():
+    python = skill_value_to_python('rodObject:123', ['prefix'], replicate)
+    assert python == ['prefix', 'rodObject:123']
 
 
 @given(lists(simple_types | lists(simple_types)))

@@ -109,6 +109,7 @@ int yyerror(
     const char* message)
 
 {
+    PyErr_SetString(parseErrorType, message);
     fprintf(stderr, "error: %s\n", message);
     return 0;
 }

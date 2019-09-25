@@ -1,25 +1,4 @@
 from setuptools import setup, find_packages, Extension
-from distutils.command.build_ext import build_ext
-from traceback import print_exc
-
-
-class BuildFailed(Exception):
-    pass
-
-
-class OptionalExtension(build_ext):
-    def run(self):
-        try:
-            super().run()
-        except Exception:
-            raise BuildFailed()
-
-    def build_extension(self, ext):
-        try:
-            super().build_extension(ext)
-        except Exception:
-            raise BuildFailed()
-
 
 with open('README.md') as fin:
     long_description = fin.read()
@@ -56,7 +35,6 @@ config = dict(
         'dev': dev_requirements
     },
     ext_modules=[fast_parser],
-    cmdclass=dict(build_ext=OptionalExtension),
     classifiers=[
         "Development Status :: Alpha",
         "Programming Language :: Python :: 3",
@@ -73,22 +51,4 @@ config = dict(
 )
 
 if __name__ == '__main__':
-    try:
-        setup(**config)
-    except BuildFailed:
-        print("*******************************************************")
-        print("* Something went wrong while building the C extension *")
-        print("*******************************************************")
-
-        print_exc()
-
-        print("***********************************")
-        print("* Building the C extension failed *")
-        print("* Retrying without C extension    *")
-        print("* Speedups will not be enabled    *")
-        print("***********************************")
-
-        config.pop('ext_modules')
-        config.pop('cmdclass')
-
-        setup(**config)
+    setup(**config)
