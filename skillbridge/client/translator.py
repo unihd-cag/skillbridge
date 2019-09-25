@@ -181,9 +181,9 @@ TOKENS = [
     r'(?:[+-]?[\d.]+(?:e[+-]?\d+)?)',  # numbers
     r'nil|t',  # constants
     r'"[^"]*"',  # strings
-    r'\w+:0x[\da-f]+',  # remote objects with hex key
-    r'\w+:\d+',  # remote objects with decimal key
-    r'\w+'  # symbols (these are used inside lists to make dictionaries)
+    r'[a-zA-Z]+:0x[\da-f]+',  # remote objects with hex key
+    r'[a-zA-Z]+:\d+',  # remote objects with decimal key
+    r'[a-zA-Z]+'  # symbols (these are used inside lists to make dictionaries)
 ]
 
 _PropList = type('PropList', (dict,), {

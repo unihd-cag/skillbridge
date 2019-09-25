@@ -46,7 +46,7 @@ nil {
     return Double;
 }
 
-[a-z]+:([0-9]+|0x[0-9a-f]+) {
+[a-zA-Z]+:([0-9]+|0x[0-9a-f]+) {
     *yylval = PyUnicode_FromString(yytext);
     return Id;
 }

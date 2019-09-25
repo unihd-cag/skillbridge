@@ -129,6 +129,11 @@ def test_object_to_python():
     assert python[1][0] == ['prefix', 1, 0, 'dbobject:234']
 
 
+def test_object_with_upper_case_id():
+    python = skill_value_to_python('rodObject:123', ['prefix'], replicate)
+    assert python == ['prefix', 'rodObject:123']
+
+
 @given(lists(simple_types | lists(simple_types)))
 def test_list_roundtrip(i):
     skill = python_value_to_skill(i).replace('(list', '(')
