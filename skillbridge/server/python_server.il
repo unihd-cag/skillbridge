@@ -97,4 +97,4 @@ defun(__py_onFinish (id data)
     printf("server was stopped with code %L\n" data)   		
 )
 
-__py_ipc = ipcBeginProcess(python "" '__py_onData '__py_onError '__py_onFinish "python_server.log")
+__py_ipc = ipcBeginProcess(__py_python "" '__py_onData '__py_onError '__py_onFinish "python_server.log")
