@@ -7,16 +7,16 @@ Initially the server must be started by loading the ``python_server.il``.
 
 After that, these management commands are available in the Skill console.
 
-.. function:: killPythonServer()
+.. function:: pyKillServer()
 
     This terminates the python subprocess and thus, kills the server.
     After that, no connections from the client side can be made anymore
     and active connections will result in a :class:`BrokenPipe` exception
     the next time they are used.
 
-.. function:: reloadPythonServer(level="WARNING")
+.. function:: pyReloadServer(level="WARNING")
 
-    This calls :func:`killPythonServer` and reloads the ``python_server.il``
+    This calls :func:`pyKillServer` and reloads the ``python_server.il``
     Skill script. With this function you can effectively restart the python
     server in case it crashes.
 
@@ -32,14 +32,14 @@ After that, these management commands are available in the Skill console.
         the time for a round-trip between the client and the server is effectively
         two to three times as long!
 
-.. function:: showPythonLog(numberOfLines=10)
+.. function:: pyShowLog(numberOfLines=10)
 
     Used for debugging. This shows the logging output from the
     python server. The parameter ``numberOfLines`` controlls
     how many lines will be printed. It always refers to the **last**
     ``numberOfLines`` lines.
 
-.. function:: dumpFunctionDefinitions(filename)
+.. function:: pyDumpFunctionDefinitions(filename)
 
     This dumps all function names, parameters and documentations into the file
     given by ``filename``. These function definitions are used by the python
