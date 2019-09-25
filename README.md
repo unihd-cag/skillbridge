@@ -25,8 +25,8 @@ Virtuoso via the Skill console.
 1. Type `python -m skillbridge` into your shell to acquire the correct `PATH-TO-IPC-SERVER`
 2. Open Virtuoso
 2. Type these commands into the Skill console
-  - `load("PATH-TO-IPC-SERVER")`
-  - `dumpFunctionDefinitions "<install>"` (`"<install>"` is not a placeholder, type it as is)
+    - `load("PATH-TO-IPC-SERVER")`
+    - `dumpFunctionDefinitions "<install>"` (`"<install>"` is not a placeholder, type it as is)
 
 **_Note:_** Generating the function definitions is very slow and will take several
 minutes. Don't cancel the command.
