@@ -43,7 +43,7 @@ static PyObject* parse(PyObject* Py_UNUSED(self), PyObject* args)
     PyObject* result = NULL;
     if (yyparse(scanner, &result, PySequence_List(path), replicator))
     {
-        PyErr_SetString(parseErrorType, "parse error");
+        // PyErr_SetString(parseErrorType, "parse error");
         return NULL;
     }
     yy_delete_buffer(buf, scanner);

@@ -1,10 +1,12 @@
-from typing import NoReturn, Any, List, Union, Callable, Dict
-from re import sub, findall
-from ast import literal_eval
+from typing import NoReturn, Any, List
+from re import sub
 from json import dumps
 
+from ..cparser.parser import parse as skill_value_to_python
+
 from .hints import Replicator, SkillPath, SkillComponent, SkillCode, ConvertToSkill
-from .hints import Skillable, PropList
+from .hints import Skillable
+
 
 SKILL_TO_PYTHON = {
     't': True,
@@ -49,27 +51,6 @@ def python_value_to_skill(value: ConvertToSkill) -> SkillCode:
 
     type_ = type(value).__name__
     raise RuntimeError(f"Cannot convert object {value!r} of type {type_} to skill.")
-
-
-def python_skill_value_to_python(string: str, path: SkillPath, replicator: Replicator)\
-        -> ConvertToSkill:
-    parser = Parser(string, path, replicator)
-    return parser.parse()
-
-
-class _ParseError(Exception):
-    pass
-
-
-try:
-    skill_value_to_python: Callable[[str, SkillPath, Replicator], ConvertToSkill]
-    from ..cparser.parser import parse as skill_value_to_python  # type: ignore
-    from ..cparser.parser import ParseError
-    fast_parser = True
-except ImportError:
-    skill_value_to_python = python_skill_value_to_python
-    ParseError = _ParseError
-    fast_parser = False
 
 
 def _not_implemented(string: str) -> Replicator:
@@ -175,114 +156,3 @@ class Var(Skillable):
 
 
 loop_variable = Var('__loop_variable')
-
-TOKENS = [
-    r'[()]',    # list parentheses
-    r'(?:[+-]?[\d.]+(?:e[+-]?\d+)?)',  # numbers
-    r'nil|t',  # constants
-    r'"[^"]*"',  # strings
-    r'[a-zA-Z]+:0x[\da-f]+',  # remote objects with hex key
-    r'[a-zA-Z]+:\d+',  # remote objects with decimal key
-    r'[a-zA-Z]+'  # symbols (these are used inside lists to make dictionaries)
-]
-
-_PropList = type('PropList', (dict,), {
-    '__getattr__': dict.__getitem__,
-    '__setattr__': dict.__setitem__,
-})
-
-
-class Parser:
-    def __init__(self, string: str, path: SkillPath, replicator: Replicator) -> None:
-        self.string = string
-        self.tokens: List[str] = findall('|'.join(TOKENS), string)
-        self.i = 0
-        self.path = path
-        self.replicate = replicator
-
-    @property
-    def _peek(self) -> str:
-        try:
-            return self.tokens[self.i]
-        except IndexError:
-            raise ParseError(f"Peek eof {self.string!r}") from None
-
-    def _next(self) -> str:
-        token = self.tokens[self.i]
-        self.i += 1
-        return token
-
-    def _parse_plain_list(self, elements: List[ConvertToSkill]) -> List[ConvertToSkill]:
-        while self._peek != ')':
-            assert isinstance(self.path[-1], int)
-            self.path[-1] += 1
-            elements.append(self.parse())
-        self.path.pop()
-        self._next()  # ')'
-
-        return elements
-
-    def _parse_property_list(self) -> PropList:
-        pl: Dict[str, ConvertToSkill] = _PropList()
-        while self._peek != ')':
-            key = self._next()
-            assert key.isalpha()
-            self.path[-1] = key
-            pl[key] = self.parse()
-        self.path.pop()
-        self._next()  # ')'
-
-        return pl
-
-    def _parse_list(self) -> Union[PropList, List[ConvertToSkill]]:
-        self._next()  # '('
-        if self._peek == ')':
-            self._next()
-            return []
-
-        self.path.append(0)
-        first = self.parse()
-
-        if self._peek == ')':
-            self._next()
-            return [first]
-
-        if first is None:
-            try:
-                second = self.parse()
-            except ParseError:
-                return self._parse_property_list()
-            return self._parse_plain_list([first, second])
-        return self._parse_plain_list([first])
-
-    def _parse_object(self) -> ConvertToSkill:
-        name = self._peek
-        self._next()
-        return self.replicate(name, self.path.copy())
-
-    def parse(self) -> ConvertToSkill:
-        try:
-            simple = SKILL_TO_PYTHON[SkillCode(self._peek)]
-        except KeyError:
-            pass
-        else:
-            self._next()
-            return simple
-
-        if ':' in self._peek:
-            return self._parse_object()
-
-        try:
-            value: ConvertToSkill = literal_eval(self._peek)
-        except (SyntaxError, ValueError):
-            pass
-        else:
-            self._next()
-            return value
-
-        if self._peek == '(':
-            return self._parse_list()  # type: ignore
-
-        raise ParseError(
-            f"could not parse {self._peek}"
-        )
