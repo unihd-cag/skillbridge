@@ -22,16 +22,11 @@ pip install skillbridge
 Before you can use the Skill bridge you must generate the function definitions from
 Virtuoso via the Skill console.
 
-1. Open Virtuoso
+1. Type `python -m skillbridge` into your shell to acquire the correct `PATH-TO-IPC-SERVER`
+2. Open Virtuoso
 2. Type these commands into the Skill console
   - `load("PATH-TO-IPC-SERVER")`
-  - `dumpFunctionDefinitions "<install>"`
-
-The `PATH-TO-IPC-SERVER` can be obtained by running
-
-```bash
-python -m skillbridge
-```
+  - `dumpFunctionDefinitions "<install>"` (`"<install>"` is not a placeholder, type it as is)
 
 **_Note:_** Generating the function definitions is very slow and will take several
 minutes. Don't cancel the command.
@@ -42,7 +37,7 @@ minutes. Don't cancel the command.
 start it by typing the following command into the Skill console.
 
 ```lisp
-load("<PATH-TO-IPC-SERVER>")
+load("PATH-TO-IPC-SERVER")
 ```
 
 ##### Connecting to the server
