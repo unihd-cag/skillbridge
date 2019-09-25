@@ -7,7 +7,7 @@ from hypothesis.strategies import lists, integers, floats, none, text, booleans
 from skillbridge.client.translator import snake_to_camel, camel_to_snake,\
     python_value_to_skill, skill_value_to_python, call_assign,\
     skill_setattr, skill_help, skill_help_to_list, skill_literal_to_value,\
-    skill_getattr, Var, check_function, build_python_path, ParseError
+    skill_getattr, Var, check_function, build_python_path, ParseError, call
 
 
 floats = floats(allow_infinity=False, allow_nan=False)
@@ -43,6 +43,11 @@ def test_camel_to_snake_input_camel():
     assert camel_to_snake('camelCase') == 'camel_case'
     assert camel_to_snake('thisIsCamelCase') == 'this_is_camel_case'
     assert camel_to_snake('thisIsHTML') == 'this_is_html'
+
+
+def test_named_parameters_are_optionally_converted():
+    code = call('func', 1, 2, 3, x=10, long_name=20, longName=30)
+    assert code.replace(' ', '') == 'func(123?x10?longName20?longName30)'
 
 
 def test_camel_to_snake_input_snake_does_not_change():
