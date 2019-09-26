@@ -51,7 +51,7 @@ nil {
     return Id;
 }
 
-[a-z]+ {
+[a-zA-Z]+ {
     *yylval = PyUnicode_FromString(yytext);
     return Symbol;
 }

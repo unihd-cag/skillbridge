@@ -4,9 +4,11 @@
 #include "generated/parser.h"
 #include "generated/lexer.h"
 
+#define RETURN_IF_NULL(thing) if (!(thing)) { return NULL; }
 
 PyObject* parseErrorType = NULL;
 PyObject* propertyListType = NULL;
+PyObject* symbolType = NULL;
 
 
 static PyObject* parse(PyObject* Py_UNUSED(self), PyObject* args)
@@ -43,7 +45,7 @@ static PyObject* parse(PyObject* Py_UNUSED(self), PyObject* args)
     PyObject* result = NULL;
     if (yyparse(scanner, &result, PySequence_List(path), replicator))
     {
-        // PyErr_SetString(parseErrorType, "parse error");
+        // error was already set by yyerror()
         return NULL;
     }
     yy_delete_buffer(buf, scanner);
@@ -59,7 +61,7 @@ static PyMethodDef ParserMethods[] = {
 
 static struct PyModuleDef parser_module = {
     PyModuleDef_HEAD_INIT,
-    "parser",
+    "cparser",
     "A fast implementation of the skill parser",
     -1,
     ParserMethods,
@@ -69,31 +71,20 @@ static struct PyModuleDef parser_module = {
     NULL
 };
 
-PyMODINIT_FUNC PyInit_parser(void)
+PyMODINIT_FUNC PyInit_cparser(void)
 {
-    const char* propertyListCode = "type('PropList', (dict,), {"
-                                   "    '__getattr__': dict.__getitem__,"
-                                   "    '__setattr__': dict.__setitem__"
-                                   "})";
-    PyObject* globals = PyEval_GetBuiltins();
-    PyObject* locals = PyDict_New();
-    propertyListType = PyRun_String(propertyListCode, Py_eval_input, globals, locals);
-    if (!propertyListType)
-    {
-        return NULL;
-    }
+    PyObject* util = PyImport_ImportModule("skillbridge.parser.util");
+    RETURN_IF_NULL(util);
 
-    parseErrorType = PyErr_NewException("skillbridge.cparser.parser.ParseError", NULL, NULL);
-    if (!parseErrorType)
-    {
-        return NULL;
-    }
+    parseErrorType = PyObject_GetAttrString(util, "ParseError");
+    RETURN_IF_NULL(parseErrorType);
 
-    PyObject* module = PyModule_Create(&parser_module);
-    if (PyModule_AddObject(module, "ParseError", parseErrorType))
-    {
-        return NULL;
-    }
+    propertyListType = PyObject_GetAttrString(util, "PropertyList");
+    RETURN_IF_NULL(propertyListType);
 
-    return module;
+    symbolType = PyObject_GetAttrString(util, "Symbol");
+    RETURN_IF_NULL(symbolType);
+
+
+    return PyModule_Create(&parser_module);
 }

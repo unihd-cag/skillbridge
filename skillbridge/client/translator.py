@@ -2,7 +2,7 @@ from typing import NoReturn, Any, List
 from re import sub
 from json import dumps
 
-from ..cparser.parser import parse as skill_value_to_python
+from ..parser.cparser import parse as skill_value_to_python
 
 from .hints import Replicator, SkillPath, SkillComponent, SkillCode, ConvertToSkill
 from .hints import Skillable

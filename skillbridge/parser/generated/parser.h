@@ -59,8 +59,9 @@ int yyerror(void*, void*, void*, void*, const char*);
 
 extern PyObject* propertyListType;
 extern PyObject* parseErrorType;
+extern PyObject* symbolType;
 
-#line 64 "generated/parser.h" /* yacc.c:1909  */
+#line 65 "generated/parser.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
