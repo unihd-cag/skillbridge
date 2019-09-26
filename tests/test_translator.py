@@ -7,7 +7,7 @@ from hypothesis.strategies import lists, integers, floats, none, text, booleans
 from skillbridge.client.translator import snake_to_camel, camel_to_snake,\
     python_value_to_skill, skill_value_to_python, call_assign,\
     skill_setattr, skill_help, skill_help_to_list, skill_literal_to_value,\
-    skill_getattr, Var, check_function, build_python_path
+    skill_getattr, Var, check_function, build_python_path, call
 from skillbridge import ParseError
 
 
