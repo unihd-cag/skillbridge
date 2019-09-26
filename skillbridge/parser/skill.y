@@ -26,6 +26,7 @@ int yyerror(void*, void*, void*, void*, const char*);
 
 extern PyObject* propertyListType;
 extern PyObject* parseErrorType;
+extern PyObject* symbolType;
 }
 
 %token Nil
@@ -39,6 +40,13 @@ extern PyObject* parseErrorType;
 %%
 
 start: expression[expr] { *top = $expr; }
+| Symbol[symbol] {
+    PyObject* arguments = PyTuple_Pack(1, $symbol);
+    *top = PyObject_CallObject(symbolType, arguments);
+
+    Py_DECREF(arguments);
+    Py_DECREF($symbol);
+}
 
 expression[expr]:
 Nil | True | String | Integer | Double
@@ -47,8 +55,8 @@ Nil | True | String | Integer | Double
     PyObject* arguments = PyTuple_Pack(2, $id, pathCopy);
     $expr = PyObject_CallObject(replicator, arguments);
 
-    Py_DECREF($id);
     Py_DECREF(arguments);
+    Py_DECREF($id);
 }
 | '(' ')' { $expr = PyList_New(0); }
 | '(' { PyList_Append(path, PyLong_FromLong(0)); } non_empty_list[list] ')' {

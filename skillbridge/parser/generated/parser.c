@@ -112,8 +112,9 @@ int yyerror(void*, void*, void*, void*, const char*);
 
 extern PyObject* propertyListType;
 extern PyObject* parseErrorType;
+extern PyObject* symbolType;
 
-#line 117 "generated/parser.c" /* yacc.c:355  */
+#line 118 "generated/parser.c" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -145,7 +146,7 @@ int yyparse (yyscan_t scanner, PyObject** top, PyObject* path, PyObject* replica
 
 /* Copy the second part of user declarations.  */
 
-#line 149 "generated/parser.c" /* yacc.c:358  */
+#line 150 "generated/parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -385,18 +386,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  12
+#define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   29
+#define YYLAST   37
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  12
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  9
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  19
+#define YYNRULES  20
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  26
+#define YYNSTATES  27
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -443,8 +444,9 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    41,    41,    44,    44,    44,    44,    44,    45,    53,
-      54,    54,    60,    61,    63,    63,    73,    73,    84,    92
+       0,    42,    42,    43,    52,    52,    52,    52,    52,    53,
+      61,    62,    62,    68,    69,    71,    71,    81,    81,    92,
+     100
 };
 #endif
 
@@ -469,10 +471,10 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -12
+#define YYPACT_NINF -13
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-12)))
+  (!!((Yystate) == (-13)))
 
 #define YYTABLE_NINF -1
 
@@ -483,9 +485,9 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      11,   -12,   -12,   -12,   -12,   -12,   -12,   -10,     2,   -12,
-     -12,    19,   -12,    -5,   -12,    -7,    11,   -12,    -2,   -12,
-     -12,    11,   -12,   -12,    11,   -12
+      11,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -10,     2,
+     -13,   -13,    19,   -13,    -5,   -13,    -7,    27,   -13,    -2,
+     -13,   -13,    27,   -13,   -13,    27,   -13
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -493,21 +495,21 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     3,     4,     5,     6,     7,     8,    10,     0,     2,
-       9,     0,     1,     3,    18,     0,    13,    14,    12,    11,
-      19,     0,    16,    15,     0,    17
+       0,     4,     5,     6,     7,     8,     3,     9,    11,     0,
+       2,    10,     0,     1,     4,    19,     0,    14,    15,    13,
+      12,    20,     0,    17,    16,     0,    18
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -12,   -12,   -11,   -12,   -12,   -12,   -12,   -12,   -12
+     -13,   -13,   -12,   -13,   -13,   -13,   -13,   -13,   -13
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     8,     9,    11,    15,    18,    21,    24,    16
+      -1,     9,    10,    12,    16,    19,    22,    25,    17
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -515,39 +517,43 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      14,    10,    12,    17,    19,    20,    22,     0,     0,     0,
-      23,     0,     0,    25,     1,     2,     3,     4,     5,     0,
-       6,     7,    13,     2,     3,     4,     5,     0,     6,     7
+      15,    11,    13,    18,    20,    21,    23,     0,     0,     0,
+      24,     0,     0,    26,     1,     2,     3,     4,     5,     6,
+       7,     8,    14,     2,     3,     4,     5,     0,     7,     8,
+       1,     2,     3,     4,     5,     0,     7,     8
 };
 
 static const yytype_int8 yycheck[] =
 {
-      11,    11,     0,     8,    11,    16,     8,    -1,    -1,    -1,
-      21,    -1,    -1,    24,     3,     4,     5,     6,     7,    -1,
-       9,    10,     3,     4,     5,     6,     7,    -1,     9,    10
+      12,    11,     0,     8,    11,    17,     8,    -1,    -1,    -1,
+      22,    -1,    -1,    25,     3,     4,     5,     6,     7,     8,
+       9,    10,     3,     4,     5,     6,     7,    -1,     9,    10,
+       3,     4,     5,     6,     7,    -1,     9,    10
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,     5,     6,     7,     9,    10,    13,    14,
-      11,    15,     0,     3,    14,    16,    20,     8,    17,    11,
-      14,    18,     8,    14,    19,    14
+       0,     3,     4,     5,     6,     7,     8,     9,    10,    13,
+      14,    11,    15,     0,     3,    14,    16,    20,     8,    17,
+      11,    14,    18,     8,    14,    19,    14
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    12,    13,    14,    14,    14,    14,    14,    14,    14,
-      15,    14,    16,    16,    18,    17,    19,    17,    20,    20
+       0,    12,    13,    13,    14,    14,    14,    14,    14,    14,
+      14,    15,    14,    16,    16,    18,    17,    19,    17,    20,
+      20
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     1,     1,     1,     1,     1,     1,     2,
-       0,     4,     2,     1,     0,     3,     0,     4,     1,     2
+       0,     2,     1,     1,     1,     1,     1,     1,     1,     1,
+       2,     0,     4,     2,     1,     0,     3,     0,     4,     1,
+       2
 };
 
 
@@ -1236,102 +1242,114 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 41 "skill.y" /* yacc.c:1646  */
+#line 42 "skill.y" /* yacc.c:1646  */
     { *top = (yyvsp[0]); }
-#line 1242 "generated/parser.c" /* yacc.c:1646  */
+#line 1248 "generated/parser.c" /* yacc.c:1646  */
     break;
 
-  case 8:
-#line 45 "skill.y" /* yacc.c:1646  */
+  case 3:
+#line 43 "skill.y" /* yacc.c:1646  */
+    {
+    PyObject* arguments = PyTuple_Pack(1, (yyvsp[0]));
+    *top = PyObject_CallObject(symbolType, arguments);
+
+    Py_DECREF(arguments);
+    Py_DECREF((yyvsp[0]));
+}
+#line 1260 "generated/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 9:
+#line 53 "skill.y" /* yacc.c:1646  */
     {
     PyObject* pathCopy = PySequence_List(path);
     PyObject* arguments = PyTuple_Pack(2, (yyvsp[0]), pathCopy);
     (yyval) = PyObject_CallObject(replicator, arguments);
 
-    Py_DECREF((yyvsp[0]));
     Py_DECREF(arguments);
+    Py_DECREF((yyvsp[0]));
 }
-#line 1255 "generated/parser.c" /* yacc.c:1646  */
-    break;
-
-  case 9:
-#line 53 "skill.y" /* yacc.c:1646  */
-    { (yyval) = PyList_New(0); }
-#line 1261 "generated/parser.c" /* yacc.c:1646  */
+#line 1273 "generated/parser.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 54 "skill.y" /* yacc.c:1646  */
-    { PyList_Append(path, PyLong_FromLong(0)); }
-#line 1267 "generated/parser.c" /* yacc.c:1646  */
+#line 61 "skill.y" /* yacc.c:1646  */
+    { (yyval) = PyList_New(0); }
+#line 1279 "generated/parser.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 54 "skill.y" /* yacc.c:1646  */
+#line 62 "skill.y" /* yacc.c:1646  */
+    { PyList_Append(path, PyLong_FromLong(0)); }
+#line 1285 "generated/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 12:
+#line 62 "skill.y" /* yacc.c:1646  */
     {
     (yyval) = (yyvsp[-1]);
     size_t length = Py_SIZE(path);
     PyList_SetSlice(path, length - 1, length, NULL);
 }
-#line 1277 "generated/parser.c" /* yacc.c:1646  */
-    break;
-
-  case 12:
-#line 60 "skill.y" /* yacc.c:1646  */
-    { (yyval) = (yyvsp[0]); Py_DECREF((yyvsp[-1])); }
-#line 1283 "generated/parser.c" /* yacc.c:1646  */
+#line 1295 "generated/parser.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 61 "skill.y" /* yacc.c:1646  */
-    { (yyval) = (yyvsp[0]); }
-#line 1289 "generated/parser.c" /* yacc.c:1646  */
+#line 68 "skill.y" /* yacc.c:1646  */
+    { (yyval) = (yyvsp[0]); Py_DECREF((yyvsp[-1])); }
+#line 1301 "generated/parser.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 63 "skill.y" /* yacc.c:1646  */
+#line 69 "skill.y" /* yacc.c:1646  */
+    { (yyval) = (yyvsp[0]); }
+#line 1307 "generated/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 15:
+#line 71 "skill.y" /* yacc.c:1646  */
     {
     size_t lastIndex = Py_SIZE(path) - 1;
     Py_INCREF((yyvsp[0]));
     PyList_SetItem(path, lastIndex, (yyvsp[0]));
 }
-#line 1299 "generated/parser.c" /* yacc.c:1646  */
+#line 1317 "generated/parser.c" /* yacc.c:1646  */
     break;
 
-  case 15:
-#line 67 "skill.y" /* yacc.c:1646  */
+  case 16:
+#line 75 "skill.y" /* yacc.c:1646  */
     {
     (yyval) = PyObject_CallObject(propertyListType, PyTuple_New(0));
     PyDict_SetItem((yyval), (yyvsp[-2]), (yyvsp[0]));
     Py_DECREF((yyvsp[-2]));
     Py_DECREF((yyvsp[0]));
 }
-#line 1310 "generated/parser.c" /* yacc.c:1646  */
+#line 1328 "generated/parser.c" /* yacc.c:1646  */
     break;
 
-  case 16:
-#line 73 "skill.y" /* yacc.c:1646  */
+  case 17:
+#line 81 "skill.y" /* yacc.c:1646  */
     {
     size_t lastIndex = Py_SIZE(path) - 1;
     Py_INCREF((yyvsp[0]));
     PyList_SetItem(path, lastIndex, (yyvsp[0]));
 }
-#line 1320 "generated/parser.c" /* yacc.c:1646  */
+#line 1338 "generated/parser.c" /* yacc.c:1646  */
     break;
 
-  case 17:
-#line 77 "skill.y" /* yacc.c:1646  */
+  case 18:
+#line 85 "skill.y" /* yacc.c:1646  */
     {
     (yyval) = (yyvsp[-3]);
     PyDict_SetItem((yyvsp[-3]), (yyvsp[-2]), (yyvsp[0]));
     Py_DECREF((yyvsp[-2]));
     Py_DECREF((yyvsp[0]));
 }
-#line 1331 "generated/parser.c" /* yacc.c:1646  */
+#line 1349 "generated/parser.c" /* yacc.c:1646  */
     break;
 
-  case 18:
-#line 84 "skill.y" /* yacc.c:1646  */
+  case 19:
+#line 92 "skill.y" /* yacc.c:1646  */
     {
     (yyval) = PyList_New(1);
     PyList_SET_ITEM((yyval), 0, (yyvsp[0]));
@@ -1340,11 +1358,11 @@ yyreduce:
     size_t value = PyLong_AsLong(PyList_GetItem(path, lastIndex));
     PyList_SetItem(path, lastIndex, PyLong_FromLong(value + 1));
 }
-#line 1344 "generated/parser.c" /* yacc.c:1646  */
+#line 1362 "generated/parser.c" /* yacc.c:1646  */
     break;
 
-  case 19:
-#line 92 "skill.y" /* yacc.c:1646  */
+  case 20:
+#line 100 "skill.y" /* yacc.c:1646  */
     {
     (yyval) = (yyvsp[-1]);
     PyList_Append((yyvsp[-1]), (yyvsp[0]));
@@ -1354,11 +1372,11 @@ yyreduce:
     size_t value = PyLong_AsLong(PyList_GetItem(path, lastIndex));
     PyList_SetItem(path, lastIndex, PyLong_FromLong(value + 1));
 }
-#line 1358 "generated/parser.c" /* yacc.c:1646  */
+#line 1376 "generated/parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1362 "generated/parser.c" /* yacc.c:1646  */
+#line 1380 "generated/parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1586,7 +1604,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 102 "skill.y" /* yacc.c:1906  */
+#line 110 "skill.y" /* yacc.c:1906  */
 
 
 int yyerror(

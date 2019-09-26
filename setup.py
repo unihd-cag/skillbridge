@@ -7,14 +7,14 @@ with open('dev-requirements.txt') as fin:
     dev_requirements = fin.read().split()
 
 fast_parser = Extension(
-    'skillbridge.cparser.parser',
+    'skillbridge.parser.cparser',
     define_macros=[
         ('YYERROR_VERBOSE', 1)
     ],
     sources=[
-        'skillbridge/cparser/parser.c',
-        'skillbridge/cparser/generated/lexer.c',
-        'skillbridge/cparser/generated/parser.c'
+        'skillbridge/parser/cparser.c',
+        'skillbridge/parser/generated/lexer.c',
+        'skillbridge/parser/generated/parser.c'
     ],
     extra_compile_args='-std=c11 -Wall -Wextra -Wpedantic'.split(),
     language='c'

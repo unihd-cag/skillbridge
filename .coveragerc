@@ -1,2 +1,2 @@
 [run]
-omit = skillbridge/cparser/*.py
+omit = skillbridge/parser/generate.py

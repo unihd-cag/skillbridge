@@ -8,12 +8,13 @@ from skillbridge.client.translator import snake_to_camel, camel_to_snake,\
     python_value_to_skill, skill_value_to_python, call_assign,\
     skill_setattr, skill_help, skill_help_to_list, skill_literal_to_value,\
     skill_getattr, Var, check_function, build_python_path, call
-from skillbridge import ParseError
+from skillbridge import ParseError, Symbol
 
 
 floats = floats(allow_infinity=False, allow_nan=False)
 ints = integers(min_value=-2**63, max_value=2**63-1)
 asciis = text(ascii_uppercase + ascii_lowercase + ascii_letters)
+symbols = text(ascii_uppercase + ascii_lowercase + ascii_letters, min_size=4)
 simple_types = floats | ints | none() | asciis
 
 
@@ -174,6 +175,27 @@ def test_set_attribute(path, name, value):
 @given(lists(simple_types) | ints | floats | booleans() | none())
 def test_literal_passes_through(value):
     assert skill_literal_to_value(value) == value
+
+
+@given(symbols)
+def test_symbol_is_parsed(name):
+    parsed = skill_value_to_python(name, [], replicate)
+    assert isinstance(parsed, Symbol)
+    assert parsed.name == name
+
+
+@given(symbols)
+def test_symbol_is_dumped(name):
+    skill = python_value_to_skill(Symbol(name))
+    assert skill == f"'{name}"
+
+
+@given(lists(symbols, min_size=1))
+def test_nested_symbol_raises(l):
+    skill = '(' + ' '.join(l) + ')'
+
+    with raises(ParseError, match="unexpected Symbol"):
+        skill_value_to_python(skill, [], replicate)
 
 
 @mark.parametrize('value, expected', [
