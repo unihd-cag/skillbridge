@@ -38,6 +38,7 @@ start it by typing the following command into the Skill console.
 
 ```lisp
 load("PATH-TO-IPC-SERVER")
+pyStartServer
 ```
 
 ##### Connecting to the server
@@ -45,7 +46,7 @@ load("PATH-TO-IPC-SERVER")
 ```python
 from skillbridge import Workspace
 
-ws = Workspace.default()
+ws = Workspace.open()
 ```
 
 ##### Accessing the currently open edit cell view
@@ -69,3 +70,40 @@ or type `cell_view.<TAB>` in jupyter/ipython
 >>> print(cell_view.b_box)
 [[0, 10], [2, 8]]
 ```
+
+##### Multiple Virtuoso Instances
+
+You can run multiple Virtuoso instances and have a running server inside
+each of them. However, in order to match the clients and server correctly
+you must start and connect a bit differently:
+
+**Virtuoso Instance 1**
+
+```lisp
+; This starts the server with the default id
+load("PATH-TO-IPC-SERVER")
+pyStartServer
+```
+
+**Python Client 1**
+
+```python
+ws = Workspace.open()
+```
+
+**Virtuoso Instance 2**
+
+```lisp
+; This starts the server with a custom id
+load("PATH-TO-IPC-SERVER")
+pyStartServer "some-id"
+```
+
+**Python Client 2**
+
+```python
+ws = Workspace.open('some-id')
+```
+
+You could even open both Workspaces in a single python session, but it
+is not possible to run two python servers in a single Virtuoso session.

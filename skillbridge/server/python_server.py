@@ -2,8 +2,10 @@ from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
 from logging import getLogger, basicConfig, WARNING
 from sys import stdout, stdin, argv
 from select import select
-from os import unlink, getenv
-from typing import List, Iterable
+from os import unlink
+from typing import Iterable
+from argparse import ArgumentParser
+from atexit import register as atext_register
 
 import logging
 
@@ -12,13 +14,7 @@ LOG_FORMAT = '%(asctime)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
 
-SOCKET_FILE = '/tmp/skill-server.sock'
-TEST_SOCKET_FILE = '/tmp/skill-server-test.sock'
-
-level = getenv('LOG_LEVEL', 'WARNING')
-level = getattr(logging, level, WARNING)
-
-basicConfig(filename=LOG_FILE, format=LOG_FORMAT, level=level, datefmt=LOG_DATE_FORMAT)
+basicConfig(filename=LOG_FILE, format=LOG_FORMAT, datefmt=LOG_DATE_FORMAT)
 logger = getLogger("python-server")
 
 
@@ -37,8 +33,8 @@ def read_from_skill() -> str:
     return 'failure <timeout>'
 
 
-class UnixServer(ThreadingMixIn, UnixStreamServer):
-    allow_reuse_address = True
+class UnixServer(UnixStreamServer):
+    request_queue_size = 0
 
 
 class Handler(StreamRequestHandler):
@@ -92,21 +88,35 @@ class Handler(StreamRequestHandler):
         logger.info("loop ended")
 
 
-def main(args: List[str]) -> None:
-    testmode = len(args) == 2 and args[1] == 'testmode'
-    socket_file = TEST_SOCKET_FILE if testmode else SOCKET_FILE
-
+def cleanup(socket: str) -> None:
     try:
-        unlink(socket_file)
+        unlink(socket)
     except FileNotFoundError:
         pass
 
-    with UnixServer(socket_file, Handler) as server:  # type: ignore
+
+def main(socket: str, log_level: str, notify: bool) -> None:
+    logger.setLevel(getattr(logging, log_level))
+
+    atext_register(lambda: cleanup(socket))
+    cleanup(socket)
+    with UnixServer(socket, Handler) as server:  # type: ignore
         logger.info("starting server")
-        if testmode:
+        if notify:
             send_to_skill('running')
         server.serve_forever()
 
 
 if __name__ == '__main__':
-    main(argv)
+    log_levels = "DEBUG WARNING INFO ERROR CRITICAL FATAL".split()
+    argument_parser = ArgumentParser(argv[0])
+    argument_parser.add_argument('socket')
+    argument_parser.add_argument('log_level', choices=log_levels)
+    argument_parser.add_argument('--notify', action='store_true')
+
+    ns = argument_parser.parse_args()
+
+    try:
+        main(ns.socket, ns.log_level, ns.notify)
+    except KeyboardInterrupt:
+        pass

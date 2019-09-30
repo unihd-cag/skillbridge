@@ -10,7 +10,7 @@ from skillbridge.server import python_server
 
 
 class Virtuoso(Thread):
-    def __init__(self):
+    def __init__(self, socket):
         super().__init__(daemon=True)
         self.daemon = True
 
@@ -20,6 +20,7 @@ class Virtuoso(Thread):
         self.server = None
         self.running = False
         self.pin = None
+        self.socket = socket
 
     def wait_until_ready(self):
         while not self.running:
@@ -30,7 +31,7 @@ class Virtuoso(Thread):
         script = python_server.__file__
         master, slave = openpty()
         self.server = Popen(
-            [executable, script, 'testmode'],
+            [executable, script, self.socket, "DEBUG", '--notify'],
             stdin=slave, stdout=PIPE, stderr=STDOUT,
             universal_newlines=True
         )
@@ -65,7 +66,7 @@ class Virtuoso(Thread):
             try:
                 answer = self.queue.get_nowait()
             except Empty:
-                raise RuntimeError(f"no answer availyble for {question!r}")
+                raise RuntimeError(f"no answer available for {question!r}")
             self.write(answer)
 
     def read(self):

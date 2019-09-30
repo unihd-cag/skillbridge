@@ -7,7 +7,7 @@ from skillbridge.server import python_server
 from skillbridge.client.channel import UnixChannel
 
 
-SOCKET_FILE = '/tmp/skill-server-test.sock'
+UNIX_SOCKET = '/tmp/skill-test-socket.sock'
 
 
 class Redirect:
@@ -36,7 +36,7 @@ class Server(Thread):
         super().__init__(daemon=True)
 
     def run(self):
-        python_server.main(['', 'testmode'])
+        python_server.main(UNIX_SOCKET, "DEBUG", notify=True)
 
 
 @fixture
@@ -60,7 +60,7 @@ def test_server_notifies(redirect):
     sleep(2)
     assert redirect.pop() == 'running', "Server didn't start in time"
 
-    c = UnixChannel(SOCKET_FILE)
+    c = UnixChannel(UNIX_SOCKET)
     c.close()
 
     s.join(0.1)
@@ -71,7 +71,7 @@ def test_one_request(redirect):
     s.start()
     sleep(2)
 
-    c = UnixChannel(SOCKET_FILE)
+    c = UnixChannel(UNIX_SOCKET)
     redirect.prepare('success pong')
     response = c.send('ping')
     assert response == 'pong'
