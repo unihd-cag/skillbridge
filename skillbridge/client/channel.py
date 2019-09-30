@@ -25,7 +25,10 @@ class Channel:
         self._max_transmission_length = value
 
     def __del__(self) -> None:
-        self.close()
+        try:
+            self.close()
+        except BrokenPipeError:
+            pass
 
 
 class UnixChannel(Channel):
@@ -41,6 +44,7 @@ class UnixChannel(Channel):
 
     def connect(self) -> socket:
         s = socket(self.address_family, self.socket_kind)
+        s.settimeout(10)
         s.connect(self.address)
         self.connected = True
         return s

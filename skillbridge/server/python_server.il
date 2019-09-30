@@ -1,4 +1,4 @@
-let((_filename _baseName _moduleFolder _installName _logName _ipc)
+let((_filename _baseName _moduleFolder _installName _logName)
 
     _filename = get_filename(piport)
     _baseName = substring(_filename 1 strlen(_filename)-2)
@@ -39,6 +39,7 @@ let((_filename _baseName _moduleFolder _installName _logName _ipc)
             close(poport)
             poport = stdout
             sprintf(nil "found %d functions total" length(names))
+            t
         )
     )
 
@@ -46,15 +47,23 @@ let((_filename _baseName _moduleFolder _installName _logName _ipc)
 
     putd('pyKillServer nil)
     defun(pyKillServer ()
-        ipcKillProcess(pyKillServer.ipc)
+        if(pyStartServer.ipc == nil then
+            printf("server was not running\n")
+            nil
+        else
+            ipcKillProcess(pyStartServer.ipc)
+            pyStartServer.ipc = nil
+            deleteFile(pyStartServer.file)
+            t
+        )
     )
 
-    putd('pyReloadServer nil)
-    defun(pyReloadServer (@optional (level "WARNING"))
+    putd('pyReloadScript nil)
+    defun(pyReloadScript ()
         printf("killing the old server\n")
         pyKillServer()
-        setShellEnvVar(strcat("LOG_LEVEL=" level))
         load(pyReloadServer.filename)
+        t
     )
 
     pyReloadServer.filename = _filename
@@ -78,6 +87,7 @@ let((_filename _baseName _moduleFolder _installName _logName _ipc)
             )
             printf("")
         )
+        t
     )
 
     pyShowLog.logName = _logName
@@ -89,9 +99,9 @@ let((_filename _baseName _moduleFolder _installName _logName _ipc)
                 errset(result=evalstring(line))
                 if((errset.errset) then
                     printf("command %L resulted in error %L\n" line errset.errset)
-                    ipcWriteProcess(__pyOnData.ipc sprintf(nil "failure %L\n" errset.errset))
+                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "failure %L\n" errset.errset))
                 else
-                    ipcWriteProcess(__pyOnData.ipc sprintf(nil "success %L\n" result))
+                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "success %L\n" result))
                 )
             )
         )
@@ -107,15 +117,35 @@ let((_filename _baseName _moduleFolder _installName _logName _ipc)
         printf("server was stopped with code %L\n" data)
     )
 
-    _ipc = ipcBeginProcess(_executable "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")
+    putd('pyStartServer nil)
+    defun(pyStartServer (@optional (id "default") (logLevel "WARNING"))
+        if(pyStartServer.ipc != nil then
+            fprintf(stderr, "server is already running\n")
+            nil
+        else
+            let((executableWithArgs socketFile)
+                socketFile = sprintf(nil "/tmp/skill-server-%s.sock"  id)
 
-    __pyOnData.ipc = _ipc
-    pyKillServer.ipc = _ipc
+                if(isFileName(socketFile) then
+                    fprintf(stderr, "Server cannot start, because %s already exists. Delete the file if you are sure that it is not in use anymore.", socketFile)
+                    nil
+                else
+                    executableWithArgs = buildString(list(_executable socketFile logLevel))
+                    pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")
+                    pyStartServer.file = socketFile
+                    t
+                )
+            )
+        )
+    )
 
-    printf("Server started\n")
+    pyStartServer.ipc = nil
+    pyStartServer.file = nil
+
     printf("Available commands:\n")
+    printf("\tpyStartServer [socketFile [logLevel]]\n")
     printf("\tpyKillServer\n")
-    printf("\tpyReloadServer [logLevel]\n")
+    printf("\tpyReloadScript\n")
     printf("\tpyShowLog [numberOfLines]\n")
     printf("\tpyDumpFunctionDefinitions filename\n")
 )

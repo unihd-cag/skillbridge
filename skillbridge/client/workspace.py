@@ -11,6 +11,7 @@ __all__ = ['Workspace']
 
 
 class Workspace:
+    SOCKET_TEMPLATE = '/tmp/skill-server-{}.sock'
     _var_counter = 0
 
     def __init__(self, channel: Channel) -> None:
@@ -47,12 +48,18 @@ class Workspace:
             ip.Completer.greedy = True
 
     @classmethod
-    def default(cls) -> 'Workspace':
-        return cls.unix('/tmp/skill-server.sock')
+    def open(cls, workspace_id: str = 'default') -> 'Workspace':
+        try:
+            return cls(UnixChannel(cls.socket_name_for_id(workspace_id)))
+        except FileNotFoundError:
+            raise RuntimeError("No running server found. It is running?") from None
+
+    def close(self) -> None:
+        self._channel.close()
 
     @classmethod
-    def unix(cls, filename: str) -> 'Workspace':
-        return cls(UnixChannel(filename))
+    def socket_name_for_id(cls, workspace_id: str) -> str:
+        return cls.SOCKET_TEMPLATE.format(workspace_id)
 
     @property
     def max_transmission_length(self) -> int:

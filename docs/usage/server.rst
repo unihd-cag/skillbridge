@@ -7,6 +7,22 @@ Initially the server must be started by loading the ``python_server.il``.
 
 After that, these management commands are available in the Skill console.
 
+.. function:: pyStartServer(id="default" logLevel="WARNING")
+
+    This starts the python server. If you are only running a single instance of
+    Virtuoso you can use the default id. For more instances, each server needs its own
+    id.
+
+    The ``logLevel`` can be used to set the log level, the default is ``"WARNING"``.
+    Other values are ``"DEBUG"`` to print absolutely everything, ``"INFO"``,
+    ``"WARNING"``, ``"ERROR"`` and ``"FATAL"``.
+
+    .. warning::
+
+        The log levels ``"DEBUG"`` and ``"INFO"`` are not recommended, because then
+        the time for a round-trip between the client and the server is effectively
+        two to three times as long!
+
 .. function:: pyKillServer()
 
     This terminates the python subprocess and thus, kills the server.
@@ -14,23 +30,11 @@ After that, these management commands are available in the Skill console.
     and active connections will result in a :class:`BrokenPipe` exception
     the next time they are used.
 
-.. function:: pyReloadServer(level="WARNING")
+.. function:: pyReloadScript
 
     This calls :func:`pyKillServer` and reloads the ``python_server.il``
-    Skill script. With this function you can effectively restart the python
-    server in case it crashes.
+    Skill script. Normally this function would not be used.
 
-    The client library will attempt to reconnect, but the success is not guaranteed.
-
-    The ``level`` can be used to set the log level, the default is ``"WARNING"``.
-    Other values are ``"DEBUG"`` to print absolutely everything, ``"INFO"``,
-    ``"WARNING"``, ``"ERROR"`` and ``"FATAL"``.
-
-    .. warning::
-
-        The loglevels ``"DEBUG"`` and ``"INFO"`` are not recommended, because then
-        the time for a round-trip between the client and the server is effectively
-        two to three times as long!
 
 .. function:: pyShowLog(numberOfLines=10)
 

@@ -7,12 +7,13 @@ from skillbridge.client.channel import UnixChannel, Channel
 from skillbridge import Workspace, loop_variable
 
 
-SOCKET_FILE = '/tmp/skill-server-test.sock'
+WORKSPACE_ID = '__test__'
+UNIX_SOCKET = Workspace.socket_name_for_id(WORKSPACE_ID)
 
 
-@fixture('module')
+@fixture("session")
 def server() -> Virtuoso:
-    v = Virtuoso()
+    v = Virtuoso(UNIX_SOCKET)
     v.start()
     v.wait_until_ready()
     yield v
@@ -21,7 +22,7 @@ def server() -> Virtuoso:
 
 @fixture
 def channel() -> Channel:
-    c = UnixChannel(SOCKET_FILE)
+    c = UnixChannel(UNIX_SOCKET)
     try:
         yield c
     finally:
@@ -30,20 +31,22 @@ def channel() -> Channel:
 
 @fixture
 def ws() -> Workspace:
-    return Workspace.unix(SOCKET_FILE)
+    ws = Workspace.open(WORKSPACE_ID)
+    yield ws
+    ws.close()
 
 
 def test_channel_cannot_connect_without_server():
     with raises(Exception):
-        UnixChannel(SOCKET_FILE)
+        UnixChannel(UNIX_SOCKET)
 
 
 def test_reconnect():
-    first = Virtuoso()
+    first = Virtuoso(UNIX_SOCKET)
     first.start()
     first.wait_until_ready()
 
-    c = UnixChannel(SOCKET_FILE)
+    c = UnixChannel(UNIX_SOCKET)
     first.answer_success('pong')
     try:
         assert c.send('ping') == 'pong\n'
@@ -51,7 +54,7 @@ def test_reconnect():
     finally:
         first.stop()
 
-    second = Virtuoso()
+    second = Virtuoso(UNIX_SOCKET)
     second.start()
     second.wait_until_ready()
 
@@ -65,7 +68,7 @@ def test_reconnect():
 
 
 def test_channel_connects(server):
-    c = UnixChannel(SOCKET_FILE)
+    c = UnixChannel(UNIX_SOCKET)
     assert c.connected
     c.close()
 

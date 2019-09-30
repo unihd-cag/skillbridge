@@ -11,6 +11,7 @@ Welcome to Python-Skill Bridge's documentation!
     usage/server
 
     reference/remote-object
+    reference/protocol
 
 
 Indices and tables
