@@ -1,4 +1,4 @@
-from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
+from socketserver import UnixStreamServer, StreamRequestHandler
 from logging import getLogger, basicConfig, WARNING
 from sys import stdout, stdin, argv
 from select import select

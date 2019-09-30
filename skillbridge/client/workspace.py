@@ -54,7 +54,7 @@ class Workspace:
         except FileNotFoundError:
             raise RuntimeError("No running server found. It is running?") from None
 
-    def close(self):
+    def close(self) -> None:
         self._channel.close()
 
     @classmethod
