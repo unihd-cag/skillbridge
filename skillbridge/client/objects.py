@@ -60,7 +60,6 @@ class RemoteObject(Skillable):
     def __dir__(self) -> List[str]:
         response = self._send(translator.skill_help(self._path))
         attributes = translator.skill_help_to_list(response)
-        attributes.extend(self._methods.keys())
         return attributes
 
     def __getattr__(self, key: str) -> Any:
