@@ -16,7 +16,7 @@ Read more in the [full documentation](#).
 ### Installation
 
 ```bash
-pip install skillbridge
+pip install git+https://github.com/unihd-cag/skillbridge.git
 ```
 
 Before you can use the Skill bridge you must generate the function definitions from
