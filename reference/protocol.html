@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Communication Protocol &#8212; Python-Skill Bridge  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Remote Objects" href="remote-object.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="communication-protocol">
+<h1>Communication Protocol<a class="headerlink" href="#communication-protocol" title="Permalink to this headline">¶</a></h1>
+<div class="figure align-default" id="id1">
+<img alt="../_images/components.svg" src="../_images/components.svg" /><p class="caption"><span class="caption-text">The different components of the Skill Bridge</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>The block diagram shows two important communication interfaces.
+namely, the TCP/Unix socket interface between the client library
+and the python server and the IPC interface between the skill script and the python server.</p>
+<div class="section" id="the-ipc-protocol">
+<h2>The IPC protocol<a class="headerlink" href="#the-ipc-protocol" title="Permalink to this headline">¶</a></h2>
+<p>The skill script communicated via <code class="docutils literal notranslate"><span class="pre">stdin</span></code> and <code class="docutils literal notranslate"><span class="pre">stdout</span></code> with the python server. All
+messages are initiated by the python server (called <em>question</em>) which is followed by
+exactly one <em>answer</em> from the skill. All <em>questions</em> and <em>answers</em> are terminated by
+a newline character <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
+<div class="section" id="the-question">
+<h3>The Question<a class="headerlink" href="#the-question" title="Permalink to this headline">¶</a></h3>
+<p>A <em>question</em> consists a single line containing executable skill code. See the following examples:</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;1 + 2\n&quot;</span>
+
+<span class="s">&quot;geGetEditCellView()\n&quot;</span>
+
+<span class="s">&quot;__py_cell = geGetEditCellView()\n&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-answer">
+<h3>The Answer<a class="headerlink" href="#the-answer" title="Permalink to this headline">¶</a></h3>
+<p>An <em>answer</em> consists of the execution status, either <code class="docutils literal notranslate"><span class="pre">&quot;failure&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;success&quot;</span></code>,
+and the result itself. The result is exactly the string representation given by skill.</p>
+<p>Examples:</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;success 1\n&quot;</span>
+
+<span class="s">&quot;success (1 2 3)\n&quot;</span>
+
+<span class="s">&quot;success db:0x1234\n&quot;</span>
+
+<span class="s">&quot;failure error ...\n&quot;</span>
+</pre></div>
+</div>
+<div class="figure align-default" id="id2">
+<img alt="../_images/diagrams-question-answer.svg" src="../_images/diagrams-question-answer.svg" /><p class="caption"><span class="caption-text">Sequence diagram for the question and answer protocol</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="behaviour">
+<h3>Behaviour<a class="headerlink" href="#behaviour" title="Permalink to this headline">¶</a></h3>
+<p>The skill script waits for <em>questions</em>. When it receives one it executes the code.
+In case of an error it sends an <em>answer</em> beginning with <code class="docutils literal notranslate"><span class="pre">&quot;failure&quot;</span></code> followed by the
+error message. Otherwise it sends an <em>answer</em> beginning with <code class="docutils literal notranslate"><span class="pre">&quot;success&quot;</span></code> followed by
+the string representation of the result.</p>
+<p>The python server waits one minute after it sent a <em>question</em>. It it does not receive
+an <em>answer</em> in that time it automatically assumes the following <em>answer</em>:
+<code class="docutils literal notranslate"><span class="pre">&quot;failure</span> <span class="pre">&lt;timeout&gt;&quot;</span></code>.</p>
+</div>
+<div class="section" id="test-mode">
+<h3>Test Mode<a class="headerlink" href="#test-mode" title="Permalink to this headline">¶</a></h3>
+<p>There is one exception to the protocol above. If the server is started with the <code class="docutils literal notranslate"><span class="pre">-notify</span></code>
+option it will send a single message containing “runningn” via stdout. This message
+must not be executed as skill code. Its sole purpose is to notify the parent process
+that the server is running.</p>
+</div>
+</div>
+<div class="section" id="the-socket-protocol">
+<h2>The Socket Protocol<a class="headerlink" href="#the-socket-protocol" title="Permalink to this headline">¶</a></h2>
+<p>This protocol is similar to the IPC protocol. The difference is the way single messages are
+grouped together. As TCP has no concept of messages, the length of the message is sent first,
+followed by the message itself. As the length of the length can also vary, it is fixed to
+exactly 10 digits. Smaller lengths must be padded with either zeros or spaces.</p>
+<p>See the following examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;1 + 2&quot;</span><span class="p">)</span>
+<span class="go">b&#39;00000000051 + 2&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;__py_cell = geGetEditCellView()&quot;</span><span class="p">)</span>
+<span class="go">b&#39;0000000031__py_cell = geGetEditCellView()&#39;</span>
+</pre></div>
+</div>
+<div class="figure align-default" id="id3">
+<img alt="../_images/diagrams-socket.svg" src="../_images/diagrams-socket.svg" /><p class="caption"><span class="caption-text">Sequence diagram for the socket protocol</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="a-full-roundtrip">
+<h2>A Full Roundtrip<a class="headerlink" href="#a-full-roundtrip" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-default" id="id4">
+<img alt="../_images/diagrams-flow.svg" src="../_images/diagrams-flow.svg" /><p class="caption"><span class="caption-text">A full roundtrip of a single python expression</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python-Skill Bridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/server.html">The Python Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remote-object.html">Remote Objects</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Communication Protocol</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-ipc-protocol">The IPC protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-socket-protocol">The Socket Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-full-roundtrip">A Full Roundtrip</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="remote-object.html" title="previous chapter">Remote Objects</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Niels Buwen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/protocol.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

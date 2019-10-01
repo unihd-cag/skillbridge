@@ -10,7 +10,8 @@ Open the Skill console in Virtuoso and type
 
 .. code-block:: lisp
 
-    load("<PATH-TO-SKILL-IPC-SCRIPT>")
+    load("PATH-TO-SKILL-IPC-SCRIPT")
+    pyStartServer
 
 You can obtain the correct path from the python library like this:
 
@@ -29,7 +30,7 @@ Connecting to the Server
 
     from skillbridge import Workspace
 
-    ws = Workspace.default()
+    ws = Workspace.open()
 
 
 Usage examples

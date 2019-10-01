@@ -37,7 +37,8 @@
 <div class="section" id="starting-the-server">
 <h2>Starting the Server<a class="headerlink" href="#starting-the-server" title="Permalink to this headline">¶</a></h2>
 <p>Open the Skill console in Virtuoso and type</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;&lt;PATH-TO-SKILL-IPC-SCRIPT&gt;&quot;</span><span class="p">)</span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-SKILL-IPC-SCRIPT&quot;</span><span class="p">)</span>
+<span class="nv">pyStartServer</span>
 </pre></div>
 </div>
 <p>You can obtain the correct path from the python library like this:</p>
@@ -50,7 +51,7 @@
 <h2>Connecting to the Server<a class="headerlink" href="#connecting-to-the-server" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Workspace</span>
 
-<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -181,6 +182,7 @@ under that prefix.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="server.html">The Python Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/remote-object.html">Remote Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/protocol.html">Communication Protocol</a></li>
 </ul>
 
 <div class="relations">
