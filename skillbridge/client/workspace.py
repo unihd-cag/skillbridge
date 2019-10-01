@@ -32,7 +32,7 @@ class Workspace:
     def define(self, code: str) -> None:
         code = code.replace('\n', ' ')
         name = self._channel.send(SkillCode(code)).strip()
-        self.user += Function(name, 'user defined')
+        self.user += Function(name, 'user defined', set())
 
     def _create_remote_object(self, name: str, path: SkillPath) -> RemoteObject:
         return RemoteObject(self._channel, name, path)
@@ -52,7 +52,7 @@ class Workspace:
         try:
             return cls(UnixChannel(cls.socket_name_for_id(workspace_id)))
         except FileNotFoundError:
-            raise RuntimeError("No running server found. It is running?") from None
+            raise RuntimeError("No server found. It is running?") from None
 
     def close(self) -> None:
         self._channel.close()

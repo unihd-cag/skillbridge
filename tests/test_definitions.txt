@@ -53,3 +53,16 @@ END FUNCTION
 BEGIN FUNCTION hiDummy
 hiDummy() => nil
 END FUNCTION
+
+BEGIN FUNCTION getCurrentWindow
+getCurrentWindow() => nil
+ALIASES hiGetCurrentWindow
+END FUNCTION
+
+BEGIN FUNCTION hiGetCurrentWindow
+hiGetCurrentWindow() => nil
+END FUNCTION
+
+BEGIN FUNCTION getValue
+getValue() => nil
+END FUNCTION

@@ -1,6 +1,6 @@
-from typing import Iterable, Iterator, List, Dict, Optional
+from typing import Iterable, Iterator, List, Dict, Optional, Set, Tuple, Union
 from itertools import takewhile, groupby
-from re import match
+from re import match, search
 from os.path import dirname, abspath, join
 from warnings import warn
 
@@ -14,29 +14,40 @@ def _inside_body(line: str) -> bool:
     return not line.startswith('END FUNCTION')
 
 
-def _extract_prefix(f: Function) -> str:
-    m = match(r'([a-z]+)[A-Z]', f.name)
+def _extract_prefix(f: Union[Function, str]) -> str:
+    if isinstance(f, Function):
+        name = f.name
+    else:
+        name = f
+    m = match(r'([a-z]+)[A-Z]', name)
     if m is None:
         return ''
     return m.group(1)
 
 
-def _sanitize_body(body: Iterable[str]) -> str:
+def _sanitize_body(body: Iterable[str]) -> Tuple[str, Set[str]]:
     lines = [line.strip() for line in body]
     while lines and not lines[0]:
         lines = lines[1:]
     while lines and not lines[-1]:
         lines.pop()
 
-    return '\n'.join(lines)
+    for line in lines:
+        if line.startswith('ALIASES '):
+            aliases = set(line[8:].split())
+            break
+    else:
+        aliases = set()
+
+    return '\n'.join(lines), aliases
 
 
 def _parse_all_functions(fin: Iterable[str]) -> Iterator[Function]:
     for line in fin:
         if line.startswith('BEGIN FUNCTION'):
             _, _, function_name = line.strip().split(maxsplit=2)
-            body = _sanitize_body(takewhile(_inside_body, fin))
-            yield Function(function_name, body)
+            body, aliases = _sanitize_body(takewhile(_inside_body, fin))
+            yield Function(function_name, body, aliases)
 
 
 def parse_all_function() -> List[Function]:
@@ -54,10 +65,16 @@ def parse_all_function() -> List[Function]:
 
 
 def functions_by_prefix() -> Dict[str, List[Function]]:
-    functions = sorted(f for f in parse_all_function() if _extract_prefix(f) in WHITELIST)
+    functions = parse_all_function()
+    functions = sorted(
+        f for f in functions
+        if _extract_prefix(f) in WHITELIST or
+        any(_extract_prefix(a) in WHITELIST for a in f.aliases)
+    )
 
     return {
-        prefix: list(group) for prefix, group in groupby(functions, _extract_prefix)
+        (prefix or '_'): list(group)
+        for prefix, group in groupby(functions, _extract_prefix)
     }
 
 
@@ -65,7 +82,6 @@ TYPE_TO_KEY = {
     'd': 'db',
     'w': 'window'
 }
-
 
 BORKED_DESCRIPTIONS = {
     'dbSetPinGroupGuideMinPinWidth',

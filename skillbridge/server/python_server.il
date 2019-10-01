@@ -9,7 +9,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
 
     putd('pyDumpFunctionDefinitions nil)
     defun(pyDumpFunctionDefinitions (filename)
-        let((names name total code)
+        let((names name total code aliases)
             names = nil
             total = float(length(oblist))
             poport = outfile(if(filename == "<install>" pyDumpFunctionDefinitions.installName filename))
@@ -26,6 +26,10 @@ let((_filename _baseName _moduleFolder _installName _logName)
                         ; `name` for some reason
                         code = sprintf(nil "help(%s)" name)
                         errset(evalstring(code))
+                        aliases = listAlias(name)
+                        if(aliases != nil then
+                            printf("ALIASES %L\n", aliases)
+                        )
                         printf("END FUNCTION %s\n\n" name)
                         names = cons(name names)
                     )
