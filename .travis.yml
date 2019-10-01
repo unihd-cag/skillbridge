@@ -11,6 +11,9 @@ before_install:
 install:
   - python setup.py build_ext --inplace -fv
 
+before_script:
+  - cp tests/test_definitions.txt skillbridge/client/definitions.txt
+
 script:
   - flake8
   - pytest
