@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple, Callable, NewType, NamedTuple, Dict
+from typing import Union, List, Tuple, Callable, NewType, NamedTuple, Dict, Set
 
 __all__ = [
     'Number', 'BBox', 'Transform',
@@ -16,7 +16,9 @@ SkillPath = List[SkillComponent]
 SkillCode = NewType('SkillCode', str)
 
 
-Function = NamedTuple('Function', [('name', str), ('description', str)])
+Function = NamedTuple('Function', [
+    ('name', str), ('description', str), ('aliases', Set[str])
+])
 Definition = List[Function]
 
 

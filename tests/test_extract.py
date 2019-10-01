@@ -16,3 +16,15 @@ def test_by_prefix():
         assert group in groups
 
         assert all(isinstance(func, Function) for func in groups[group])
+
+
+def test_aliases_are_mapped_even_when_prefix_not_whitelisted():
+    functions = functions_by_prefix()['get']
+
+    assert any(func.name == 'getCurrentWindow' for func in functions)
+
+
+def test_not_whitelisted_prefix_not_present():
+    functions = functions_by_prefix()['get']
+
+    assert all(func.name != 'getValue' for func in functions)

@@ -6,7 +6,8 @@ from .translator import camel_to_snake, assign, call, skill_value_to_python
 
 
 def _name_without_prefix(name: str) -> str:
-    return camel_to_snake(name).split('_', maxsplit=1)[1]
+    *_, name = camel_to_snake(name).split('_', maxsplit=1)
+    return name
 
 
 class FunctionCollection:

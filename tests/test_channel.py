@@ -241,6 +241,14 @@ def test_methods_depend_on_type(server, ws):
     assert db._methods != window._methods
 
 
+def test_methods_are_readonly(server, ws):
+    server.answer_success('db:123')
+    db = ws.ge.get_edit_cell_view()
+
+    with raises(TypeError, match="readonly"):
+        db.db_full_path = None
+
+
 def test_function_produces_same_code_as_method(server, ws):
     server.answer_success('db:123')
     db = ws.ge.get_edit_cell_view()
