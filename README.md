@@ -1,4 +1,4 @@
-# Python-Skill Bridge ![build](https://travis-ci.org/unihd-cag/skillbridge.svg?branch=master)
+# Python-Skill Bridge ![build](https://travis-ci.org/unihd-cag/skillbridge.svg?branch=master) ![codecov](https://codecov.io/gh/unihd-cag/skillbridge/branch/master/graph/badge.svg)
 
 ### Features
 
@@ -11,7 +11,7 @@
   - global function list
   - methods
 
-Read more in the [full documentation](#).
+Read more in the [full documentation](https://unihd-cag.github.io/skillbridge/).
 
 ### Installation
 
