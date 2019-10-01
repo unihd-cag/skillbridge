@@ -8,7 +8,6 @@ from .hints import Function
 from .translator import camel_to_snake
 
 WHITELIST = set('db dd sch ge rod le via pte lx hi mae'.split())
-ALIAS = r'alias (?:to|of) (?:the)? ([a-z]+[A-Z][a-zA-Z]+)'
 
 
 def _inside_body(line: str) -> bool:
