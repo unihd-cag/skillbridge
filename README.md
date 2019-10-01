@@ -1,4 +1,4 @@
-# Python-Skill Bridge
+# Python-Skill Bridge ![build](https://travis-ci.org/unihd-cag/skillbridge.svg?branch=master)
 
 ### Features
 

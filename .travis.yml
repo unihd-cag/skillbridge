@@ -9,11 +9,11 @@ before_install:
   - pip install codecov
 
 install:
-  - pip install .
+  - python setup.py build_ext --inplace -fv
 
 script:
+  - cp tests/test_definitions.txt skillbridge/client/definitions.txt
   - flake8
-  - mypy --strict skillbridge --show-error-context
   - pytest
 
 after_success:
