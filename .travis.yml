@@ -29,5 +29,5 @@ deploy:
   keep_history: true
   on:
     branch: master
-  local_dir: doc/_build/html
+  local_dir: docs/_build/html
 
