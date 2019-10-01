@@ -18,7 +18,7 @@ script:
 
 after_success:
   - codecov
-  - cd doc
+  - cd docs
   - make html
   - touch _build/html/.nojekyll
 
