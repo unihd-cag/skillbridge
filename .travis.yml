@@ -9,7 +9,7 @@ before_install:
   - pip install codecov
 
 install:
-  - pip install .
+  - python setup.py build_ext --inplace -fv
 
 script:
   - flake8
