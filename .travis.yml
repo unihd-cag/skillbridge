@@ -12,6 +12,8 @@ install:
   - pip install .
 
 script:
+  - pwd
+  - ls
   - flake8
   - mypy --strict skillbridge --show-error-context
   - pytest
