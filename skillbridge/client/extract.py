@@ -1,6 +1,6 @@
 from typing import Iterable, Iterator, List, Dict, Optional, Set, Tuple, Union
 from itertools import takewhile, groupby
-from re import match, search
+from re import match
 from os.path import dirname, abspath, join
 from warnings import warn
 
