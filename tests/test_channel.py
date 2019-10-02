@@ -31,7 +31,15 @@ def channel() -> Channel:
 
 @fixture
 def ws() -> Workspace:
-    ws = Workspace.open(WORKSPACE_ID)
+    for _ in range(10):
+        try:
+            ws = Workspace.open(WORKSPACE_ID)
+        except BlockingIOError:
+            continue
+        else:
+            break
+    else:
+        raise
     yield ws
     ws.close()
 
