@@ -4,7 +4,7 @@ docs/_templates/*
 
 build/*
 dist/*
-skill_bridge.egg-info/*
+skillbridge.egg-info/*
 
 .idea/*
 .coverage

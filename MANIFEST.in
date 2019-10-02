@@ -7,3 +7,4 @@ include skillbridge/parser/generated/parser.h
 include skillbridge/parser/cparser.c
 include skillbridge/parser/skill.l
 include skillbridge/parser/skill.y
+include dev-requirements.txt
