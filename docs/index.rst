@@ -1,5 +1,5 @@
-Welcome to Python-Skill Bridge's documentation!
-===============================================
+Welcome to Python-Skill Bridge |version|
+========================================
 
 .. toctree::
     :maxdepth: 2
