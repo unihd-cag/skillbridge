@@ -13,9 +13,11 @@ script:
 - pytest
 after_success:
 - codecov
+- rm coverage.xml
 - cd docs
 - make html
 - touch _build/html/.nojekyll
+- cd ..
 deploy:
   - provider: pages
     skip_cleanup: true
