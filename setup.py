@@ -91,7 +91,7 @@ config = dict(
         "Operating System :: POSIX :: Linux",
         "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
         "Topic :: Software Development",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     ]
 )
 
