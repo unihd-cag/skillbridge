@@ -39,7 +39,7 @@ After that, these management commands are available in the Skill console.
 .. function:: pyShowLog(numberOfLines=10)
 
     Used for debugging. This shows the logging output from the
-    python server. The parameter ``numberOfLines`` controlls
+    python server. The parameter ``numberOfLines`` controls
     how many lines will be printed. It always refers to the **last**
     ``numberOfLines`` lines.
 
