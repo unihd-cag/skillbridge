@@ -16,8 +16,10 @@ Read more in the [full documentation](https://unihd-cag.github.io/skillbridge/).
 ### Installation
 
 ```bash
-pip install git+https://github.com/unihd-cag/skillbridge.git
+pip install skillbridge
 ```
+
+Add the `--user`  option if you don't want to install it systemwide.
 
 Before you can use the Skill bridge you must generate the function definitions from
 Virtuoso via the Skill console.
@@ -30,6 +32,14 @@ Virtuoso via the Skill console.
 
 **_Note:_** Generating the function definitions is very slow and will take several
 minutes. Don't cancel the command.
+
+### Updating
+
+In order to update the python package type this
+
+```bash
+pip install skillbridge --upgrade
+```
 
 ### Examples
 
