@@ -1,4 +1,3 @@
-include skillbridge/client/definitions.txt
 include skillbridge/server/python_server.il
 include skillbridge/parser/generated/lexer.c
 include skillbridge/parser/generated/lexer.h
