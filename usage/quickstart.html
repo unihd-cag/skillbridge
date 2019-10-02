@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Quickstart &#8212; Python-Skill Bridge 0.9.2 documentation</title>
+    <title>Quickstart &#8212; Python-Skill Bridge 0.9.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -54,102 +54,7 @@
 <span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="usage-examples">
-<h2>Usage examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h2>
-<p><strong>Accessing the currently open edit cell view</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cell_view</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">cellView</span> <span class="pre">=</span> <span class="pre">geGetEditCellView()</span></code></p>
-<p><strong>Inspecting available properties</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">cell_view</span><span class="p">)</span>
-<span class="go">[&#39;DBUPerUU&#39;, &#39;any_inst_count&#39;, &#39;area_boundaries&#39;, &#39;assoc_text_displays&#39;, &#39;b_box&#39;, ...]</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">cellView-&gt;?</span></code></p>
-<p>or type <code class="docutils literal notranslate"><span class="pre">cell_view.&lt;TAB&gt;</span></code> in ipython/jupyter</p>
-<p><strong>Reading properties</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cell_view</span><span class="o">.</span><span class="n">b_box</span><span class="p">)</span>
-<span class="go">[[0, 10], [0, 10]]</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">cellView-&gt;bBox</span></code></p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>All Skill identifiers like <code class="docutils literal notranslate"><span class="pre">bBox</span></code> or <code class="docutils literal notranslate"><span class="pre">cellViewType</span></code> are
-transformed to snake case on the python side <code class="docutils literal notranslate"><span class="pre">b_box</span></code> and <code class="docutils literal notranslate"><span class="pre">cell_view_type</span></code>.
-You may choose whether you want to use the original camel-case names or the
-transformed snake-case variants.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">bBox</span>
-<span class="go">[[0, 10], [0, 10]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">b_box</span>
-<span class="go">[[0, 10], [0, 10]]</span>
-</pre></div>
-</div>
-</div>
-<p><strong>Calling global functions</strong></p>
-<p>The Skill functions are separated based on their prefix (compare
-<code class="docutils literal notranslate"><span class="pre">dbOpenCellView</span></code> vs <code class="docutils literal notranslate"><span class="pre">schCreateWire</span></code>). Functions with the same
-prefix are grouped together inside a python <code class="xref py py-class docutils literal notranslate"><span class="pre">client.functions.FunctionCollection</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">open_cell_view</span><span class="p">(</span><span class="s2">&quot;lib&quot;</span><span class="p">,</span> <span class="s2">&quot;cell_name&quot;</span><span class="p">,</span> <span class="s2">&quot;view_name&quot;</span><span class="p">)</span>  <span class="c1"># dbOpenCellView</span>
-<span class="go">&lt;remote object ...&gt;</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">dbOpenCellView(&quot;lib&quot;,</span> <span class="pre">&quot;cell_name&quot;,</span> <span class="pre">&quot;view_name&quot;)</span></code></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">sch</span><span class="o">.</span><span class="n">create_wire</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># schCreateWire</span>
-<span class="go">[&lt;remote object ...&gt;]</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">schCreateWire(...)</span></code></p>
-<p><strong>Calling functions with keyword arguments</strong></p>
-<p>Some Skill functions have named arguments. This can be seen in the documentation.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span>
-<span class="go">&lt;remote function&gt;</span>
-<span class="go">leComputeAreaDensity(</span>
-<span class="go">w_windowId</span>
-<span class="go">l_lppSpec</span>
-<span class="go">[ ?depth x_depth ]</span>
-<span class="go">[ ?region l_region ]</span>
-<span class="go">)</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">help(leComputeAreaDensity)</span></code></p>
-<p>We can see that the function takes four arguments: <code class="docutils literal notranslate"><span class="pre">w_windowId</span></code> and <code class="docutils literal notranslate"><span class="pre">l_lppSpec</span></code>
-are positional arguments and can be passed as shown above. But <code class="docutils literal notranslate"><span class="pre">depth</span></code> and <code class="docutils literal notranslate"><span class="pre">region</span></code>
-are named parameters. These are translated to keyword arguments in python:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">llp_spec</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">some_value</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">some_value</span><span class="p">)</span>
-<span class="go">[...]</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">leComputeAreaDensity(window</span> <span class="pre">llpSpec</span> <span class="pre">?depth</span> <span class="pre">someValue</span> <span class="pre">?region</span> <span class="pre">someValue)</span></code></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>On the python side you must use keyword arguments <strong>if and only if</strong> the Skill
-function has a named parameter.</p>
-</div>
-<p><strong>Calling methods</strong></p>
-<p>Some Skill functions receive a remote object as their first argument.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">full_path</span>
-<span class="go">&lt;remote method &#39;dbFullPath&#39;&gt;</span>
-<span class="go">dbFullPath(</span>
-<span class="go">d_cellView</span>
-<span class="go">)</span>
-</pre></div>
-</div>
-<p>These functions can be treated like methods by calling them directly from the
-corresponding remote object:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">db_full_path</span><span class="p">()</span>  <span class="c1"># not the &#39;_&#39; instead of &#39;.&#39;</span>
-<span class="go"># same output as ws.db.full_path(cell_view)</span>
-</pre></div>
-</div>
-<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">dbFullPath(cellView)</span></code></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In order to prevent name collisions, the method name contains the prefix of the
-Skill function while the global functions do not, since they are already grouped
-under that prefix.</p>
-</div>
+<p>Here are some <a class="reference internal" href="../examples/basic.html#basic"><span class="std std-ref">Basic Examples</span></a>.</p>
 </div>
 </div>
 
@@ -177,10 +82,11 @@ under that prefix.</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#starting-the-server">Starting the Server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#connecting-to-the-server">Connecting to the Server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="server.html">The Python Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/basic.html">Basic Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multiple-instances.html">Managing Multiple Virtuoso Instances</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/remote-object.html">Remote Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/protocol.html">Communication Protocol</a></li>
 </ul>
