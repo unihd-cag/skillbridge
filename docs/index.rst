@@ -1,6 +1,10 @@
 Welcome to Python-Skill Bridge |version|
 ========================================
 
+.. raw:: html
+
+    <a href="https://github.com/unihd-cag/skillbridge">Github Repository</a>
+
 .. toctree::
     :maxdepth: 2
     :caption: Contents:
@@ -9,6 +13,9 @@ Welcome to Python-Skill Bridge |version|
     usage/installation
     usage/quickstart
     usage/server
+
+    examples/basic
+    examples/multiple-instances
 
     reference/remote-object
     reference/protocol
