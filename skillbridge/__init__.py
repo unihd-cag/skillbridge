@@ -14,5 +14,5 @@ except ImportError:
     ParseError = None
     Symbol = None
 
-__version__ = '0.1.0'
+__version__ = '0.9.0'
 __all__ = ['Workspace', 'loop_variable', 'Var', 'ParseError', 'Symbol']
