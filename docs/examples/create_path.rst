@@ -21,4 +21,6 @@ In this example horizontal and vercital paths are created on Metal1 and Metal2 d
     for n in range(40):
         ws.rod.create_path(layer=["Metal2", "drawing"], width=0.08, pts = [[0. + 0.125 * n, 0.], [0. + 0.125 * n, 5.]])
         ws.rod.create_path(layer=["Metal2", "drawing"], width=0.08, pts = [[0., 0. + 0.125 * n], [5., 0. + 0.125 * n]])
-
+    
+    # Redraw the layout window
+    ws.hi.redraw()
