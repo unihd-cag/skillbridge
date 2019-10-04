@@ -11,6 +11,7 @@ Afterwards a pie chart with matplotlib is created
 
 
 .. code-block:: python 
+
     from skillbridge import Workspace
     from collections import Counter
     from matplotlib.pyplot import pie,figure,title
@@ -44,3 +45,5 @@ Afterwards a pie chart with matplotlib is created
     pie(counts.values(), labels = counts.keys())
     sub2.set_title("Accumulated Area of each Cell")
     pie(areas.values(), labels = areas.keys())
+    
+    
