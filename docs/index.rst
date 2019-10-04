@@ -18,6 +18,7 @@ Welcome to Python-Skill Bridge |version|
     examples/multiple-instances
     examples/inst-statistics
     examples/lib_save
+    examples/create_path
     reference/remote-object
     reference/protocol
 
