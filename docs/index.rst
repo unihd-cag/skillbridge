@@ -16,6 +16,7 @@ Welcome to Python-Skill Bridge |version|
 
     examples/basic
     examples/multiple-instances
+    examples/inst-statistics
 
     reference/remote-object
     reference/protocol

@@ -3,11 +3,20 @@
 Basic Examples
 ==============
 
+.. code-block:: python 
+    from skillbridge import Workspace
+    
+    ws = Workspace.open()
+    cell_view = ws.ge.get_edit_cell_view()
 
+    print(dir(cell_view))
+    print(cell_view.b_box)
+    
+    cell_view = ws.db.open_cell_view("lib", "cell_name", "view_name")
 **Accessing the currently open edit cell view**
 
 .. code-block:: python
-
+    
     cell_view = ws.ge.get_edit_cell_view()
 
 
