@@ -1,5 +1,12 @@
 from setuptools import setup, find_packages, Extension, Command
+from re import match
+from os.path import join
+
 import skillbridge
+
+
+def comparable_version(version):
+    return tuple(int(i) for i in version.split('.'))
 
 
 class TagVersion(Command):
@@ -26,19 +33,48 @@ class TagVersion(Command):
             print(f"Can only tag on master. You are on branch {branch!r}!")
             return
 
-        tags = {tag.name for tag in repo.tags}
+        highest_tag = max(comparable_version(tag.tag.tag.split('/')[-1]) for tag in repo.tags)
         version = skillbridge.__version__
-        if any(version in tag for tag in tags):
-            print(f"Version {version!r} was already tagged!")
-            return
 
         if repo.is_dirty():
             print(f"You must commit all changes before you can create a tag!")
             return
 
-        tag = repo.create_tag(f'releases/{version}', message=f'release {version}').tag
+        print(f"Current version is {version!r}")
+        one_higher = comparable_version(version)
+        one_higher = *one_higher[:2], one_higher[2] + 1
+        one_higher = '.'.join(str(i) for i in one_higher)
+        new_version = input(f"Enter the new version ({one_higher}): ") or one_higher
+
+        if not match('\d+\.\d+\.\d+', new_version):
+            print("Version must be of this format: NUMBER.NUMBER.NUMBER")
+            return
+
+        if comparable_version(new_version) <= comparable_version(version):
+            print("The new version must be higher than the current version")
+            return
+
+        if comparable_version(new_version) <= highest_tag:
+            print("The new version must be higher than the tagged version")
+            return
+
+        with open('skillbridge/__init__.py') as fin:
+            code = fin.readlines()
+
+        with open('skillbridge/__init__.py', 'w') as fout:
+            for line in code:
+                if line.startswith('__version__'):
+                    fout.write(f"__version__ = {new_version!r}\n")
+                else:
+                    fout.write(line)
+        repo.index.add(['skillbridge/__init__.py'])
+        repo.index.commit(f"bump version {new_version!r}")
+        print(f"Changes committed as {repo.active_branch.commit.message!r}")
+        print("Use `git push` to upload the commit")
+        tag = repo.create_tag(f'releases/{new_version}',
+                              message=f'release {new_version}').tag
         print(f"Tag created as {tag.tag!r} with message {tag.message!r}")
-        print("Use `git push --tags` to upload the tags")
+        print("Use `git push --tags` to upload the tag")
 
 
 with open('README.md') as fin:
