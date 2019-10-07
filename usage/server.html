@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>The Python Server &#8212; Python-Skill Bridge 0.9.3 documentation</title>
+    <title>The Python Server &#8212; Python-Skill Bridge 0.9.4 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -38,7 +38,7 @@
 <p>After that, these management commands are available in the Skill console.</p>
 <dl class="function">
 <dt id="pyStartServer">
-<code class="sig-name descname">pyStartServer</code><span class="sig-paren">(</span><em class="sig-param">id=&quot;default&quot; logLevel=&quot;WARNING&quot;</em><span class="sig-paren">)</span><a class="headerlink" href="#pyStartServer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pyStartServer</code><span class="sig-paren">(</span><em class="sig-param">id=&quot;default&quot; logLevel=&quot;WARNING&quot; singleMode=nil</em><span class="sig-paren">)</span><a class="headerlink" href="#pyStartServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>This starts the python server. If you are only running a single instance of
 Virtuoso you can use the default id. For more instances, each server needs its own
 id.</p>
@@ -50,6 +50,18 @@ Other values are <code class="docutils literal notranslate"><span class="pre">&q
 <p>The log levels <code class="docutils literal notranslate"><span class="pre">&quot;DEBUG&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;INFO&quot;</span></code> are not recommended, because then
 the time for a round-trip between the client and the server is effectively
 two to three times as long!</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">singleMode</span></code> parameter allows you to disable simultaneous connections to
+the server. By default, multiple connections are allowed for convenience reasons.
+Especially jupyter users will benefit from this, since jupyter keeps the socket
+connections open.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Even when <code class="docutils literal notranslate"><span class="pre">singleMode</span></code> is disabled it is <strong>never</strong> safe to simultaneously
+access the server. This will lead to strange errors, where variables don’t
+contain what you initially assigned to them.</p>
+<p>In order to stay safe: <strong>never</strong> interleave commands from two different
+connections.</p>
 </div>
 </dd></dl>
 
@@ -115,7 +127,10 @@ must be executed once before you can use the python module.</p>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">The Python Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/basic.html">Basic Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/multiple-instances.html">Managing Multiple Virtuoso Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multiple-instances.html">Multiple Virtuoso Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/inst-statistics.html">Layout Inst Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/lib_save.html">Check/Save Libs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/create_path.html">Create some paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/remote-object.html">Remote Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/protocol.html">Communication Protocol</a></li>
 </ul>
