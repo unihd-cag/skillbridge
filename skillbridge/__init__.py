@@ -9,5 +9,5 @@ except ImportError:
          UserWarning)
 
 
-__version__ = '0.9.4'
+__version__ = '0.9.5'
 __all__ = ['Workspace', 'loop_variable', 'Var', 'ParseError', 'Symbol']
