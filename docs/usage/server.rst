@@ -7,7 +7,7 @@ Initially the server must be started by loading the ``python_server.il``.
 
 After that, these management commands are available in the Skill console.
 
-.. function:: pyStartServer(id="default" logLevel="WARNING")
+.. function:: pyStartServer(id="default" logLevel="WARNING" singleMode=nil)
 
     This starts the python server. If you are only running a single instance of
     Virtuoso you can use the default id. For more instances, each server needs its own
@@ -22,6 +22,20 @@ After that, these management commands are available in the Skill console.
         The log levels ``"DEBUG"`` and ``"INFO"`` are not recommended, because then
         the time for a round-trip between the client and the server is effectively
         two to three times as long!
+
+    The ``singleMode`` parameter allows you to disable simultaneous connections to
+    the server. By default, multiple connections are allowed for convenience reasons.
+    Especially jupyter users will benefit from this, since jupyter keeps the socket
+    connections open.
+
+    .. warning::
+
+        Even when ``singleMode`` is disabled it is **never** safe to simultaneously
+        access the server. This will lead to strange errors, where variables don't
+        contain what you initially assigned to them.
+
+        In order to stay safe: **never** interleave commands from two different
+        connections.
 
 .. function:: pyKillServer()
 
