@@ -3,8 +3,8 @@ python:
 - '3.6'
 - '3.7'
 before_install:
-- pip install --upgrade -r dev-requirements.txt
-- pip install --upgrade codecov
+- pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt
+- pip install --upgrade --upgrade-strategy eager codecov
 install:
 - python setup.py build_ext --inplace -fv
 script:
