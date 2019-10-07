@@ -9,43 +9,34 @@ let((_filename _baseName _moduleFolder _installName _logName)
 
     putd('pyDumpFunctionDefinitions nil)
     defun(pyDumpFunctionDefinitions (filename)
-        let((names name total code aliases)
-            names = nil
-            total = float(length(oblist))
+        let((code functions total aliases progress)
             poport = outfile(if(filename == "<install>" pyDumpFunctionDefinitions.installName filename))
-
-            for(i 1 (length(oblist) - 1)
-                ; apparently the symbol unbound is in oblist and when you assign unbound to a
-                ; variable, the variable is indeed unbound and causes an error if used, wtf skill
-                if(symbolToString(nth(i oblist)) != "unbound" then
-                    name = nth(i oblist)
-
-                    if(and(isCallable(name) substring(name 1 1) != "_") then
-                        printf("BEGIN FUNCTION %s\n", name)
-                        ; this is a hack, because `help(name)` does not evaluate the variable
-                        ; `name` for some reason
-                        code = sprintf(nil "help(%s)" name)
-                        errset(evalstring(code))
-                        aliases = listAlias(name)
-                        if(aliases != nil then
-                            printf("ALIASES %L\n", aliases)
-                        )
-                        printf("END FUNCTION %s\n\n" name)
-                        names = cons(name names)
-                    )
+            functions = listFunctions("[a-z]+[A-Z][a-zA-Z]+")
+            total = length(functions)
+            progress = 0
+            foreach(func functions
+                printf("BEGIN FUNCTION %s\n", func)
+                code = sprintf(nil "help(%s)" func)
+                errset(evalstring(code))
+                aliases = listAlias(func)
+                if(aliases != nil then
+                    printf("ALIASES %L\n", aliases)
                 )
+                printf("END FUNCTION %s\n\n" func)
 
-                if(mod(i 100) == 0 then
-                    fprintf(stdout "dumped %6.2f%% found %d functions\n" (i / total * 100) length(names))
+                progress = progress + 1
+
+                if(mod(progress 100) == 0 then
+                    fprintf(stdout "dumped %6.2f%% found %d functions\n" (progress * 100.0 / total) progress)
                 )
             )
-
-            close(poport)
-            poport = stdout
-            sprintf(nil "found %d functions total" length(names))
-            t
+           fprintf(stdout "finished with %d functions total" progress)
         )
+        close(poport)
+        poport = stdout
+        t
     )
+
 
     pyDumpFunctionDefinitions.installName = _installName
 
