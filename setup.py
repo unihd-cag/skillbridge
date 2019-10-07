@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages, Extension, Command
 from re import match
-from os.path import join
 
 import skillbridge
 
@@ -46,7 +45,7 @@ class TagVersion(Command):
         one_higher = '.'.join(str(i) for i in one_higher)
         new_version = input(f"Enter the new version ({one_higher}): ") or one_higher
 
-        if not match('\d+\.\d+\.\d+', new_version):
+        if not match(r'\d+\.\d+\.\d+', new_version):
             print("Version must be of this format: NUMBER.NUMBER.NUMBER")
             return
 
