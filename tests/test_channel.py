@@ -11,7 +11,7 @@ WORKSPACE_ID = '__test__'
 UNIX_SOCKET = Workspace.socket_name_for_id(WORKSPACE_ID)
 
 
-@fixture("session")
+@fixture(scope="session")
 def server() -> Virtuoso:
     v = Virtuoso(UNIX_SOCKET)
     v.start()

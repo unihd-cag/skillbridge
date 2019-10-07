@@ -1,4 +1,4 @@
-from socketserver import UnixStreamServer, StreamRequestHandler
+from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
 from logging import getLogger, basicConfig, WARNING
 from sys import stdout, stdin, argv
 from select import select
@@ -33,8 +33,12 @@ def read_from_skill() -> str:
     return 'failure <timeout>'
 
 
-class UnixServer(UnixStreamServer):
+class SingleUnixServer(UnixStreamServer):
     request_queue_size = 0
+
+
+class ThreadingUnixServer(ThreadingMixIn, UnixStreamServer):
+    pass
 
 
 class Handler(StreamRequestHandler):
@@ -95,12 +99,15 @@ def cleanup(socket: str) -> None:
         pass
 
 
-def main(socket: str, log_level: str, notify: bool) -> None:
+def main(socket: str, log_level: str, notify: bool, single: bool) -> None:
     logger.setLevel(getattr(logging, log_level))
 
     atext_register(lambda: cleanup(socket))
     cleanup(socket)
-    with UnixServer(socket, Handler) as server:  # type: ignore
+
+    server_class = SingleUnixServer if single else ThreadingUnixServer
+
+    with server_class(socket, Handler) as server:  # type: ignore
         logger.info("starting server")
         if notify:
             send_to_skill('running')
@@ -113,10 +120,11 @@ if __name__ == '__main__':
     argument_parser.add_argument('socket')
     argument_parser.add_argument('log_level', choices=log_levels)
     argument_parser.add_argument('--notify', action='store_true')
+    argument_parser.add_argument('--single', action='store_true')
 
     ns = argument_parser.parse_args()
 
     try:
-        main(ns.socket, ns.log_level, ns.notify)
+        main(ns.socket, ns.log_level, ns.notify, ns.single)
     except KeyboardInterrupt:
         pass

@@ -16,6 +16,19 @@ class Workspace:
     SOCKET_TEMPLATE = '/tmp/skill-server-{}.sock'
     _var_counter = 0
 
+    db: FunctionCollection
+    dd: FunctionCollection
+    sch: FunctionCollection
+    ge: FunctionCollection
+    rod: FunctionCollection
+    le: FunctionCollection
+    via: FunctionCollection
+    pte: FunctionCollection
+    lx: FunctionCollection
+    hi: FunctionCollection
+    mae: FunctionCollection
+    get: FunctionCollection
+
     def __init__(self, channel: Channel, id: str) -> None:
         definitions = functions_by_prefix()
 

@@ -36,7 +36,7 @@ class Server(Thread):
         super().__init__(daemon=True)
 
     def run(self):
-        python_server.main(UNIX_SOCKET, "DEBUG", notify=True)
+        python_server.main(UNIX_SOCKET, "DEBUG", notify=True, single=False)
 
 
 @fixture

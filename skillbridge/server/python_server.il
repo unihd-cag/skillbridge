@@ -48,7 +48,6 @@ let((_filename _baseName _moduleFolder _installName _logName)
         else
             ipcKillProcess(pyStartServer.ipc)
             pyStartServer.ipc = nil
-            deleteFile(pyStartServer.file)
             t
         )
     )
@@ -110,10 +109,12 @@ let((_filename _baseName _moduleFolder _installName _logName)
     putd('__pyOnFinish nil)
     defun(__pyOnFinish (id data)
         printf("server was stopped with code %L\n" data)
+        deleteFile(pyStartServer.file)
+        remExitProc('__pyDeleteSocketOnExit)
     )
 
     putd('pyStartServer nil)
-    defun(pyStartServer (@optional (id "default") (logLevel "WARNING"))
+    defun(pyStartServer (@optional (id "default") (logLevel "WARNING") (singleMode nil))
         if(pyStartServer.ipc != nil then
             fprintf(stderr, "server is already running\n")
             nil
@@ -125,20 +126,31 @@ let((_filename _baseName _moduleFolder _installName _logName)
                     fprintf(stderr, "Server cannot start, because %s already exists. Delete the file if you are sure that it is not in use anymore.", socketFile)
                     nil
                 else
-                    executableWithArgs = buildString(list(_executable socketFile logLevel))
+                    executableWithArgs = buildString(list(pyStartServer.exe socketFile logLevel))
+                    if(singleMode != nil then
+                        executableWithArgs = buildString(list(executableWithArgs "--single"))
+                    )
+
                     pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")
                     pyStartServer.file = socketFile
+                    regExitBefore('__pyDeleteSocketOnExit)
                     t
                 )
             )
         )
     )
 
+    putd('__pyDeleteSocketOnExit nil)
+    defun(__pyDeleteSocketOnExit (@rest args)
+        deleteFile(pyStartServer.file)
+    )
+
     pyStartServer.ipc = nil
     pyStartServer.file = nil
+    pyStartServer.exe = _executable
 
     printf("Available commands:\n")
-    printf("\tpyStartServer [socketFile [logLevel]]\n")
+    printf("\tpyStartServer [socketFile [logLevel [singleMode]]\n")
     printf("\tpyKillServer\n")
     printf("\tpyReloadScript\n")
     printf("\tpyShowLog [numberOfLines]\n")
