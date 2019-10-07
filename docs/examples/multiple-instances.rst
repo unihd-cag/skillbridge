@@ -1,7 +1,7 @@
 .. _multiple:
 
-Managing Multiple Virtuoso Instances
-====================================
+Multiple Virtuoso Instances
+===========================
 
 You can run multiple Virtuoso instances and have a running server inside
 each of them. However, in order to match the clients and server correctly
