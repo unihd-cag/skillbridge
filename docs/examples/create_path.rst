@@ -1,7 +1,7 @@
 .. _create_path:
 
-Create some paths on Metal 1 and 2
-==============
+Create some paths 
+=================
 
 In this example horizontal and vercital paths are created on Metal1 and Metal2 drawing.
 

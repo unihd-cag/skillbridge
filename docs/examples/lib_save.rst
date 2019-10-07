@@ -1,7 +1,7 @@
 .. _lib_save:
 
-Check/Save all cells in whitelisted Libs
-==============
+Check/Save Libs
+===============
 
 This examples checks and saves all schematic cell_views in a Lib
 

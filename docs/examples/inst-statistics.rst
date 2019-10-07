@@ -1,7 +1,7 @@
 .. _inst-statistics:
 
-Layout Instances Example
-==============
+Layout Inst Example
+===================
 
 This example should be used on a layout view with some instances in it.
 
