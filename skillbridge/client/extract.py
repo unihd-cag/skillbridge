@@ -7,8 +7,6 @@ from warnings import warn
 from .hints import Function
 from .translator import camel_to_snake
 
-WHITELIST = set('db dd sch ge rod le via pte lx hi mae'.split())
-
 
 def _inside_body(line: str) -> bool:
     return not line.startswith('END FUNCTION')
@@ -66,11 +64,7 @@ def parse_all_function() -> List[Function]:
 
 def functions_by_prefix() -> Dict[str, List[Function]]:
     functions = parse_all_function()
-    functions = sorted(
-        f for f in functions
-        if _extract_prefix(f) in WHITELIST or
-        any(_extract_prefix(a) in WHITELIST for a in f.aliases)
-    )
+    functions.sort()
 
     return {
         (prefix or '_'): list(group)

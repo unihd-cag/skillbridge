@@ -18,25 +18,26 @@ class Workspace:
 
     db: FunctionCollection
     dd: FunctionCollection
-    sch: FunctionCollection
     ge: FunctionCollection
-    rod: FunctionCollection
-    le: FunctionCollection
-    via: FunctionCollection
-    pte: FunctionCollection
-    lx: FunctionCollection
-    hi: FunctionCollection
-    mae: FunctionCollection
     get: FunctionCollection
+    hi: FunctionCollection
+    le: FunctionCollection
+    lx: FunctionCollection
+    mae: FunctionCollection
+    pte: FunctionCollection
+    rod: FunctionCollection
+    sch: FunctionCollection
+    via: FunctionCollection
 
-    def __init__(self, channel: Channel, id: str) -> None:
+    def __init__(self, channel: Channel, id_: str) -> None:
         definitions = functions_by_prefix()
 
-        self._id = id
+        self._id = id_
         self._channel = channel
         self._max_transmission_length = 1_000_000
 
-        for key, definition in definitions.items():
+        for key in Workspace.__annotations__:
+            definition = definitions[key]
             value = FunctionCollection(channel, definition, self._create_remote_object)
             setattr(self, key, value)
 
