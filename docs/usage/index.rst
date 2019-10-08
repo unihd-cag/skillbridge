@@ -1,0 +1,7 @@
+Usage
+=====
+
+.. toctree::
+    :glob:
+
+    *
