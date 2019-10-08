@@ -17,7 +17,7 @@ _open_workspaces: Dict[str, 'Workspace'] = {}
 
 def _register_well_known_functions(ws):
     @ws.register
-    def db_check(d_cellview: Optional) -> "t / nil":
+    def db_check(d_cellview: Optional) -> None:
         """
         Checks the integrity of the database.
         """
