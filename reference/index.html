@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Overview &#8212; Python-Skill Bridge 1.0.0 documentation</title>
+    <title>Reference &#8212; Python-Skill Bridge 1.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,8 +14,8 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Quickstart" href="quickstart.html" />
-    <link rel="prev" title="Installation" href="installation.html" />
+    <link rel="next" title="Communication Protocol" href="protocol.html" />
+    <link rel="prev" title="Multiple Virtuoso Instances" href="../examples/multiple-instances.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,18 +32,25 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="overview">
-<span id="id1"></span><h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="what-is-this">
-<h2>What Is this?<a class="headerlink" href="#what-is-this" title="Permalink to this headline">¶</a></h2>
-<p>The Python-Skill Bridge is a set of tools that allows you to control Virtuoso via
-its Skill console remotely from python. It consists of several parts:</p>
-<ul class="simple">
-<li><p>A Skill script that must be executed inside the Skill console. This script will start and manage the python server</p></li>
-<li><p>A python server that waits for Skill commands, runs them and sends the result back.</p></li>
-<li><p>A python client library that encapsulates the connection and transport details and offers a pythonic interface to the Skill code.</p></li>
+  <div class="section" id="reference">
+<h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="protocol.html">Communication Protocol</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html#the-ipc-protocol">The IPC protocol</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="protocol.html#the-question">The Question</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocol.html#the-answer">The Answer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocol.html#behaviour">Behaviour</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocol.html#test-mode">Test Mode</a></li>
 </ul>
-<img alt="../_images/components.svg" src="../_images/components.svg" /></div>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html#the-socket-protocol">The Socket Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html#a-full-roundtrip">A Full Roundtrip</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="remote-object.html">Remote Objects</a></li>
+</ul>
+</div>
 </div>
 
 
@@ -65,25 +72,21 @@ its Skill console remotely from python. It consists of several parts:</p>
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Usage</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-<li class="toctree-l2"><a class="reference internal" href="server.html">The Python Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html">Communication Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="remote-object.html">Remote Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">Usage</a><ul>
-      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
-      <li>Next: <a href="quickstart.html" title="next chapter">Quickstart</a></li>
-  </ul></li>
+      <li>Previous: <a href="../examples/multiple-instances.html" title="previous chapter">Multiple Virtuoso Instances</a></li>
+      <li>Next: <a href="protocol.html" title="next chapter">Communication Protocol</a></li>
   </ul></li>
 </ul>
 </div>
@@ -117,7 +120,7 @@ its Skill console remotely from python. It consists of several parts:</p>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/usage/overview.rst.txt"
+      <a href="../_sources/reference/index.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

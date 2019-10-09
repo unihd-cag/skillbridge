@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Manually Registering Functions &#8212; Python-Skill Bridge 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Layout Inst Example" href="inst-statistics.html" />
+    <link rel="prev" title="Create some paths" href="create_path.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="manually-registering-functions">
+<h1>Manually Registering Functions<a class="headerlink" href="#manually-registering-functions" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">skillbridge</span></code> will only export functions that are documented in
+the running Vivado instance. If you need functions that are not documented there
+but still exist, you can register them manually.</p>
+<p>Let’s take a look at the following example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@ws.register</span>
+<span class="k">def</span> <span class="nf">dbCheck</span><span class="p">(</span><span class="n">d_cellview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A docstring</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>This will register the function <code class="docutils literal notranslate"><span class="pre">dbCheck</span></code> which takes a single argument <code class="docutils literal notranslate"><span class="pre">d_cellview</span></code>
+and returns <code class="docutils literal notranslate"><span class="pre">nil</span></code>. You may also write the function name in snake case: <code class="docutils literal notranslate"><span class="pre">db_check</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You must provide a return type annotation. Use <code class="docutils literal notranslate"><span class="pre">None</span></code> if you don’t know the type
+or are unsure. You also must provide a doc string which describes what the function
+actually does.</p>
+</div>
+<p>There are three ways to specify arguments.</p>
+<ol class="arabic simple">
+<li><p>Positional, required arguments by naming the python parameter accordingly</p></li>
+<li><p>Positional, optional arguments by adding the type annotation <code class="docutils literal notranslate"><span class="pre">Optional</span></code></p></li>
+<li><p>Keyword arguments by assigning a name to the variable</p></li>
+</ol>
+<p>The next example shows all three uses</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="nd">@ws.register</span>
+<span class="k">def</span> <span class="nf">myFunction</span><span class="p">(</span><span class="n">required</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;someName&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;someReturnValue&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A nice doc string, that explains the function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>You can use the function like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">function</span>
+<span class="go">&lt;remote function &#39;myFunction&#39;&gt;</span>
+<span class="go">myFunction(</span>
+<span class="go">    required</span>
+<span class="go">    [ optional ]</span>
+<span class="go">    [ ?someName keyword ]</span>
+<span class="go">=&gt; someReturnValue</span>
+<span class="go">A nice doc string, that explains the function</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Obviously this only <strong>registers</strong> the function, but it does not define it
+in Skill. If you actually call <code class="docutils literal notranslate"><span class="pre">myFunction</span></code> you will get the error:</p>
+<p><code class="docutils literal notranslate"><span class="pre">undefined</span> <span class="pre">function</span> <span class="pre">myFunction</span></code></p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python-Skill Bridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basic.html">Basic Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_path.html">Create some paths</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Manually Registering Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inst-statistics.html">Layout Inst Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lib_save.html">Check/Save Libs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiple-instances.html">Multiple Virtuoso Instances</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Examples</a><ul>
+      <li>Previous: <a href="create_path.html" title="previous chapter">Create some paths</a></li>
+      <li>Next: <a href="inst-statistics.html" title="next chapter">Layout Inst Example</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Niels Buwen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/examples/custom_functions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
