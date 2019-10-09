@@ -26,7 +26,6 @@ class Workspace:
     ael: FunctionCollection
     ahdl: FunctionCollection
     alm: FunctionCollection
-    ams: FunctionCollection
     amse: FunctionCollection
     anc: FunctionCollection
     ann: FunctionCollection
@@ -161,7 +160,7 @@ class Workspace:
         self._max_transmission_length = 1_000_000
 
         for key in Workspace.__annotations__:
-            definition = definitions[key]
+            definition = definitions.get(key, [])
             value = FunctionCollection(channel, definition, self._create_remote_object)
             setattr(self, key, value)
 
