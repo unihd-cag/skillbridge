@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Callable, Any
 from inspect import signature
 from textwrap import dedent
 
@@ -15,9 +15,9 @@ __all__ = ['Workspace']
 _open_workspaces: Dict[str, 'Workspace'] = {}
 
 
-def _register_well_known_functions(ws):
+def _register_well_known_functions(ws: 'Workspace') -> None:
     @ws.register
-    def db_check(d_cellview: Optional) -> None:
+    def db_check(d_cellview: Optional) -> None:  # type: ignore
         """
         Checks the integrity of the database.
         """
@@ -118,7 +118,7 @@ class Workspace:
         return skill_value_to_python(response, [variable], self._create_remote_object)
 
     @staticmethod
-    def _build_function(function):
+    def _build_function(function: Callable[..., Any]) -> Function:
         if not function.__doc__:
             raise RuntimeError("Function does not have a doc string.")
 
@@ -148,11 +148,11 @@ class Workspace:
             ""
         ]
 
-        doc = '\n'.join(doc) + dedent(function.__doc__)
+        doc_string = '\n'.join(doc) + dedent(function.__doc__)
 
-        return Function(snake_to_camel(function.__name__), doc, set())
+        return Function(snake_to_camel(function.__name__), doc_string, set())
 
-    def register(self, function):
+    def register(self, function: Callable[..., Any]) -> Function:
         name = camel_to_snake(function.__name__)
 
         try:
@@ -169,7 +169,7 @@ class Workspace:
             collection = FunctionCollection(self._channel, [], self._create_remote_object)
             setattr(self, prefix, collection)
 
-        function = self._build_function(function)
-        collection.add_by_key(rest, function)
+        function_tuple = self._build_function(function)
+        collection.add_by_key(rest, function_tuple)
 
-        return function
+        return function_tuple

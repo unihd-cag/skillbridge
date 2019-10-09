@@ -23,7 +23,7 @@ class FunctionCollection:
         self._definitions[camel_to_snake(func.name)] = func
         return self
 
-    def add_by_key(self, key: str, func: Function):
+    def add_by_key(self, key: str, func: Function) -> None:
         self._definitions[key] = func
 
     def __repr__(self) -> str:

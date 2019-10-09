@@ -107,7 +107,7 @@ def main(socket: str, log_level: str, notify: bool, single: bool) -> None:
 
     server_class = SingleUnixServer if single else ThreadingUnixServer
 
-    with server_class(socket, Handler) as server:  # type: ignore
+    with server_class(socket, Handler) as server:
         logger.info("starting server")
         if notify:
             send_to_skill('running')
