@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pytest import fixture, raises
 
 from skillbridge.client.objects import RemoteObject
@@ -316,3 +318,53 @@ def test_skill_side_for_loop(server, ws):
     assert 'mapcar(' in last and 'geGetCellViewWindow' in last
 
     assert windows == [10, 10, 10, 10, 10]
+
+
+def test_add_function_manually(server, ws):
+    assert not hasattr(ws, "custom")
+    assert not hasattr(ws.db, "custom")
+
+    @ws.register
+    def custom_function(positional, optional: Optional, keyword="name") -> None:
+        """
+        Custom Doc String
+        """
+
+    @ws.register
+    def db_custom() -> None:
+        """
+        Pass
+        """
+
+    assert hasattr(ws, "custom") and hasattr(ws.custom, "function")
+
+    doc = repr(ws.custom.function)
+    assert "Custom Doc String" in doc
+    assert "nil" in doc
+    assert "positional" in doc
+    assert "[optional]" in doc.replace(" ", "")
+    assert "?namekeyword" in doc.replace(" ", "")
+
+    assert hasattr(ws.db, "custom")
+
+
+def test_cannot_add_malformed_manual_functions(server, ws):
+    with raises(RuntimeError, match="does not have a prefix"):
+        @ws.register
+        def noprefix():
+            pass
+
+    with raises(RuntimeError, match="cannot use that prefix"):
+        @ws.register
+        def registerFunction():
+            pass
+
+    with raises(RuntimeError, match="does not have a doc string"):
+        @ws.register
+        def withPrefixNoDoc():
+            pass
+
+    with raises(RuntimeError, match="does not have a return annotation"):
+        @ws.register
+        def withPrefixNoReturn():
+            """pass"""

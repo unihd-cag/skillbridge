@@ -9,18 +9,9 @@ Welcome to Python-Skill Bridge |version|
     :maxdepth: 2
     :caption: Contents:
 
-    usage/overview
-    usage/installation
-    usage/quickstart
-    usage/server
-
-    examples/basic
-    examples/multiple-instances
-    examples/inst-statistics
-    examples/lib_save
-    examples/create_path
-    reference/remote-object
-    reference/protocol
+    usage/index
+    examples/index
+    reference/index
 
 
 Indices and tables

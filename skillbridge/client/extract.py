@@ -12,11 +12,8 @@ def _inside_body(line: str) -> bool:
     return not line.startswith('END FUNCTION')
 
 
-def _extract_prefix(f: Union[Function, str]) -> str:
-    if isinstance(f, Function):
-        name = f.name
-    else:
-        name = f
+def _extract_prefix(f: Function) -> str:
+    name = f.name
     m = match(r'([a-z]+)[A-Z]', name)
     if m is None:
         return ''
