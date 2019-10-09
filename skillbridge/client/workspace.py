@@ -16,18 +16,141 @@ class Workspace:
     SOCKET_TEMPLATE = '/tmp/skill-server-{}.sock'
     _var_counter = 0
 
+    abe: FunctionCollection
+    abs: FunctionCollection
+    adp: FunctionCollection
+    adpnl: FunctionCollection
+    adt: FunctionCollection
+    aed: FunctionCollection
+    ael: FunctionCollection
+    ael: FunctionCollection
+    ahdl: FunctionCollection
+    alm: FunctionCollection
+    amse: FunctionCollection
+    anc: FunctionCollection
+    ann: FunctionCollection
+    ann: FunctionCollection
+    ans: FunctionCollection
+    ap: FunctionCollection
+    apa: FunctionCollection
+    arm: FunctionCollection
+    art: FunctionCollection
+    asi: FunctionCollection
+    auLvs: FunctionCollection
+    awv: FunctionCollection
+    axl: FunctionCollection
+    bnd: FunctionCollection
+    cal: FunctionCollection
+    cci: FunctionCollection
+    ccp: FunctionCollection
+    cdf: FunctionCollection
+    cds: FunctionCollection
+    cds: FunctionCollection
+    ci: FunctionCollection
+    ciw: FunctionCollection
+    conn: FunctionCollection
+    cpf: FunctionCollection
+    cpf: FunctionCollection
+    cpfe: FunctionCollection
+    cph: FunctionCollection
+    cst: FunctionCollection
+    ct: FunctionCollection
+    dag: FunctionCollection
     db: FunctionCollection
     dd: FunctionCollection
+    dds: FunctionCollection
+    de: FunctionCollection
+    deo: FunctionCollection
+    dl: FunctionCollection
+    dm: FunctionCollection
+    dmb: FunctionCollection
+    dr: FunctionCollection
+    dr: FunctionCollection
+    drd: FunctionCollection
+    drpl: FunctionCollection
+    ead: FunctionCollection
+    edi: FunctionCollection
+    edif: FunctionCollection
+    edifin: FunctionCollection
+    edifout: FunctionCollection
+    elec: FunctionCollection
+    env: FunctionCollection
+    fam: FunctionCollection
+    fnl: FunctionCollection
+    gdm: FunctionCollection
     ge: FunctionCollection
     get: FunctionCollection
+    gpe: FunctionCollection
+    hdb: FunctionCollection
+    he: FunctionCollection
     hi: FunctionCollection
+    hnl: FunctionCollection
+    hnl: FunctionCollection
+    hsm: FunctionCollection
+    icc: FunctionCollection
+    idf: FunctionCollection
+    imp: FunctionCollection
+    ipc: FunctionCollection
+    ise: FunctionCollection
+    lbui: FunctionCollection
+    lce: FunctionCollection
+    ldtr: FunctionCollection
     le: FunctionCollection
+    lm: FunctionCollection
+    lmgr: FunctionCollection
+    lo: FunctionCollection
+    lob: FunctionCollection
     lx: FunctionCollection
     mae: FunctionCollection
+    mg: FunctionCollection
+    mpt: FunctionCollection
+    msp: FunctionCollection
+    ncl: FunctionCollection
+    nl: FunctionCollection
+    nmp: FunctionCollection
+    nr: FunctionCollection
+    ocnxl: FunctionCollection
+    odc: FunctionCollection
+    opc: FunctionCollection
+    par: FunctionCollection
+    pc: FunctionCollection
+    pcdb: FunctionCollection
+    pi: FunctionCollection
+    pipo: FunctionCollection
+    po: FunctionCollection
+    ps: FunctionCollection
     pte: FunctionCollection
+    pte: FunctionCollection
+    rdb: FunctionCollection
+    rde: FunctionCollection
+    relx: FunctionCollection
     rod: FunctionCollection
+    rte: FunctionCollection
     sch: FunctionCollection
+    sev: FunctionCollection
+    sim: FunctionCollection
+    soi: FunctionCollection
+    tc: FunctionCollection
+    tech: FunctionCollection
+    tpa: FunctionCollection
+    tx: FunctionCollection
+    vdr: FunctionCollection
+    verif: FunctionCollection
+    vfo: FunctionCollection
+    vfp: FunctionCollection
+    vhdl: FunctionCollection
+    vhms: FunctionCollection
     via: FunctionCollection
+    viva: FunctionCollection
+    vos: FunctionCollection
+    vpa: FunctionCollection
+    vsa: FunctionCollection
+    vv: FunctionCollection
+    we: FunctionCollection
+    xoas: FunctionCollection
+    xoasis: FunctionCollection
+    xpc: FunctionCollection
+    xst: FunctionCollection
 
     def __init__(self, channel: Channel, id_: str) -> None:
         definitions = functions_by_prefix()
@@ -37,7 +160,7 @@ class Workspace:
         self._max_transmission_length = 1_000_000
 
         for key in Workspace.__annotations__:
-            definition = definitions[key]
+            definition = definitions.get(key, [])
             value = FunctionCollection(channel, definition, self._create_remote_object)
             setattr(self, key, value)
 
