@@ -4,7 +4,7 @@ from os.path import exists
 from pytest import raises
 
 from skillbridge.client.channel import Channel
-from skillbridge.parser.util import Symbol
+from skillbridge.client.translator import Symbol
 
 
 def test_reports_skill_server_correctly():

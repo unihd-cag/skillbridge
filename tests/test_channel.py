@@ -131,100 +131,65 @@ def test_unknown_function_raises(server, ws):
     with raises(AttributeError):
         _ = ws.ge.this_does_not_exist_and_will_hopefully_never_exist
 
-    server.answer_success('object:123')
+    server.answer_success('Remote("__py_object_123")')
     result = ws.ge.get_edit_cell_view()
     with raises(AttributeError):
         _ = result._repr_html_
 
 
 def test_list_is_mapped(server, ws):
-    server.answer_success('(1 2 3 (4 5 6) (7 8 9 (10 11 12)))')
+    server.answer_success('[1,2,3,[4,5,6],[7,8,9,[10,11,12]]]')
     result = ws.ge.get_edit_cell_view()
 
     assert result == [1, 2, 3, [4, 5, 6], [7, 8, 9, [10, 11, 12]]]
 
 
 def test_property_list_is_mapped(server, ws):
-    server.answer_success('(nil x 1 y 2)')
+    server.answer_success("{'x': 1, 'y': 2}")
     result = ws.ge.get_edit_cell_view()
 
-    assert result.x == 1
-    assert result.y == 2
+    assert result['x'] == 1
+    assert result['y'] == 2
 
 
 def test_object_is_mapped(server, ws):
-    server.answer_success('object:1234')
+    server.answer_object('object', 1234, None)
     result = ws.ge.get_edit_cell_view()
 
     assert isinstance(result, RemoteObject)
-    assert len(result._path) == 1
-    assert result._name == 'object:1234'
+    assert 'object@1234' in str(result)
 
-    server.answer_success('(x y z)')
+    server.answer_success('[x,y,z]')
     doc = result.getdoc()
     assert 'x' in doc
     assert 'y' in doc
     assert 'z' in doc
 
 
-def test_object_chain(server, ws):
-    server.answer_success(f'object:0')
-    server.answer_success(f'object:1')
-    server.answer_success(f'object:2')
-
-    result = ws.ge.get_edit_cell_view()
-    assert isinstance(result, RemoteObject)
-    assert 'geGetEditCellView' in server.last_question
-
-    sub = result.xyz
-    assert isinstance(sub, RemoteObject)
-    assert sub._name == 'object:1'
-    assert sub._path[1:] == ['xyz']
-    assert '->xyz' in server.last_question.replace(' ', '')
-
-    sub = sub.abc
-    assert isinstance(sub, RemoteObject)
-    assert sub._name == 'object:2'
-    assert sub._path[1:] == ['xyz', 'abc']
-    assert '->xyz->abc' in server.last_question.replace(' ', '')
-    assert 'xyz.abc' in str(sub)
-
-    server.answer_success('(bar foo)')
-    assert dir(sub) == ['bar', 'foo']
-
-    server.answer_success(f'1234')
-    assert sub.integer == 1234
-
-
 def test_send_back_objects(server, ws):
-    server.answer_success('object:123')
+    server.answer_object('object', 123)
     result = ws.ge.get_edit_cell_view()
-    varname, _ = server.last_question.split('=')
 
-    server.answer_success('window:234')
+    server.answer_object('window', 234)
     window = ws.ge.get_cell_view_window(result)
-    path = server.last_question
-    assert window._name == 'window:234'
-    assert varname.strip() in path
-    assert 'geGetCellViewWindow' in path
+
+    assert window._variable == "__py_window_234"
 
 
 def test_setattr(server, ws):
-    server.answer_success('object:123')
+    server.answer_object('object', 123)
     result = ws.ge.get_edit_cell_view()
-    varname, _ = server.last_question.split('=')
-    varname = varname.strip()
 
     server.answer_success('123')
     result.x = 234
 
-    assert server.last_question.strip().replace(' ', '') == f'{varname}->x=234'
+    assert server.last_question.strip().replace(' ', '') == f'__py_object_123->x=234'
 
 
 def test_object_equality(server, ws):
-    server.answer_success('object:123')
-    server.answer_success('object:123')
-    server.answer_success('object:234')
+    server.answer_object('object', 123)
+    server.answer_object('object', 123)
+    server.answer_object('object', 234)
 
     first = ws.ge.get_edit_cell_view()
     second = ws.ge.get_edit_cell_view()
@@ -238,11 +203,11 @@ def test_object_equality(server, ws):
 
 
 def test_methods_depend_on_type(server, ws):
-    server.answer_success('nothing:123')
+    server.answer_object('nothing', 123)
     nothing = ws.ge.get_edit_cell_view()
-    server.answer_success('db:123')
+    server.answer_object('db', 123)
     db = ws.ge.get_edit_cell_view()
-    server.answer_success('window:123')
+    server.answer_object('window', 123)
     window = ws.ge.get_edit_cell_view()
 
     assert not nothing._methods
@@ -252,7 +217,7 @@ def test_methods_depend_on_type(server, ws):
 
 
 def test_methods_are_readonly(server, ws):
-    server.answer_success('db:123')
+    server.answer_object('db', 123)
     db = ws.ge.get_edit_cell_view()
 
     with raises(TypeError, match="readonly"):
@@ -260,7 +225,7 @@ def test_methods_are_readonly(server, ws):
 
 
 def test_function_produces_same_code_as_method(server, ws):
-    server.answer_success('db:123')
+    server.answer_object('db', 123)
     db = ws.ge.get_edit_cell_view()
 
     server.answer_success('"/path/to/thing"')
@@ -307,8 +272,8 @@ def test_flush_does_no_harm(server, ws):
 
 
 def test_skill_side_for_loop(server, ws):
-    server.answer_success("cell:1234")
-    server.answer_success("(10 10 10 10 10)")
+    server.answer_object('cell', 1234)
+    server.answer_success("[10,10,10,10,10]")
 
     cell = ws.ge.get_edit_cell_view()
     assert 'geGetEditCellView' in server.last_question

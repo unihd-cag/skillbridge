@@ -1,10 +1,9 @@
-from typing import NoReturn, Any, List
+from typing import NoReturn, Any, List, Iterable
+from collections import namedtuple
 from re import sub
 from json import dumps
 
-from ..parser.cparser import parse as skill_value_to_python
-
-from .hints import Replicator, SkillPath, SkillComponent, SkillCode, ConvertToSkill
+from .hints import Replicator, SkillComponent, SkillCode, ConvertToSkill
 from .hints import Skillable
 
 
@@ -12,6 +11,33 @@ SKILL_TO_PYTHON = {
     't': True,
     'nil': None
 }
+
+
+class Symbol(Skillable, namedtuple('Symbol', 'name')):
+    def __str__(self) -> str:
+        return f"Symbol({self.name})"
+
+    def __repr__(self) -> str:
+        return f"Symbol({self.name!r})"
+
+    def __repr_skill__(self) -> SkillCode:
+        return SkillCode(f"'{self.name}")
+
+
+class ParseError(Exception):
+    pass
+
+
+def _raise_error(message):
+    raise ParseError(message)
+
+
+def skill_value_to_python(string, replicate: Replicator):
+    return eval(string, {
+        'Remote': replicate,
+        'Symbol': Symbol,
+        'error': _raise_error
+    })
 
 
 def snake_to_camel(snake: str) -> str:
@@ -32,7 +58,7 @@ def python_value_to_skill(value: ConvertToSkill) -> SkillCode:
         return value.__repr_skill__()
 
     if isinstance(value, dict):
-        items = ' '.join(f'{key} {python_value_to_skill(value)}'
+        items = ' '.join(f"'{key} {python_value_to_skill(value)}"
                          for key, value in value.items())
         return SkillCode(f'list(nil {items})')
 
@@ -54,7 +80,7 @@ def python_value_to_skill(value: ConvertToSkill) -> SkillCode:
 
 
 def _not_implemented(string: str) -> Replicator:
-    def inner(_name: str, _path: SkillPath) -> NoReturn:
+    def inner(_name: str) -> NoReturn:
         raise NotImplementedError(f"Failed to parse skill literal {string!r}")
     return inner
 
@@ -62,16 +88,15 @@ def _not_implemented(string: str) -> Replicator:
 def skill_literal_to_value(string_or_object: Any) -> Any:
     if isinstance(string_or_object, str):
         replicator = _not_implemented(string_or_object)
-        return skill_value_to_python(string_or_object, [], replicator)
+        return skill_value_to_python(string_or_object, replicator)
     return string_or_object
 
 
-def skill_help(path: SkillPath) -> SkillCode:
-    variable = build_skill_path(path)
+def skill_help(obj: SkillCode) -> SkillCode:
     parts = ' '.join((
-        f'{variable}->?',
-        f'{variable}->systemHandleNames',
-        f'{variable}->userHandleNames',
+        f'{obj}->?',
+        f'{obj}->systemHandleNames',
+        f'{obj}->userHandleNames',
     ))
     code = f'nconc({parts})'
     return SkillCode(code)
@@ -82,15 +107,12 @@ def skill_help_to_list(code: str) -> List[str]:
     return [camel_to_snake(attr) for attr in code.split()]
 
 
-def skill_getattr(path: SkillPath, key: SkillComponent) -> SkillCode:
-    return build_skill_path(path + [key])
+def skill_getattr(obj: SkillCode, key: str) -> SkillCode:
+    return build_skill_path([obj, key])
 
 
-def skill_setattr(path: SkillPath, key: SkillComponent, value: Any) -> SkillCode:
-    if isinstance(key, int):
-        raise NotImplementedError("Cannot write when last component is list access.")
-
-    code = build_skill_path(path + [key])
+def skill_setattr(obj: SkillCode, key: str, value: Any) -> SkillCode:
+    code = build_skill_path([obj, key])
     value = python_value_to_skill(value)
     return SkillCode(f'{code} = {value}')
 
@@ -122,7 +144,7 @@ def list_map(expression: SkillCode, data: List[ConvertToSkill]) -> SkillCode:
     return SkillCode(f'mapcar(lambda(({variable}) {expression}) {skill_data})')
 
 
-def build_skill_path(components: SkillPath) -> SkillCode:
+def build_skill_path(components: Iterable[str]) -> SkillCode:
     it = iter(components)
     path = snake_to_camel(str(next(it)))
 
@@ -135,7 +157,7 @@ def build_skill_path(components: SkillPath) -> SkillCode:
     return SkillCode(path)
 
 
-def build_python_path(components: SkillPath) -> SkillCode:
+def build_python_path(components: Iterable[str]) -> SkillCode:
     it = iter(components)
     path = str(next(it))
 

@@ -67,6 +67,7 @@ class Virtuoso(Thread):
                 answer = self.queue.get_nowait()
             except Empty:
                 raise RuntimeError(f"no answer available for {question!r}")
+            print("answer", answer)
             self.write(answer)
 
     def read(self):
@@ -88,6 +89,11 @@ class Virtuoso(Thread):
 
     def answer_success(self, message):
         self.answer_with('success', message)
+
+    def answer_object(self, type_, address, object_type=()):
+        self.answer_success(f'Remote("__py_{type_}_{address}")')
+        if object_type != ():
+            self.answer_success(repr(object_type))
 
     def answer_failure(self, message):
         self.answer_with('failure', message)

@@ -4,6 +4,7 @@ from pytest import raises, mark
 from hypothesis import given
 from hypothesis.strategies import lists, integers, floats, none, text, booleans
 
+from skillbridge.client.hints import SkillCode
 from skillbridge.client.translator import snake_to_camel, camel_to_snake,\
     python_value_to_skill, skill_value_to_python, call_assign,\
     skill_setattr, skill_help, skill_help_to_list, skill_literal_to_value,\
@@ -91,18 +92,17 @@ def test_var_to_skill(a):
 
 
 def test_property_list_to_python():
-    pl = skill_value_to_python('(nil x 1 y 2)', [], replicate)
+    pl = skill_value_to_python('{"x":1,"y":2}', replicate)
     assert isinstance(pl, dict)
     assert pl['x'] == 1
     assert pl['y'] == 2
     assert pl == dict(x=1, y=2)
 
-    pl = skill_value_to_python('(nil x object:123)', ['prefix'], replicate)
+    pl = skill_value_to_python('{"x":Remote("__py_object_123")}', replicate)
     assert isinstance(pl, dict)
-    assert pl['x'] == ['prefix', 'x', 'object:123']
-    assert pl == dict(x=['prefix', 'x', 'object:123'])
+    assert 'object' in pl['x'] and '123' in pl['x']
 
-    pl = skill_value_to_python('(nil x (nil y 2))', [], replicate)
+    pl = skill_value_to_python('{"x": {"y": 2}}', replicate)
     assert isinstance(pl, dict)
     assert isinstance(pl['x'], dict)
     assert pl['x']['y'] == 2
@@ -111,46 +111,45 @@ def test_property_list_to_python():
 
 def test_property_list_to_skill():
     p = {'x': 1, 'y': 2}
-    assert python_value_to_skill(p) == 'list(nil x 1 y 2)'
+    assert python_value_to_skill(p) == "list(nil 'x 1 'y 2)"
 
     p = {'x': 'x', 'y': 'y'}
-    assert python_value_to_skill(p) == 'list(nil x "x" y "y")'
+    assert python_value_to_skill(p) == """list(nil 'x "x" 'y "y")"""
 
 
-def replicate(name, path):
-    return path + [name]
+def replicate(name):
+    return name
 
 
 def test_object_to_python():
-    python = skill_value_to_python('dbobject:123', ['prefix'], replicate)
-    assert python == ['prefix', 'dbobject:123']
+    python = skill_value_to_python('Remote("dbobject:123")', replicate)
+    assert '123' in python and 'dbobject' in python
 
-    python = skill_value_to_python('(1 2 3 dbobject:123)', ['prefix'], replicate)
+    python = skill_value_to_python('[1,2,3,Remote("dbobject:123")]', replicate)
     assert python[:3] == [1, 2, 3]
-    assert python[3] == ['prefix', 3, 'dbobject:123']
+    assert '123' in python[3] and 'dbobject' in python[3]
 
-    skill = '((1 2 3 dbobject:123) (dbobject:234 4 5 6))'
-    python = skill_value_to_python(skill, ['prefix'], replicate)
+    skill = '[[1,2,3,Remote("dbobject:123")],[Remote("dbobject:234"),4,5,6]]'
+    python = skill_value_to_python(skill, replicate)
     assert python[0][:3] == [1, 2, 3]
-    assert python[0][3] == ['prefix', 0, 3, 'dbobject:123']
-    assert python[1][0] == ['prefix', 1, 0, 'dbobject:234']
+    assert '123' in python[0][3] and 'dbobject' in python[0][3]
+    assert '234' in python[1][0] and 'dbobject' in python[1][0]
 
 
 def test_object_with_upper_case_id():
-    python = skill_value_to_python('rodObject:123', ['prefix'], replicate)
-    assert python == ['prefix', 'rodObject:123']
+    python = skill_value_to_python('Remote("rodObject:123")', replicate)
+    assert 'rodObject' in python and '123' in python
 
 
 @given(lists(simple_types | lists(simple_types)))
 def test_list_roundtrip(i):
-    skill = python_value_to_skill(i).replace('(list', '(')
-    python = skill_value_to_python(skill, [], replicate)
-    assert python == i
+    python = skill_value_to_python(repr(i), replicate)
+    assert python == i or (python is None and i == [])
 
 
 def test_constants_to_python():
-    assert skill_value_to_python('nil', [], replicate) is None
-    assert skill_value_to_python('t', [], replicate) is True
+    assert skill_value_to_python('None', replicate) is None
+    assert skill_value_to_python('True', replicate) is True
 
 
 @mark.parametrize('value', [..., Exception, open])
@@ -159,15 +158,15 @@ def test_unknown_to_skill(value):
         python_value_to_skill(value)
 
 
-@given(lists(asciis), asciis)
-def test_get_attribute(path, name):
-    assert skill_getattr(path, name).replace(' ', '') == '->'.join(path + [name])
+@given(asciis, asciis)
+def test_get_attribute(obj, name):
+    assert skill_getattr(obj, name).replace(' ', '') == '->'.join([obj, name])
 
 
-@given(lists(asciis), asciis, ints)
-def test_set_attribute(path, name, value):
-    got = skill_setattr(path, name, value).replace(' ', '')
-    left = '->'.join(path + [name])
+@given(asciis, asciis, ints)
+def test_set_attribute(obj, name, value):
+    got = skill_setattr(obj, name, value).replace(' ', '')
+    left = '->'.join([obj, name])
     expected = f'{left}={value}'
     assert got == expected
 
@@ -179,7 +178,7 @@ def test_literal_passes_through(value):
 
 @given(symbols)
 def test_symbol_is_parsed(name):
-    parsed = skill_value_to_python(name, [], replicate)
+    parsed = skill_value_to_python(f"Symbol({name!r})", replicate)
     assert isinstance(parsed, Symbol)
     assert parsed.name == name
 
@@ -190,20 +189,12 @@ def test_symbol_is_dumped(name):
     assert skill == f"'{name}"
 
 
-@given(lists(symbols, min_size=1))
-def test_nested_symbol_raises(l):
-    skill = '(' + ' '.join(l) + ')'
-
-    with raises(ParseError, match="unexpected Symbol"):
-        skill_value_to_python(skill, [], replicate)
-
-
 @mark.parametrize('value, expected', [
     ('1', 1),
     ('1.0', 1.0),
     ('"hello"', 'hello'),
-    ('t', True),
-    ('nil', None)
+    ('True', True),
+    ('None', None)
 ])
 def test_literal_parses_strings(value, expected):
     assert skill_literal_to_value(value) == expected
@@ -215,8 +206,8 @@ def test_literal_raises_on_non_literal():
 
 
 def test_skill_help_adds_question_mark():
-    assert 'x->?' in skill_help(['x'])
-    assert 'x->y->?' in skill_help(['x', 'y'])
+    assert 'x->?' in skill_help(SkillCode('x'))
+    assert 'x->y->?' in skill_help(SkillCode('x->y'))
 
 
 def test_skill_help_to_list():
@@ -225,24 +216,11 @@ def test_skill_help_to_list():
 
 
 def test_skill_setattr_ok():
-    skill = skill_setattr([], 'key', 123).replace(' ', '')
-    assert skill == 'key=123'
-
-    skill = skill_setattr(['x'], 'key', 123).replace(' ', '')
+    skill = skill_setattr(SkillCode('x'), 'key', 123).replace(' ', '')
     assert skill == 'x->key=123'
 
-    skill = skill_setattr(['x', 'y'], 'key', 123).replace(' ', '')
+    skill = skill_setattr(SkillCode('x->y'), 'key', 123).replace(' ', '')
     assert skill == 'x->y->key=123'
-
-
-def test_skill_setattr_inner_int_ok():
-    skill = skill_setattr(['abc', 2], 'key', 123).replace(' ', '')
-    assert skill == '(nth2abc)->key=123'
-
-
-def test_skill_setattr_last_int_raises():
-    with raises(Exception, match='last component is list access'):
-        skill_setattr(['abc'], 0, 123)
 
 
 def test_skill_call_empty():
@@ -269,8 +247,3 @@ def test_python_path():
     assert build_python_path(['x']) == 'x'
     assert build_python_path(['x', 'y']) == 'x.y'
     assert build_python_path(['x', 'y', 123]) == 'x.y[123]'
-
-
-def test_parse_eof_raises():
-    with raises(ParseError):
-        skill_value_to_python('(1 2 3', [], replicate)
