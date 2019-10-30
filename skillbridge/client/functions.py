@@ -53,7 +53,7 @@ class RemoteFunction:
         command = assign(variable, command)
         result = self._channel.send(command)
 
-        return skill_value_to_python(result, [variable], self._replicator)
+        return skill_value_to_python(result, self._replicator)
 
     def lazy(self, *args: ConvertToSkill, **kwargs: ConvertToSkill) -> SkillCode:
         name = self._function.name

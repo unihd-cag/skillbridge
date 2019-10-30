@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages, Extension, Command
+from setuptools import setup, find_packages, Command
 from re import match
 
 import skillbridge
@@ -82,20 +82,6 @@ with open('README.md') as fin:
 with open('dev-requirements.txt') as fin:
     dev_requirements = fin.read().split()
 
-parser = Extension(
-    'skillbridge.parser.cparser',
-    define_macros=[
-        ('YYERROR_VERBOSE', 1)
-    ],
-    sources=[
-        'skillbridge/parser/cparser.c',
-        'skillbridge/parser/generated/lexer.c',
-        'skillbridge/parser/generated/parser.c'
-    ],
-    extra_compile_args='-std=c11 -Wall -Wextra -Wpedantic'.split(),
-    language='c'
-)
-
 
 config = dict(
     name="skillbridge",
@@ -111,7 +97,6 @@ config = dict(
     extras_require={
         'dev': dev_requirements
     },
-    ext_modules=[parser],
     cmdclass={
         'tag': TagVersion,
     },

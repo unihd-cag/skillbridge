@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from .hints import SkillPath, SkillCode, Skillable
+from .hints import SkillCode, Skillable
 from .channel import Channel
 from .extract import method_map
 from .functions import RemoteFunction, RemoteMethod
@@ -29,36 +29,34 @@ def is_jupyter_magic(attribute: str) -> bool:
 
 
 class RemoteObject(Skillable):
-    _attributes = {'_channel', '_path', '_name', '_methods'}
+    _attributes = {'_channel', '_variable', '_methods'}
     _method_map = method_map()
 
-    def __init__(self, channel: Channel, name: str, path: SkillPath) -> None:
+    def __init__(self, channel: Channel, variable: str) -> None:
         self._channel = channel
-        self._name = name
-        self._path = path
+        self._variable = SkillCode(variable)
 
-        self._methods = self._method_map.get(self._name.split(':')[0], {})
+        object_type, _ = variable[5:].split('_')
+        self._methods = RemoteObject._method_map.get(object_type, {})
 
-    def _replicate(self, name: str, path: SkillPath) -> 'RemoteObject':
-        return RemoteObject(self._channel, name, path)
+    def _replicate(self, variable: str) -> 'RemoteObject':
+        return RemoteObject(self._channel, variable)
 
     def __repr_skill__(self) -> SkillCode:
-        return translator.build_skill_path(self._path)
-
-    @property
-    def _python(self) -> str:
-        return translator.build_python_path(self._path)
+        return SkillCode(self._variable)
 
     def _send(self, command: SkillCode) -> Any:
         return self._channel.send(command).strip()
 
     def __str__(self) -> str:
-        return f"<remote {self._name} @{self._python!r}>"
+        type_, address = self._variable[5:].split('_')
+        object_type = self.obj_type or type_
+        return f"<remote {object_type}@{address}>"
 
     __repr__ = __str__
 
     def __dir__(self) -> List[str]:
-        response = self._send(translator.skill_help(self._path))
+        response = self._send(translator.skill_help(self._variable))
         attributes = translator.skill_help_to_list(response)
         return attributes
 
@@ -70,30 +68,28 @@ class RemoteObject(Skillable):
             func = RemoteFunction(self._channel, self._methods[key], self._replicate)
             return RemoteMethod(self, func)
 
-        result = self._send(translator.skill_getattr(self._path, key))
-        path = self._path + [key]
-        return translator.skill_value_to_python(result, path, self._replicate)
+        result = self._send(translator.skill_getattr(self._variable, key))
+        return translator.skill_value_to_python(result, self._replicate)
 
     def __setattr__(self, key: str, value: Any) -> None:
-        if key in self._attributes:
+        if key in RemoteObject._attributes:
             return super().__setattr__(key, value)
 
         if key in self._methods:
             raise TypeError("remote method is readonly")
 
-        result = self._send(translator.skill_setattr(self._path, key, value))
-        path = self._path + [key]
-        translator.skill_value_to_python(result, path, self._replicate)
+        result = self._send(translator.skill_setattr(self._variable, key, value))
+        translator.skill_value_to_python(result, self._replicate)
 
     def getdoc(self) -> str:
         return "Properties:\n- " + '\n- '.join(dir(self))
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, RemoteObject):
-            return self._name == other._name
+            return self._variable == other._variable
         return NotImplemented
 
     def __ne__(self, other: Any) -> bool:
         if isinstance(other, RemoteObject):
-            return self._name != other._name
+            return self._variable != other._variable
         return NotImplemented

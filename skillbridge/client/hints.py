@@ -2,7 +2,7 @@ from typing import Union, List, Tuple, Callable, NewType, NamedTuple, Dict, Set
 
 __all__ = [
     'Number', 'BBox', 'Transform',
-    'SkillComponent', 'SkillPath', 'SkillCode', 'Skillable',
+    'SkillComponent', 'SkillCode', 'Skillable',
     'ConvertToSkill', 'ConvertToSkillFlat',
     'Replicator',
     'Definition', 'Function'
@@ -12,7 +12,6 @@ Number = Union[int, float]
 BBox = List[List[Number]]
 Transform = Tuple[Tuple[Number, Number], str, Number]
 SkillComponent = Union[int, str]
-SkillPath = List[SkillComponent]
 SkillCode = NewType('SkillCode', str)
 
 
@@ -27,10 +26,7 @@ class Skillable:
 
 
 ConvertToSkillFlat = Union[Skillable, Number, str, bool, None]
-ConvertToSkill = Union[ConvertToSkillFlat,
-                       List[ConvertToSkillFlat],
-                       List[List[ConvertToSkillFlat]],
-                       List[List[List[ConvertToSkillFlat]]]]
-PropList = Dict[str, ConvertToSkill]
+PropList = Dict[str, ConvertToSkillFlat]
+ConvertToSkill = Union[ConvertToSkillFlat, List[ConvertToSkillFlat], PropList]
 
-Replicator = Callable[[str, SkillPath], ConvertToSkill]
+Replicator = Callable[[str], ConvertToSkill]

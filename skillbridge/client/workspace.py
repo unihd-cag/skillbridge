@@ -2,7 +2,7 @@ from typing import List, Dict, Optional, Callable, Any
 from inspect import signature
 from textwrap import dedent
 
-from .hints import SkillPath, Function, SkillCode, ConvertToSkill
+from .hints import Function, SkillCode, ConvertToSkill
 from .channel import Channel, UnixChannel
 from .functions import FunctionCollection
 from .extract import functions_by_prefix
@@ -191,8 +191,8 @@ class Workspace:
         name = self._channel.send(SkillCode(code)).strip()
         self.user += Function(name, 'user defined', set())
 
-    def _create_remote_object(self, name: str, path: SkillPath) -> RemoteObject:
-        return RemoteObject(self._channel, name, path)
+    def _create_remote_object(self, variable: str) -> RemoteObject:
+        return RemoteObject(self._channel, variable)
 
     @staticmethod
     def fix_completion() -> None:
@@ -238,7 +238,7 @@ class Workspace:
         Workspace._var_counter += 1
         code = assign(variable, code)
         response = self._channel.send(code)
-        return skill_value_to_python(response, [variable], self._create_remote_object)
+        return skill_value_to_python(response, self._create_remote_object)
 
     @staticmethod
     def _build_function(function: Callable[..., Any]) -> Function:

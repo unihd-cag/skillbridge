@@ -95,7 +95,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
                     printf("command %L resulted in error %L\n" line errset.errset)
                     ipcWriteProcess(pyStartServer.ipc sprintf(nil "failure %L\n" errset.errset))
                 else
-                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "success %L\n" result))
+                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "success %s\n" __pySkillToPython(result)))
                 )
             )
         )
@@ -111,6 +111,60 @@ let((_filename _baseName _moduleFolder _installName _logName)
         printf("server was stopped with code %L\n" data)
         deleteFile(pyStartServer.file)
         remExitProc('__pyDeleteSocketOnExit)
+    )
+
+    putd('__pyPropertyListToPython nil)
+    defun(__pyPropertyListToPython (propList)
+        strcat("{"
+            buildString(
+                mapcar(lambda((key)
+                    sprintf(nil "'%s':%s" key __pySkillToPython(get(propList key))))
+                    propList->?)
+            ",")
+            "}"
+        )
+    )
+
+    putd('__pySaveToVariableAndReturn nil)
+    defun(__pySaveToVariableAndReturn (thing)
+        let((repr variableName split objectType address)
+            repr = sprintf(nil "%L" thing)
+            if(rexExecute(repr) then
+                split = parseString(repr ":")
+                objectType = car(split)
+                address = cadr(split)
+                variableName = sprintf(nil "__py_%s_%s" objectType address)
+                set(stringToSymbol(variableName) thing)
+                sprintf(nil "Remote(%L)" variableName)
+            else sprintf(nil "error(%L)" repr)
+            )
+        )
+    )
+
+    putd('__pyListToPython nil)
+    defun(__pyListToPython (thing)
+        strcat(
+            "["
+            buildString(mapcar('__pySkillToPython thing) ",")
+            "]"
+        )
+    )
+
+    putd('__pySkillToPython nil)
+    defun(__pySkillToPython (thing)
+        if(thing == t then "True" else
+        if(thing == nil then "None" else
+        if(or(numberp(thing) stringp(thing)) then sprintf(nil "%L" thing) else
+        if(symbolp(thing) then sprintf(nil "Symbol('%s')" thing) else
+        if(listp(thing) then
+            if(and(car(thing) == nil symbolp(cadr(thing)))
+            then __pyPropertyListToPython(thing)
+            else __pyListToPython(thing)
+            )
+        else
+        rexCompile("^[a-zA-Z]+:[x0-9a-f]+$")
+        __pySaveToVariableAndReturn(thing)
+        )))))
     )
 
     putd('pyStartServer nil)
