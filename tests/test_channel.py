@@ -159,7 +159,7 @@ def test_object_is_mapped(server, ws):
     assert isinstance(result, RemoteObject)
     assert 'object@1234' in str(result)
 
-    server.answer_success('[x,y,z]')
+    server.answer_success('["x","y","z"]')
     doc = result.getdoc()
     assert 'x' in doc
     assert 'y' in doc

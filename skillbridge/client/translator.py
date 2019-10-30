@@ -98,13 +98,13 @@ def skill_help(obj: SkillCode) -> SkillCode:
         f'{obj}->systemHandleNames',
         f'{obj}->userHandleNames',
     ))
-    code = f'nconc({parts})'
+    code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
     return SkillCode(code)
 
 
 def skill_help_to_list(code: str) -> List[str]:
-    code = code[1:-1].replace('"', '')
-    return [camel_to_snake(attr) for attr in code.split()]
+    attributes = skill_value_to_python(code, _not_implemented("help list"))
+    return [camel_to_snake(attr) for attr in attributes]
 
 
 def skill_getattr(obj: SkillCode, key: str) -> SkillCode:

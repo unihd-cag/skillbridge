@@ -212,7 +212,7 @@ def test_skill_help_adds_question_mark():
 
 def test_skill_help_to_list():
     expected = ['abc', 'def', 'camel_case', 'snake_case']
-    assert skill_help_to_list('(abc def camelCase snake_case)') == expected
+    assert skill_help_to_list('["abc","def","camelCase","snake_case"]') == expected
 
 
 def test_skill_setattr_ok():
