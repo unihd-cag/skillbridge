@@ -3,7 +3,7 @@ from collections import namedtuple
 from re import sub
 from json import dumps
 
-from .hints import Replicator, SkillComponent, SkillCode, ConvertToSkill
+from .hints import Replicator, SkillCode, ConvertToSkill
 from .hints import Skillable
 
 

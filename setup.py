@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages, Extension, Command
+from setuptools import setup, find_packages, Command
 from re import match
 
 import skillbridge
