@@ -72,9 +72,13 @@ class Virtuoso(Thread):
     def read(self):
         # we need to wait pretty long here, because sometimes it takes really long
         # to start the server
-        readable, _, _ = select([self.server.stdout], [], [], 10)
-        if readable:
-            return self.server.stdout.readline().strip()
+        from time import perf_counter
+        for timeout in (0.1, 0.5, 1, 2, 4, 8):
+            if not self.should_run:
+                return
+            readable, _, _ = select([self.server.stdout], [], [], timeout)
+            if readable:
+                return self.server.stdout.readline().strip()
 
     def write(self, message):
         self.pin.write(message + '\n')
