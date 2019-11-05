@@ -167,6 +167,30 @@ def test_object_is_mapped(server, ws):
     assert 'z' in doc
 
 
+def test_db_object_repr(server, ws):
+    server.answer_object('db', 1234)
+    db = ws.ge.get_edit_cell_view()
+    server.answer_success('"instance"')
+    assert 'instance' in str(db)
+    assert 'objType' in server.last_question
+
+
+def test_dd_object_repr(server, ws):
+    server.answer_object('dd', 1234)
+    dd = ws.ge.get_edit_cell_view()
+    server.answer_success('Symbol("DDthingTYPE")')
+    assert 'thing' in str(dd)
+    assert 'type' in server.last_question
+
+
+def test_nested_remote_object(server, ws):
+    server.answer_object('parent', 1234)
+    parent = ws.ge.get_edit_cell_view()
+    server.answer_object('child', 1234)
+    child = parent.child
+    assert isinstance(child, RemoteObject)
+
+
 def test_send_back_objects(server, ws):
     server.answer_object('object', 123)
     result = ws.ge.get_edit_cell_view()
