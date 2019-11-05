@@ -67,11 +67,12 @@ class Virtuoso(Thread):
                 answer = self.queue.get_nowait()
             except Empty:
                 raise RuntimeError(f"no answer available for {question!r}")
-            print("answer", answer)
             self.write(answer)
 
     def read(self):
-        readable, _, _ = select([self.server.stdout], [], [], 1)
+        # we need to wait pretty long here, because sometimes it takes really long
+        # to start the server
+        readable, _, _ = select([self.server.stdout], [], [], 10)
         if readable:
             return self.server.stdout.readline().strip()
 

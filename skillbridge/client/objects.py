@@ -50,8 +50,12 @@ class RemoteObject(Skillable):
 
     def __str__(self) -> str:
         type_, address = self._variable[5:].split('_')
-        object_type = self.obj_type or type_
-        return f"<remote {object_type}@{address}>"
+        if type_.startswith('db'):
+            type_ = self.obj_type or type_
+        elif type_.startswith('dd'):
+            dd_type = self.type
+            type_ = dd_type.name[2:-4] if dd_type else type_
+        return f"<remote {type_}@{address}>"
 
     __repr__ = __str__
 

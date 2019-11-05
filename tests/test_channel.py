@@ -153,11 +153,12 @@ def test_property_list_is_mapped(server, ws):
 
 
 def test_object_is_mapped(server, ws):
-    server.answer_object('object', 1234, None)
+    server.answer_object('object', 1234)
     result = ws.ge.get_edit_cell_view()
 
     assert isinstance(result, RemoteObject)
-    assert 'object@1234' in str(result)
+    string = str(result)
+    assert 'object@1234' in string
 
     server.answer_success('["x","y","z"]')
     doc = result.getdoc()
