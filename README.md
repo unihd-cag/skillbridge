@@ -1,5 +1,11 @@
 # Python-Skill Bridge ![build](https://travis-ci.org/unihd-cag/skillbridge.svg?branch=master) ![codecov](https://codecov.io/gh/unihd-cag/skillbridge/branch/master/graph/badge.svg)
 
+### Prerequisites
+
+- Python 3.6 or higher
+- pip
+- IC 6.1.7 or ICADV/M or higher
+
 ### Features
 
 - Run Virtuoso's Skill functions from Python
