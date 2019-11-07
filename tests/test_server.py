@@ -27,7 +27,7 @@ class Redirect:
     def write(self, message):
         self.written.append(message)
 
-    def read(self):
+    def read(self, _timeout=None):
         return self.reading.pop()
 
 
@@ -36,7 +36,7 @@ class Server(Thread):
         super().__init__(daemon=True)
 
     def run(self):
-        python_server.main(UNIX_SOCKET, "DEBUG", notify=True, single=False)
+        python_server.main(UNIX_SOCKET, "DEBUG", notify=True, single=False, timeout=None)
 
 
 @fixture

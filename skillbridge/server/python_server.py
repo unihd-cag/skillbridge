@@ -82,7 +82,7 @@ class Handler(StreamRequestHandler):
         try:
             return self.handle_one_request()
         except Exception as e:
-            logger.exception(e)
+            logger.error(str(e))
             return False
 
     def handle(self) -> None:
