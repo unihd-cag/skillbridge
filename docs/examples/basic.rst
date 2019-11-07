@@ -3,7 +3,8 @@
 Basic Examples
 ==============
 
-.. code-block:: python 
+.. code-block:: python
+
     from skillbridge import Workspace
     
     ws = Workspace.open()
@@ -13,6 +14,7 @@ Basic Examples
     print(cell_view.b_box)
     
     cell_view = ws.db.open_cell_view("lib", "cell_name", "view_name")
+
 **Accessing the currently open edit cell view**
 
 .. code-block:: python

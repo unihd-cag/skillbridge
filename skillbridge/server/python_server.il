@@ -168,7 +168,9 @@ let((_filename _baseName _moduleFolder _installName _logName)
     )
 
     putd('pyStartServer nil)
-    defun(pyStartServer (@optional (id "default") (logLevel "WARNING") (singleMode nil))
+    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil))
+        printf("pyStartServer %L %L %L\n", id, logLevel, singleMode)
+
         if(pyStartServer.ipc != nil then
             fprintf(stderr, "server is already running\n")
             nil
