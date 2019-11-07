@@ -21,5 +21,7 @@ skillbridge/server/python_server.log
 skillbridge/client/definitions*
 
 test.py
+test.ipynb
+.ipynb_checkpoints/*
 
 *.so
