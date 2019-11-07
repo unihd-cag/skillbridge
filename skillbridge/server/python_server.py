@@ -3,14 +3,14 @@ from logging import getLogger, basicConfig, WARNING
 from sys import stdout, stdin, argv
 from select import select
 from os import unlink
-from typing import Iterable
+from typing import Iterable, Optional
 from argparse import ArgumentParser
 from atexit import register as atext_register
 
 import logging
 
 LOG_FILE = __file__ + '.log'
-LOG_FORMAT = '%(asctime)s %(message)s'
+LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
 
@@ -24,12 +24,14 @@ def send_to_skill(data: str) -> None:
     stdout.flush()
 
 
-def read_from_skill() -> str:
-    readable, _, _ = select([stdin], [], [], 5)
+def read_from_skill(timeout: Optional[float]) -> str:
+    readable, _, _ = select([stdin], [], [], timeout)
 
     if readable:
-        return stdin.readline()
+        data = stdin.readline()
+        return data
 
+    logger.debug("timeout")
     return 'failure <timeout>'
 
 
@@ -67,8 +69,8 @@ class Handler(StreamRequestHandler):
 
         send_to_skill(command.decode())
         logger.info("sent data to skill")
-        result = read_from_skill().encode()
-        logger.info("got response form skill {!r}".format(result[:1000]))
+        result = read_from_skill(self.server.skill_timeout).encode()
+        logger.info("got response from skill {!r}".format(result[:1000]))
 
         self.request.send('{:10}'.format(len(result)).encode())
         self.request.send(result)
@@ -88,27 +90,30 @@ class Handler(StreamRequestHandler):
         client_is_connected = True
         while client_is_connected:
             client_is_connected = self.try_handle_one_request()
-            logger.info("loop continue?")
-        logger.info("loop ended")
 
 
-def cleanup(socket: str) -> None:
+def cleanup(socket: str, log=None) -> None:
+    if log:
+        log.info(f"server {socket} was killed")
     try:
         unlink(socket)
     except FileNotFoundError:
         pass
 
 
-def main(socket: str, log_level: str, notify: bool, single: bool) -> None:
+def main(socket: str, log_level: str, notify: bool, single: bool,
+         timeout: Optional[float]) -> None:
     logger.setLevel(getattr(logging, log_level))
 
-    atext_register(lambda: cleanup(socket))
+    atext_register(lambda: cleanup(socket, logger))
     cleanup(socket)
 
     server_class = SingleUnixServer if single else ThreadingUnixServer
 
     with server_class(socket, Handler) as server:
-        logger.info("starting server")
+        server.skill_timeout = timeout
+        logger.info(f"starting server socket={socket} log={log_level} notify={notify} "
+                    f"single={single} timeout={timeout}")
         if notify:
             send_to_skill('running')
         server.serve_forever()
@@ -121,10 +126,11 @@ if __name__ == '__main__':
     argument_parser.add_argument('log_level', choices=log_levels)
     argument_parser.add_argument('--notify', action='store_true')
     argument_parser.add_argument('--single', action='store_true')
+    argument_parser.add_argument('--timeout', type=float, default=None)
 
     ns = argument_parser.parse_args()
 
     try:
-        main(ns.socket, ns.log_level, ns.notify, ns.single)
+        main(ns.socket, ns.log_level, ns.notify, ns.single, ns.timeout)
     except KeyboardInterrupt:
         pass

@@ -103,13 +103,14 @@ let((_filename _baseName _moduleFolder _installName _logName)
 
     putd('__pyOnError nil)
     defun(__pyOnError (id data)
-        printf("error %L\n" data)
+        fprintf(stderr "error %L\n" data)
     )
 
     putd('__pyOnFinish nil)
     defun(__pyOnFinish (id data)
         printf("server was stopped with code %L\n" data)
         deleteFile(pyStartServer.file)
+        pyStartServer.ipc = nil
         remExitProc('__pyDeleteSocketOnExit)
     )
 
@@ -168,15 +169,14 @@ let((_filename _baseName _moduleFolder _installName _logName)
     )
 
     putd('pyStartServer nil)
-    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil))
-        printf("pyStartServer %L %L %L\n", id, logLevel, singleMode)
+    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil) (timeout nil))
 
         if(pyStartServer.ipc != nil then
             fprintf(stderr, "server is already running\n")
             nil
         else
             let((executableWithArgs socketFile)
-                socketFile = sprintf(nil "/tmp/skill-server-%s.sock"  id)
+                socketFile = sprintf(nil "/tmp/skill-server-%L.sock"  id)
 
                 if(isFileName(socketFile) then
                     fprintf(stderr, "Server cannot start, because %s already exists. Delete the file if you are sure that it is not in use anymore.", socketFile)
@@ -184,7 +184,10 @@ let((_filename _baseName _moduleFolder _installName _logName)
                 else
                     executableWithArgs = buildString(list(pyStartServer.exe socketFile logLevel))
                     if(singleMode != nil then
-                        executableWithArgs = buildString(list(executableWithArgs "--single"))
+                        executableWithArgs = strcat(executableWithArgs "--single")
+                    )
+                    if(timeout != nil then
+                        executableWithArgs = sprintf(nil "%s --timeout %L" executableWithArgs timeout)
                     )
 
                     pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")
