@@ -3,7 +3,12 @@
 The Python Server
 =================
 
-Initially the server must be started by loading the ``python_server.il``.
+Initially the server script must be run by loading the ``python_server.il``.
+
+.. code-block::
+    lisp
+
+    load("PATH-TO-SKILL-IPC-SCRIPT")
 
 After that, these management commands are available in the Skill console.
 
@@ -16,6 +21,28 @@ After that, these management commands are available in the Skill console.
     The ``logLevel`` can be used to set the log level, the default is ``"WARNING"``.
     Other values are ``"DEBUG"`` to print absolutely everything, ``"INFO"``,
     ``"WARNING"``, ``"ERROR"`` and ``"FATAL"``.
+
+    .. note::
+
+        The parameters are marked with ``@key`` which means that it is only possible
+        to change their default value by explicitly naming them when calling the function.
+
+        Here are a few examples:
+
+        .. code-block::
+            lisp
+
+            ; only change the log level to "INFO"
+            pyStartServer ?logLevel "INFO"
+
+            ; only change the server id to "foo"
+            pyStartServer ?id "foo"
+
+            ; change both server id and log level
+            pyStartServer ?id "foo" ?logLevel "INFO"
+
+            ; same as above, the order does not matter
+            pyStartServer ?logLevel "INFO" ?id "foo"
 
     .. warning::
 
@@ -44,7 +71,7 @@ After that, these management commands are available in the Skill console.
     and active connections will result in a :class:`BrokenPipe` exception
     the next time they are used.
 
-.. function:: pyReloadScript
+.. function:: pyReloadScript()
 
     This calls :func:`pyKillServer` and reloads the ``python_server.il``
     Skill script. Normally this function would not be used.
@@ -57,6 +84,16 @@ After that, these management commands are available in the Skill console.
     how many lines will be printed. It always refers to the **last**
     ``numberOfLines`` lines.
 
+    Example:
+
+    .. code-block:: lisp
+
+        ; show the last 10 lines of the log file
+        pyShowLog
+
+        ; show the last 20 lines of the log file
+        pyShowLog 20
+
 .. function:: pyDumpFunctionDefinitions(filename)
 
     This dumps all function names, parameters and documentations into the file
@@ -66,3 +103,14 @@ After that, these management commands are available in the Skill console.
     If ``filename`` is set to the special value ``"<install>"`` then the file
     will be placed inside the python module ready to be used. This command
     must be executed once before you can use the python module.
+
+    Example:
+
+    .. code-block:: lisp
+
+        ; install the function definitions
+        ; i.e. place them where the skillbridge needs them to be
+        pyDumpFunctionDefinitions "<install>"
+
+        ; dump them to a specific file (useful if you want to inspect the definitions)
+        pyDumpFunctionDefinitions "~/dump.txt"
