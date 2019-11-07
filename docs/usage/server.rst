@@ -75,7 +75,7 @@ After that, these management commands are available in the Skill console.
 
             ; this tells the server to wait at most 10.5 seconds
             ; before sending a timeout error
-            pyStartServer ?timeout 10.0
+            pyStartServer ?timeout 10.5
 
 .. function:: pyKillServer()
 
