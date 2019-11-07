@@ -16,6 +16,9 @@ class Channel:
     def flush(self) -> None:
         raise NotImplementedError
 
+    def try_repair(self):
+        raise NotImplementedError
+
     @property
     def max_transmission_length(self) -> int:
         return self._max_transmission_length
@@ -44,8 +47,9 @@ class UnixChannel(Channel):
 
     def connect(self) -> socket:
         s = socket(self.address_family, self.socket_kind)
-        s.settimeout(10)
+        s.settimeout(1)
         s.connect(self.address)
+        s.settimeout(None)
         self.connected = True
         return s
 
@@ -53,13 +57,13 @@ class UnixChannel(Channel):
         self.socket.close()
         self.socket = self.connect()
 
-    def _receive(self, remaining: int) -> Iterable[bytes]:
+    def _receive_all(self, remaining: int) -> Iterable[bytes]:
         while remaining:
             data = self.socket.recv(remaining)
             remaining -= len(data)
             yield data
 
-    def send(self, data: str) -> str:
+    def _send_only(self, data: str):
         byte = data.encode()
 
         if len(byte) > self._max_transmission_length:
@@ -68,6 +72,7 @@ class UnixChannel(Channel):
             raise ValueError(f'Data exceeds max transmission length {got} > {should}')
 
         length = '{:10}'.format(len(byte)).encode()
+
         try:
             self.socket.sendall(length)
         except (BrokenPipeError, OSError):
@@ -82,14 +87,40 @@ class UnixChannel(Channel):
             self.reconnect()
             self.socket.sendall(length)
             self.socket.sendall(byte)
-        received_length = int(self.socket.recv(10))
-        response = b''.join(self._receive(received_length)).decode()
+
+    def _receive_only(self):
+        try:
+            received_length_raw = self.socket.recv(10)
+        except KeyboardInterrupt:
+            raise RuntimeError("Receive aborted, you should restart the skill server or"
+                               " call `ws.try_repair()` if you are sure that the response"
+                               " will arrive.") from None
+
+        if not received_length_raw:
+            raise RuntimeError("The server unexpectedly died")
+        received_length = int(received_length_raw)
+        response = b''.join(self._receive_all(received_length)).decode()
 
         status, response = response.split(' ', maxsplit=1)
 
         if status == 'failure':
+            if response == '<timeout>':
+                raise RuntimeError("Timeout: you should restart the skill server and "
+                                   "increase the timeout `pyStartServer ?timeout X`.")
             raise RuntimeError(response)
         return response
+
+    def send(self, data: str) -> str:
+        self._send_only(data)
+        return self._receive_only()
+
+    def try_repair(self):
+        try:
+            length = int(self.socket.recv(10))
+            message = b''.join(self._receive_all(length))
+        except Exception as e:
+            return e
+        return message.decode()
 
     def close(self) -> None:
         if self.connected:

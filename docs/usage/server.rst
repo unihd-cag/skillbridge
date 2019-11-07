@@ -12,7 +12,7 @@ Initially the server script must be run by loading the ``python_server.il``.
 
 After that, these management commands are available in the Skill console.
 
-.. function:: pyStartServer(id="default" logLevel="WARNING" singleMode=nil)
+.. function:: pyStartServer(id="default" logLevel="WARNING" singleMode=nil timeout=nil)
 
     This starts the python server. If you are only running a single instance of
     Virtuoso you can use the default id. For more instances, each server needs its own
@@ -21,6 +21,35 @@ After that, these management commands are available in the Skill console.
     The ``logLevel`` can be used to set the log level, the default is ``"WARNING"``.
     Other values are ``"DEBUG"`` to print absolutely everything, ``"INFO"``,
     ``"WARNING"``, ``"ERROR"`` and ``"FATAL"``.
+
+    .. warning::
+
+        The log levels ``"DEBUG"`` and ``"INFO"`` are not recommended, because then
+        the time for a round-trip between the client and the server is effectively
+        two to three times as long!
+
+    The ``singleMode`` parameter allows you to disable simultaneous connections to
+    the server. By default, multiple connections are allowed for convenience reasons.
+    Especially jupyter users will benefit from this, since jupyter keeps the socket
+    connections open.
+
+    .. warning::
+
+        Even when ``singleMode`` is disabled it is **never** safe to simultaneously
+        access the server. This will lead to strange errors, where variables don't
+        contain what you initially assigned to them.
+
+        In order to stay safe: **never** interleave commands from two different
+        connections.
+
+    With the ``timeout`` parameter you can control how long the server will wait for
+    the Skill code to finish. ``nil`` means: wait forever, setting it to a number will
+    wait at most that number as seconds.
+
+    .. warning::
+
+        Whenever a timeout occurs the python client and the Skill server are out of sync.
+        You must restart the Skill server before you can continue.
 
     .. note::
 
@@ -44,25 +73,9 @@ After that, these management commands are available in the Skill console.
             ; same as above, the order does not matter
             pyStartServer ?logLevel "INFO" ?id "foo"
 
-    .. warning::
-
-        The log levels ``"DEBUG"`` and ``"INFO"`` are not recommended, because then
-        the time for a round-trip between the client and the server is effectively
-        two to three times as long!
-
-    The ``singleMode`` parameter allows you to disable simultaneous connections to
-    the server. By default, multiple connections are allowed for convenience reasons.
-    Especially jupyter users will benefit from this, since jupyter keeps the socket
-    connections open.
-
-    .. warning::
-
-        Even when ``singleMode`` is disabled it is **never** safe to simultaneously
-        access the server. This will lead to strange errors, where variables don't
-        contain what you initially assigned to them.
-
-        In order to stay safe: **never** interleave commands from two different
-        connections.
+            ; this tells the server to wait at most 10.5 seconds
+            ; before sending a timeout error
+            pyStartServer ?timeout 10.5
 
 .. function:: pyKillServer()
 

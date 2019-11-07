@@ -296,3 +296,6 @@ class Workspace:
         collection.add_by_key(rest, function_tuple)
 
         return function_tuple
+
+    def try_repair(self):
+        return self._channel.try_repair()
