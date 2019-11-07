@@ -28,8 +28,7 @@ def read_from_skill(timeout: Optional[float]) -> str:
     readable, _, _ = select([stdin], [], [], timeout)
 
     if readable:
-        data = stdin.readline()
-        return data
+        return stdin.readline()
 
     logger.debug("timeout")
     return 'failure <timeout>'
