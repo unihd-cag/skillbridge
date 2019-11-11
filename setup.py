@@ -93,6 +93,7 @@ config = dict(
     long_description_content_type="text/markdown",
     url="https://github.com/unihd-cag/skillbridge",
     packages=find_packages(),
+    package_data={'skillbridge': ['py.typed']},
     include_package_data=True,
     extras_require={
         'dev': dev_requirements

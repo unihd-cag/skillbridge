@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from .hints import SkillCode, Skillable
+from .hints import SkillCode
 from .channel import Channel
 from .extract import method_map
 from .functions import RemoteFunction, RemoteMethod
@@ -28,7 +28,7 @@ def is_jupyter_magic(attribute: str) -> bool:
     return attribute in ignore
 
 
-class RemoteObject(Skillable):
+class RemoteObject:
     _attributes = {'_channel', '_variable', '_methods'}
     _method_map = method_map()
 
@@ -40,7 +40,7 @@ class RemoteObject(Skillable):
         self._methods = RemoteObject._method_map.get(object_type, {})
 
     @property
-    def skill_id(self):
+    def skill_id(self) -> str:
         return self._variable.split('_')[-1]
 
     def _replicate(self, variable: str) -> 'RemoteObject':

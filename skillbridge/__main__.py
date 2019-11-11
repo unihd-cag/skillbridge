@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from . import generate_static_completion
 
 
-def print_skill_script_location():
+def print_skill_script_location() -> None:
     folder = dirname(abspath(__file__))
     skill_source = join(folder, 'server', 'python_server.il')
     print(skill_source)

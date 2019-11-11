@@ -1,9 +1,16 @@
-from typing import Union, List, Tuple, Callable, NewType, NamedTuple, Dict, Set
+from typing import Union, List, Callable, NewType, NamedTuple, Dict, Set, Tuple
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing_extensions import Protocol
+else:
+    class Protocol:
+        pass
+
 
 __all__ = [
-    'Number',
-    'SkillComponent', 'SkillCode', 'Skillable',
-    'ConvertToSkill', 'ConvertToSkillFlat',
+    'Number', 'Symbol', 'Var',
+    'SkillComponent', 'SkillCode', 'Skill',
     'Replicator',
     'Definition', 'Function'
 ]
@@ -13,18 +20,59 @@ SkillComponent = Union[int, str]
 SkillCode = NewType('SkillCode', str)
 
 
-Function = NamedTuple('Function', [
-    ('name', str), ('description', str), ('aliases', Set[str])
-])
+class Function(NamedTuple):
+    name: str
+    description: str
+    aliases: Set[str]
+
+
 Definition = List[Function]
 
 
-class Skillable:
+class SupportsReprSkill(Protocol):
     def __repr_skill__(self) -> SkillCode: ...
 
 
-ConvertToSkillFlat = Union[Skillable, Number, str, bool, None]
-PropList = Dict[str, ConvertToSkillFlat]
-ConvertToSkill = Union[ConvertToSkillFlat, List[ConvertToSkillFlat], PropList]
+Skill = Union[
+    SupportsReprSkill, Number, str, bool, None,
+    'SkillList', 'SkillDict', 'SkillTuple'
+]
+Replicator = Callable[[str], Skill]
 
-Replicator = Callable[[str], ConvertToSkill]
+
+class SkillList(List[Skill]):
+    pass
+
+
+class SkillTuple(Tuple[Skill, ...]):
+    pass
+
+
+class SkillDict(Dict[str, Skill]):
+    pass
+
+
+class Symbol(NamedTuple):
+    name: str
+
+    def __repr_skill__(self) -> SkillCode:
+        return SkillCode(f"'{self.name}")
+
+    def __str__(self) -> str:
+        return f"Symbol({self.name})"
+
+    def __repr__(self) -> str:
+        return f"Symbol({self.name!r})"
+
+
+class Var(NamedTuple):
+    name: str
+
+    def __repr_skill__(self) -> SkillCode:
+        return SkillCode(self.name)
+
+    def __str__(self) -> str:
+        return f"Var({self.name})"
+
+    def __repr__(self) -> str:
+        return f"Var({self.name!r})"

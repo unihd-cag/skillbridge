@@ -1,6 +1,6 @@
 from typing import List
 
-from .hints import Replicator, Definition, Function, ConvertToSkill, SkillCode
+from .hints import Replicator, Definition, Function, SkillCode, Skill
 from .channel import Channel
 from .translator import camel_to_snake, call, skill_value_to_python
 
@@ -47,13 +47,13 @@ class RemoteFunction:
         self._replicator = replicator
         self._function = func
 
-    def __call__(self, *args: ConvertToSkill, **kwargs: ConvertToSkill) -> ConvertToSkill:
+    def __call__(self, *args: Skill, **kwargs: Skill) -> Skill:
         command = self.lazy(*args, **kwargs)
         result = self._channel.send(command)
 
         return skill_value_to_python(result, self._replicator)
 
-    def lazy(self, *args: ConvertToSkill, **kwargs: ConvertToSkill) -> SkillCode:
+    def lazy(self, *args: Skill, **kwargs: Skill) -> SkillCode:
         name = self._function.name
         RemoteFunction._counter += 1
 
@@ -67,9 +67,9 @@ class RemoteFunction:
 
 
 class RemoteMethod:
-    def __init__(self, instance: ConvertToSkill, func: RemoteFunction) -> None:
+    def __init__(self, instance: Skill, func: RemoteFunction) -> None:
         self._instance = instance
         self._function = func
 
-    def __call__(self, *args: ConvertToSkill, **kwargs: ConvertToSkill) -> ConvertToSkill:
+    def __call__(self, *args: Skill, **kwargs: Skill) -> Skill:
         return self._function(self._instance, *args, **kwargs)

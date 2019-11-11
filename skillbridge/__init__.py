@@ -1,16 +1,14 @@
 from os import chdir
 
 from .client.workspace import Workspace
-from .client.translator import loop_variable, Var, ParseError, Symbol
+from .client.translator import ParseError
+from .client.hints import Var, Symbol
 
 __version__ = '1.0.2'
-__all__ = [
-    'Workspace', 'loop_variable', 'Var', 'ParseError', 'Symbol',
-    'generate_static_completion'
-]
+__all__ = ['Workspace', 'Var', 'ParseError', 'Symbol', 'generate_static_completion']
 
 
-def generate_static_completion():
+def generate_static_completion() -> None:
     from subprocess import run
     from .client.extract import functions_by_prefix
     from .client.functions import name_without_prefix

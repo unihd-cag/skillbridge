@@ -34,12 +34,10 @@ class Workspace:
     adt: FunctionCollection
     aed: FunctionCollection
     ael: FunctionCollection
-    ael: FunctionCollection
     ahdl: FunctionCollection
     alm: FunctionCollection
     amse: FunctionCollection
     anc: FunctionCollection
-    ann: FunctionCollection
     ann: FunctionCollection
     ans: FunctionCollection
     ap: FunctionCollection
@@ -56,11 +54,9 @@ class Workspace:
     ccp: FunctionCollection
     cdf: FunctionCollection
     cds: FunctionCollection
-    cds: FunctionCollection
     ci: FunctionCollection
     ciw: FunctionCollection
     conn: FunctionCollection
-    cpf: FunctionCollection
     cpf: FunctionCollection
     cpfe: FunctionCollection
     cph: FunctionCollection
@@ -75,7 +71,6 @@ class Workspace:
     dl: FunctionCollection
     dm: FunctionCollection
     dmb: FunctionCollection
-    dr: FunctionCollection
     dr: FunctionCollection
     drd: FunctionCollection
     drpl: FunctionCollection
@@ -95,7 +90,6 @@ class Workspace:
     hdb: FunctionCollection
     he: FunctionCollection
     hi: FunctionCollection
-    hnl: FunctionCollection
     hnl: FunctionCollection
     hsm: FunctionCollection
     icc: FunctionCollection
@@ -130,7 +124,6 @@ class Workspace:
     pipo: FunctionCollection
     po: FunctionCollection
     ps: FunctionCollection
-    pte: FunctionCollection
     pte: FunctionCollection
     rdb: FunctionCollection
     rde: FunctionCollection
@@ -289,5 +282,5 @@ class Workspace:
 
         return function_tuple
 
-    def try_repair(self):
+    def try_repair(self) -> Any:
         return self._channel.try_repair()
