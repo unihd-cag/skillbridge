@@ -1,4 +1,4 @@
-from typing import Iterable, Iterator, List, Dict, Optional, Set, Tuple, Union
+from typing import Iterable, Iterator, List, Dict, Optional, Set, Tuple
 from itertools import takewhile, groupby
 from re import match
 from os.path import dirname, abspath, join

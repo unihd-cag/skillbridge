@@ -2,7 +2,7 @@ from typing import List
 
 from .hints import Replicator, Definition, Function, ConvertToSkill, SkillCode
 from .channel import Channel
-from .translator import camel_to_snake, assign, call, skill_value_to_python
+from .translator import camel_to_snake, call, skill_value_to_python
 
 
 def name_without_prefix(name: str) -> str:
@@ -49,8 +49,6 @@ class RemoteFunction:
 
     def __call__(self, *args: ConvertToSkill, **kwargs: ConvertToSkill) -> ConvertToSkill:
         command = self.lazy(*args, **kwargs)
-        variable = f'__call_{self._function.name}_{self._counter}'
-        command = assign(variable, command)
         result = self._channel.send(command)
 
         return skill_value_to_python(result, self._replicator)

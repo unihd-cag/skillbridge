@@ -6,7 +6,7 @@ from skillbridge.client.objects import RemoteObject
 from tests.virtuoso import Virtuoso
 
 from skillbridge.client.channel import UnixChannel, Channel
-from skillbridge import Workspace, loop_variable
+from skillbridge import Workspace
 
 
 WORKSPACE_ID = '__test__'
@@ -257,9 +257,9 @@ def test_function_produces_same_code_as_method(server, ws):
     server.answer_success('"/path/to/thing"')
 
     ws.db.full_path(db)
-    _, from_function = server.last_question.split('=')
+    from_function = server.last_question
     db.db_full_path()
-    _, from_method = server.last_question.split('=')
+    from_method = server.last_question
 
     assert from_function == from_method
 
@@ -294,20 +294,6 @@ def test_max_transmission_length_is_honored(server, ws):
 
 def test_flush_does_no_harm(server, ws):
     ws.flush()
-
-
-def test_skill_side_for_loop(server, ws):
-    server.answer_object('cell', 1234)
-    server.answer_success("[10,10,10,10,10]")
-
-    cell = ws.ge.get_edit_cell_view()
-    assert 'geGetEditCellView' in server.last_question
-
-    windows = ws.map(ws.ge.get_cell_view_window.lazy(loop_variable), [cell] * 5)
-    last = server.last_question
-    assert 'mapcar(' in last and 'geGetCellViewWindow' in last
-
-    assert windows == [10, 10, 10, 10, 10]
 
 
 def test_add_function_manually(server, ws):

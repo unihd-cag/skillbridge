@@ -1,7 +1,7 @@
 from typing import Union, List, Tuple, Callable, NewType, NamedTuple, Dict, Set
 
 __all__ = [
-    'Number', 'BBox', 'Transform',
+    'Number',
     'SkillComponent', 'SkillCode', 'Skillable',
     'ConvertToSkill', 'ConvertToSkillFlat',
     'Replicator',
@@ -9,8 +9,6 @@ __all__ = [
 ]
 
 Number = Union[int, float]
-BBox = List[List[Number]]
-Transform = Tuple[Tuple[Number, Number], str, Number]
 SkillComponent = Union[int, str]
 SkillCode = NewType('SkillCode', str)
 

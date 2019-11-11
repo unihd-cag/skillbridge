@@ -1,13 +1,13 @@
-from typing import List, Dict, Optional, Callable, Any
+from typing import Dict, Optional, Callable, Any
 from inspect import signature
 from textwrap import dedent
 
-from .hints import Function, SkillCode, ConvertToSkill
+from .hints import Function, SkillCode
 from .channel import Channel, UnixChannel
 from .functions import FunctionCollection
 from .extract import functions_by_prefix
 from .objects import RemoteObject
-from .translator import list_map, assign, skill_value_to_python, camel_to_snake
+from .translator import camel_to_snake
 from .translator import snake_to_camel
 
 __all__ = ['Workspace']
@@ -231,14 +231,6 @@ class Workspace:
     @max_transmission_length.setter
     def max_transmission_length(self, value: int) -> None:
         self._channel.max_transmission_length = value
-
-    def map(self, expr: SkillCode, data: List[ConvertToSkill]) -> ConvertToSkill:
-        code = list_map(expr, data)
-        variable = f'__ws_map_{self._var_counter}'
-        Workspace._var_counter += 1
-        code = assign(variable, code)
-        response = self._channel.send(code)
-        return skill_value_to_python(response, self._create_remote_object)
 
     @staticmethod
     def _build_function(function: Callable[..., Any]) -> Function:

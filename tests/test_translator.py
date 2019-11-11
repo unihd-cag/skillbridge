@@ -2,13 +2,13 @@ from string import ascii_letters, ascii_lowercase, ascii_uppercase
 
 from pytest import raises, mark
 from hypothesis import given
-from hypothesis.strategies import lists, integers, floats, none, text, booleans
+from hypothesis.strategies import lists, integers, floats, none, text
 
 from skillbridge.client.hints import SkillCode
 from skillbridge.client.translator import snake_to_camel, camel_to_snake,\
-    python_value_to_skill, skill_value_to_python, call_assign,\
-    skill_setattr, skill_help, skill_help_to_list, skill_literal_to_value,\
-    skill_getattr, Var, check_function, build_python_path, call
+    python_value_to_skill, skill_value_to_python,\
+    skill_setattr, skill_help, skill_help_to_list,\
+    skill_getattr, Var, build_python_path, call
 from skillbridge import Symbol
 
 
@@ -171,11 +171,6 @@ def test_set_attribute(obj, name, value):
     assert got == expected
 
 
-@given(lists(simple_types) | ints | floats | booleans() | none())
-def test_literal_passes_through(value):
-    assert skill_literal_to_value(value) == value
-
-
 @given(symbols)
 def test_symbol_is_parsed(name):
     parsed = skill_value_to_python(f"Symbol({name!r})", replicate)
@@ -187,22 +182,6 @@ def test_symbol_is_parsed(name):
 def test_symbol_is_dumped(name):
     skill = python_value_to_skill(Symbol(name))
     assert skill == f"'{name}"
-
-
-@mark.parametrize('value, expected', [
-    ('1', 1),
-    ('1.0', 1.0),
-    ('"hello"', 'hello'),
-    ('True', True),
-    ('None', None)
-])
-def test_literal_parses_strings(value, expected):
-    assert skill_literal_to_value(value) == expected
-
-
-def test_literal_raises_on_non_literal():
-    with raises(Exception):
-        skill_literal_to_value('dbobject:123')
 
 
 def test_skill_help_adds_question_mark():
@@ -221,26 +200,6 @@ def test_skill_setattr_ok():
 
     skill = skill_setattr(SkillCode('x->y'), 'key', 123).replace(' ', '')
     assert skill == 'x->y->key=123'
-
-
-def test_skill_call_empty():
-    assert call_assign('var', 'func').replace(' ', '') == 'var=func()'
-
-
-def test_skill_call_args():
-    assert call_assign('var', 'func', 1, "x").replace(' ', '') == 'var=func(1"x")'
-
-
-def test_skill_call_kwargs():
-    skill = call_assign('var', 'func', x=1, y='y').replace(' ', '')
-    assert skill == 'var=func(?x1?y"y")'
-
-    skill = call_assign('var', 'func', 1, y='y').replace(' ', '')
-    assert skill == 'var=func(1?y"y")'
-
-
-def test_check_function():
-    assert "isCallable('f)" in check_function('f').replace(' ', '')
 
 
 def test_python_path():
