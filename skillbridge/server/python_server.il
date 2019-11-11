@@ -1,6 +1,7 @@
 let((_filename _baseName _moduleFolder _installName _logName)
 
     _filename = get_filename(piport)
+    _filename = pcreReplace(pcreCompile("^ +| +$") _filename "" 0)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _installName = strcat(_moduleFolder "client/definitions.txt")
