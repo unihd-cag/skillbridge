@@ -5,7 +5,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _installName = strcat(_moduleFolder "client/definitions.txt")
-    _executable = strcat("python " _baseName "py")
+    _executable = strcat("python '" _baseName "py'")
     _logName = strcat(_baseName "py.log")
 
     putd('pyDumpFunctionDefinitions nil)
@@ -210,7 +210,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
     pyStartServer.exe = _executable
 
     printf("Available commands:\n")
-    printf("\tpyStartServer [socketFile [logLevel [singleMode]]\n")
+    printf("\tpyStartServer ?id \"default\" ?logLevel \"WARNING\" ?singleMode nil ?timeout nil\n")
     printf("\tpyKillServer\n")
     printf("\tpyReloadScript\n")
     printf("\tpyShowLog [numberOfLines]\n")
