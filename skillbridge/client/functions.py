@@ -5,7 +5,7 @@ from .channel import Channel
 from .translator import camel_to_snake, assign, call, skill_value_to_python
 
 
-def _name_without_prefix(name: str) -> str:
+def name_without_prefix(name: str) -> str:
     *_, name = camel_to_snake(name).split('_', maxsplit=1)
     return name
 
@@ -16,7 +16,7 @@ class FunctionCollection:
         self._channel = channel
         self._replicate = replicator
         self._definitions = {
-            _name_without_prefix(func.name): func for func in definition
+            name_without_prefix(func.name): func for func in definition
         }
 
     def __iadd__(self, func: Function) -> 'FunctionCollection':

@@ -19,6 +19,7 @@ env/*
 skillbridge/server/python_server.py.log
 skillbridge/server/python_server.log
 skillbridge/client/definitions*
+skillbridge/client/workspace.pyi
 
 test.py
 test.ipynb

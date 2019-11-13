@@ -36,8 +36,12 @@ Virtuoso via the Skill console.
     - `load("PATH-TO-IPC-SERVER")`
     - `pyDumpFunctionDefinitions "<install>"` (`"<install>"` is not a placeholder, type it as is)
 
-**_Note:_** Generating the function definitions is very slow and will take several
-minutes. Don't cancel the command.
+**_Note:_** Generating the function definitions may take several seconds to complete.
+
+After that you can also generate the static completion stub files. This is useful for code completion
+in certain IDEs (e.g. PyCharm)
+
+- Type `python -m skillbridge -g` into your shell.
 
 ### Updating
 

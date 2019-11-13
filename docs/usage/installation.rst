@@ -17,7 +17,7 @@ Source Installation
 2. ``cd skillbridge``
 3. ``pip install -e .``
 
-Verify installation
+Verify Installation
 ~~~~~~~~~~~~~~~~~~~
 
 ``python -m skillbridge``
