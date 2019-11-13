@@ -39,6 +39,10 @@ class RemoteObject(Skillable):
         object_type, _ = variable[5:].split('_')
         self._methods = RemoteObject._method_map.get(object_type, {})
 
+    @property
+    def skill_id(self):
+        return self._variable.split('_')[-1]
+
     def _replicate(self, variable: str) -> 'RemoteObject':
         return RemoteObject(self._channel, variable)
 
