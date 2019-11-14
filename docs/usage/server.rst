@@ -12,7 +12,7 @@ Initially the server script must be run by loading the ``python_server.il``.
 
 After that, these management commands are available in the Skill console.
 
-.. function:: pyStartServer(id="default" logLevel="WARNING" singleMode=nil timeout=nil)
+.. function:: pyStartServer(id="default" logLevel="WARNING" singleMode=nil timeout=nil python="python")
 
     This starts the python server. If you are only running a single instance of
     Virtuoso you can use the default id. For more instances, each server needs its own
@@ -51,6 +51,11 @@ After that, these management commands are available in the Skill console.
         Whenever a timeout occurs the python client and the Skill server are out of sync.
         You must restart the Skill server before you can continue.
 
+    The default python interpreter that is used to start the server is ``"python"``. If your
+    interpreter is called differently (e.g. ``"python3.6"``) you can pass its name with the
+    ``python`` parameter. Your specified interpreter does not need the ``skillbridge`` package.
+    The only requirement is ``python>=3.6``.
+
     .. note::
 
         The parameters are marked with ``@key`` which means that it is only possible
@@ -76,6 +81,9 @@ After that, these management commands are available in the Skill console.
             ; this tells the server to wait at most 10.5 seconds
             ; before sending a timeout error
             pyStartServer ?timeout 10.5
+
+            ; use a custom interpreter path
+            pyStartServer ?python "python3.6"
 
 .. function:: pyKillServer()
 
