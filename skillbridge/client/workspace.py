@@ -1,13 +1,13 @@
-from typing import List, Dict, Optional, Callable, Any
+from typing import Dict, Optional, Callable, Any
 from inspect import signature
 from textwrap import dedent
 
-from .hints import Function, SkillCode, ConvertToSkill
+from .hints import Function, SkillCode
 from .channel import Channel, UnixChannel
 from .functions import FunctionCollection
 from .extract import functions_by_prefix
 from .objects import RemoteObject
-from .translator import list_map, assign, skill_value_to_python, camel_to_snake
+from .translator import camel_to_snake
 from .translator import snake_to_camel
 
 __all__ = ['Workspace']
@@ -34,12 +34,10 @@ class Workspace:
     adt: FunctionCollection
     aed: FunctionCollection
     ael: FunctionCollection
-    ael: FunctionCollection
     ahdl: FunctionCollection
     alm: FunctionCollection
     amse: FunctionCollection
     anc: FunctionCollection
-    ann: FunctionCollection
     ann: FunctionCollection
     ans: FunctionCollection
     ap: FunctionCollection
@@ -56,11 +54,9 @@ class Workspace:
     ccp: FunctionCollection
     cdf: FunctionCollection
     cds: FunctionCollection
-    cds: FunctionCollection
     ci: FunctionCollection
     ciw: FunctionCollection
     conn: FunctionCollection
-    cpf: FunctionCollection
     cpf: FunctionCollection
     cpfe: FunctionCollection
     cph: FunctionCollection
@@ -75,7 +71,6 @@ class Workspace:
     dl: FunctionCollection
     dm: FunctionCollection
     dmb: FunctionCollection
-    dr: FunctionCollection
     dr: FunctionCollection
     drd: FunctionCollection
     drpl: FunctionCollection
@@ -95,7 +90,6 @@ class Workspace:
     hdb: FunctionCollection
     he: FunctionCollection
     hi: FunctionCollection
-    hnl: FunctionCollection
     hnl: FunctionCollection
     hsm: FunctionCollection
     icc: FunctionCollection
@@ -130,7 +124,6 @@ class Workspace:
     pipo: FunctionCollection
     po: FunctionCollection
     ps: FunctionCollection
-    pte: FunctionCollection
     pte: FunctionCollection
     rdb: FunctionCollection
     rde: FunctionCollection
@@ -232,14 +225,6 @@ class Workspace:
     def max_transmission_length(self, value: int) -> None:
         self._channel.max_transmission_length = value
 
-    def map(self, expr: SkillCode, data: List[ConvertToSkill]) -> ConvertToSkill:
-        code = list_map(expr, data)
-        variable = f'__ws_map_{self._var_counter}'
-        Workspace._var_counter += 1
-        code = assign(variable, code)
-        response = self._channel.send(code)
-        return skill_value_to_python(response, self._create_remote_object)
-
     @staticmethod
     def _build_function(function: Callable[..., Any]) -> Function:
         if not function.__doc__:
@@ -297,5 +282,5 @@ class Workspace:
 
         return function_tuple
 
-    def try_repair(self):
+    def try_repair(self) -> Any:
         return self._channel.try_repair()

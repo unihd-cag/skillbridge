@@ -11,6 +11,7 @@ install:
 script:
 - cp tests/test_definitions.txt skillbridge/client/definitions.txt
 - flake8
+- mypy --strict skillbridge
 - pytest
 after_success:
 - codecov

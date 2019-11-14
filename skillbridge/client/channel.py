@@ -1,6 +1,6 @@
 from socket import socket, SOCK_STREAM, AF_UNIX
 from select import select
-from typing import Iterable
+from typing import Iterable, Union, Any
 
 
 class Channel:
@@ -16,7 +16,7 @@ class Channel:
     def flush(self) -> None:
         raise NotImplementedError
 
-    def try_repair(self):
+    def try_repair(self) -> Any:
         raise NotImplementedError
 
     @property
@@ -63,7 +63,7 @@ class UnixChannel(Channel):
             remaining -= len(data)
             yield data
 
-    def _send_only(self, data: str):
+    def _send_only(self, data: str) -> None:
         byte = data.encode()
 
         if len(byte) > self._max_transmission_length:
@@ -88,7 +88,7 @@ class UnixChannel(Channel):
             self.socket.sendall(length)
             self.socket.sendall(byte)
 
-    def _receive_only(self):
+    def _receive_only(self) -> str:
         try:
             received_length_raw = self.socket.recv(10)
         except KeyboardInterrupt:
@@ -114,7 +114,7 @@ class UnixChannel(Channel):
         self._send_only(data)
         return self._receive_only()
 
-    def try_repair(self):
+    def try_repair(self) -> Union[Exception, str]:
         try:
             length = int(self.socket.recv(10))
             message = b''.join(self._receive_all(length))

@@ -1,5 +1,5 @@
 from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
-from logging import getLogger, basicConfig, WARNING
+from logging import getLogger, basicConfig, WARNING, Logger
 from sys import stdout, stdin, argv
 from select import select
 from os import unlink
@@ -64,11 +64,11 @@ class Handler(StreamRequestHandler):
         if command.startswith(b'close'):
             logger.info("client {} disconnected".format(self.client_address))
             return False
-        logger.info("got data {}".format(command[:1000]))
+        logger.info("got data {}".format(command[:1000].decode()))
 
         send_to_skill(command.decode())
         logger.info("sent data to skill")
-        result = read_from_skill(self.server.skill_timeout).encode()
+        result = read_from_skill(self.server.skill_timeout).encode()  # type: ignore
         logger.info("got response from skill {!r}".format(result[:1000]))
 
         self.request.send('{:10}'.format(len(result)).encode())
@@ -91,7 +91,7 @@ class Handler(StreamRequestHandler):
             client_is_connected = self.try_handle_one_request()
 
 
-def cleanup(socket: str, log=None) -> None:
+def cleanup(socket: str, log: Optional[Logger] = None) -> None:
     if log:
         log.info(f"server {socket} was killed")
     try:
@@ -110,7 +110,7 @@ def main(socket: str, log_level: str, notify: bool, single: bool,
     server_class = SingleUnixServer if single else ThreadingUnixServer
 
     with server_class(socket, Handler) as server:
-        server.skill_timeout = timeout
+        server.skill_timeout: Optional[float] = timeout  # type: ignore
         logger.info(f"starting server socket={socket} log={log_level} notify={notify} "
                     f"single={single} timeout={timeout}")
         if notify:
