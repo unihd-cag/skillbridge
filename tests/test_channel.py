@@ -6,7 +6,7 @@ from skillbridge.client.objects import RemoteObject
 from tests.virtuoso import Virtuoso
 
 from skillbridge.client.channel import UnixChannel, Channel
-from skillbridge import Workspace
+from skillbridge import Workspace, current_workspace
 
 
 WORKSPACE_ID = '__test__'
@@ -344,3 +344,28 @@ def test_cannot_add_malformed_manual_functions(server, ws):
         @ws.register
         def withPrefixNoReturn():
             """pass"""
+
+
+def test_make_workspace_current(server, ws):
+    assert not current_workspace.is_current
+    assert not ws.is_current
+
+    ws.make_current()
+
+    assert current_workspace.is_current
+    assert ws.is_current
+
+
+def test_use_current_workspace(server, ws):
+    with raises(RuntimeError):
+        current_workspace.ge.get_edit_cell_view()
+
+    ws.make_current()
+
+    server.answer_success('"ok"')
+    assert current_workspace.ge.get_edit_cell_view() == 'ok'
+
+    ws.close()
+
+    with raises(RuntimeError):
+        current_workspace.ge.get_edit_cell_view()

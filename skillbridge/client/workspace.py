@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Callable, Any
+from typing import Dict, Optional, Callable, Any, NoReturn
 from inspect import signature
 from textwrap import dedent
 
@@ -10,9 +10,22 @@ from .objects import RemoteObject
 from .translator import camel_to_snake
 from .translator import snake_to_camel
 
-__all__ = ['Workspace']
+__all__ = ['Workspace', 'current_workspace']
 
 _open_workspaces: Dict[str, 'Workspace'] = {}
+
+
+class _NoWorkspace:
+    id = object()
+    is_current = False
+
+    def __getattr__(self, item: Any) -> NoReturn:
+        raise RuntimeError("No Workspace made current")
+
+
+_no_workspace: 'Workspace' = _NoWorkspace()  # type: ignore
+current_workspace: 'Workspace'
+current_workspace = _no_workspace
 
 
 def _register_well_known_functions(ws: 'Workspace') -> None:
@@ -211,7 +224,11 @@ class Workspace:
 
     def close(self) -> None:
         self._channel.close()
-        _open_workspaces.pop(self.id)
+        _open_workspaces.pop(self.id, None)
+
+        if current_workspace.id == self.id:
+            current_workspace.__class__ = _NoWorkspace  # type: ignore
+            current_workspace.__dict__ = {}
 
     @classmethod
     def socket_name_for_id(cls, workspace_id: str) -> str:
@@ -284,3 +301,12 @@ class Workspace:
 
     def try_repair(self) -> Any:
         return self._channel.try_repair()
+
+    def make_current(self) -> 'Workspace':
+        current_workspace.__class__ = Workspace
+        current_workspace.__dict__ = self.__dict__
+        return self
+
+    @property
+    def is_current(self) -> bool:
+        return current_workspace.id == self.id
