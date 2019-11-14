@@ -5,7 +5,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _installName = strcat(_moduleFolder "client/definitions.txt")
-    _executable = strcat("python '" _baseName "py'")
+    _executable = strcat("'" _baseName "py'")
     _logName = strcat(_baseName "py.log")
 
     putd('pyDumpFunctionDefinitions nil)
@@ -170,7 +170,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
     )
 
     putd('pyStartServer nil)
-    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil) (timeout nil))
+    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil) (timeout nil) (python "python"))
 
         if(pyStartServer.ipc != nil then
             fprintf(stderr, "server is already running\n")
@@ -190,6 +190,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
                     if(timeout != nil then
                         executableWithArgs = sprintf(nil "%s --timeout %L" executableWithArgs timeout)
                     )
+                    executableWithArgs = sprintf(nil "'%s' %s" python executableWithArgs)
 
                     pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")
                     pyStartServer.file = socketFile
@@ -210,7 +211,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
     pyStartServer.exe = _executable
 
     printf("Available commands:\n")
-    printf("\tpyStartServer ?id \"default\" ?logLevel \"WARNING\" ?singleMode nil ?timeout nil\n")
+    printf("\tpyStartServer ?id \"default\" ?logLevel \"WARNING\" ?singleMode nil ?timeout nil ?python "python"\n")
     printf("\tpyKillServer\n")
     printf("\tpyReloadScript\n")
     printf("\tpyShowLog [numberOfLines]\n")
