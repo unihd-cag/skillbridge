@@ -1,11 +1,14 @@
 from os import chdir
 
-from .client.workspace import Workspace
+from .client.workspace import Workspace, current_workspace
 from .client.translator import ParseError
 from .client.hints import Var, Symbol
 
 __version__ = '1.0.2'
-__all__ = ['Workspace', 'Var', 'ParseError', 'Symbol', 'generate_static_completion']
+__all__ = [
+    'Workspace', 'Var', 'ParseError', 'Symbol',
+    'generate_static_completion', 'current_workspace'
+]
 
 
 def generate_static_completion() -> None:
