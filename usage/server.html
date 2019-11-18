@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>The Python Server &#8212; Python-Skill Bridge 1.0.2 documentation</title>
+    <title>The Python Server &#8212; Python-Skill Bridge 1.0.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,11 +34,14 @@
             
   <div class="section" id="the-python-server">
 <span id="server"></span><h1>The Python Server<a class="headerlink" href="#the-python-server" title="Permalink to this headline">¶</a></h1>
-<p>Initially the server must be started by loading the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>.</p>
+<p>Initially the server script must be run by loading the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>.</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-SKILL-IPC-SCRIPT&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>After that, these management commands are available in the Skill console.</p>
 <dl class="function">
 <dt id="pyStartServer">
-<code class="sig-name descname">pyStartServer</code><span class="sig-paren">(</span><em class="sig-param">id=&quot;default&quot; logLevel=&quot;WARNING&quot; singleMode=nil</em><span class="sig-paren">)</span><a class="headerlink" href="#pyStartServer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pyStartServer</code><span class="sig-paren">(</span><em class="sig-param">id=&quot;default&quot; logLevel=&quot;WARNING&quot; singleMode=nil timeout=nil python=&quot;python&quot;</em><span class="sig-paren">)</span><a class="headerlink" href="#pyStartServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>This starts the python server. If you are only running a single instance of
 Virtuoso you can use the default id. For more instances, each server needs its own
 id.</p>
@@ -62,6 +65,44 @@ access the server. This will lead to strange errors, where variables don’t
 contain what you initially assigned to them.</p>
 <p>In order to stay safe: <strong>never</strong> interleave commands from two different
 connections.</p>
+</div>
+<p>With the <code class="docutils literal notranslate"><span class="pre">timeout</span></code> parameter you can control how long the server will wait for
+the Skill code to finish. <code class="docutils literal notranslate"><span class="pre">nil</span></code> means: wait forever, setting it to a number will
+wait at most that number as seconds.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Whenever a timeout occurs the python client and the Skill server are out of sync.
+You must restart the Skill server before you can continue.</p>
+</div>
+<p>The default python interpreter that is used to start the server is <code class="docutils literal notranslate"><span class="pre">&quot;python&quot;</span></code>. If your
+interpreter is called differently (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;python3.6&quot;</span></code>) you can pass its name with the
+<code class="docutils literal notranslate"><span class="pre">python</span></code> parameter. Your specified interpreter does not need the <code class="docutils literal notranslate"><span class="pre">skillbridge</span></code> package.
+The only requirement is <code class="docutils literal notranslate"><span class="pre">python&gt;=3.6</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameters are marked with <code class="docutils literal notranslate"><span class="pre">&#64;key</span></code> which means that it is only possible
+to change their default value by explicitly naming them when calling the function.</p>
+<p>Here are a few examples:</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; only change the log level to &quot;INFO&quot;</span>
+<span class="nv">pyStartServer</span> <span class="nv">?logLevel</span> <span class="s">&quot;INFO&quot;</span>
+
+<span class="c1">; only change the server id to &quot;foo&quot;</span>
+<span class="nv">pyStartServer</span> <span class="nv">?id</span> <span class="s">&quot;foo&quot;</span>
+
+<span class="c1">; change both server id and log level</span>
+<span class="nv">pyStartServer</span> <span class="nv">?id</span> <span class="s">&quot;foo&quot;</span> <span class="nv">?logLevel</span> <span class="s">&quot;INFO&quot;</span>
+
+<span class="c1">; same as above, the order does not matter</span>
+<span class="nv">pyStartServer</span> <span class="nv">?logLevel</span> <span class="s">&quot;INFO&quot;</span> <span class="nv">?id</span> <span class="s">&quot;foo&quot;</span>
+
+<span class="c1">; this tells the server to wait at most 10.5 seconds</span>
+<span class="c1">; before sending a timeout error</span>
+<span class="nv">pyStartServer</span> <span class="nv">?timeout</span> <span class="mf">10.5</span>
+
+<span class="c1">; use a custom interpreter path</span>
+<span class="nv">pyStartServer</span> <span class="nv">?python</span> <span class="s">&quot;python3.6&quot;</span>
+</pre></div>
+</div>
 </div>
 </dd></dl>
 
@@ -88,6 +129,14 @@ Skill script. Normally this function would not be used.</p>
 python server. The parameter <code class="docutils literal notranslate"><span class="pre">numberOfLines</span></code> controls
 how many lines will be printed. It always refers to the <strong>last</strong>
 <code class="docutils literal notranslate"><span class="pre">numberOfLines</span></code> lines.</p>
+<p>Example:</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; show the last 10 lines of the log file</span>
+<span class="nv">pyShowLog</span>
+
+<span class="c1">; show the last 20 lines of the log file</span>
+<span class="nv">pyShowLog</span> <span class="mi">20</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -99,6 +148,15 @@ module to generate the mapping of the global functions.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">filename</span></code> is set to the special value <code class="docutils literal notranslate"><span class="pre">&quot;&lt;install&gt;&quot;</span></code> then the file
 will be placed inside the python module ready to be used. This command
 must be executed once before you can use the python module.</p>
+<p>Example:</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; install the function definitions</span>
+<span class="c1">; i.e. place them where the skillbridge needs them to be</span>
+<span class="nv">pyDumpFunctionDefinitions</span> <span class="s">&quot;&lt;install&gt;&quot;</span>
+
+<span class="c1">; dump them to a specific file (useful if you want to inspect the definitions)</span>
+<span class="nv">pyDumpFunctionDefinitions</span> <span class="s">&quot;~/dump.txt&quot;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

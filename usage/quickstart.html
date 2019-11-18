@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Quickstart &#8212; Python-Skill Bridge 1.0.2 documentation</title>
+    <title>Quickstart &#8212; Python-Skill Bridge 1.0.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,6 +46,27 @@
 </pre></div>
 </div>
 <p>Read more about <a class="reference internal" href="server.html#server"><span class="std std-ref">The Python Server</span></a>.</p>
+</div>
+<div class="section" id="one-time-setup">
+<h2>One-time setup<a class="headerlink" href="#one-time-setup" title="Permalink to this headline">¶</a></h2>
+<p>Before you can use the python library you must generate the list of function
+available in Skill. Type this once into the Skill console,
+after you loaded the Skill script.</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyDumpFunctionDefinitions</span> <span class="s">&quot;&lt;install&gt;&quot;</span>
+</pre></div>
+</div>
+<p>After that you can generate the static completion stub file. That is useful
+for IDEs like PyCharm. Type this once into a terminal after you generated the
+function definitions.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python -m skillbridge -g
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generating the static completion stub files requires a tool called <code class="docutils literal notranslate"><span class="pre">stubgen</span></code>.
+You can install it alongside the python static type check <code class="docutils literal notranslate"><span class="pre">mypy</span></code> by typing
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">mypy</span></code> into your shell.</p>
+</div>
 </div>
 <div class="section" id="connecting-to-the-server">
 <h2>Connecting to the Server<a class="headerlink" href="#connecting-to-the-server" title="Permalink to this headline">¶</a></h2>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Basic Examples &#8212; Python-Skill Bridge 1.0.2 documentation</title>
+    <title>Basic Examples &#8212; Python-Skill Bridge 1.0.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,6 +34,17 @@
             
   <div class="section" id="basic-examples">
 <span id="basic"></span><h1>Basic Examples<a class="headerlink" href="#basic-examples" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Workspace</span>
+
+<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="n">cell_view</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">cell_view</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">cell_view</span><span class="o">.</span><span class="n">b_box</span><span class="p">)</span>
+
+<span class="n">cell_view</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">open_cell_view</span><span class="p">(</span><span class="s2">&quot;lib&quot;</span><span class="p">,</span> <span class="s2">&quot;cell_name&quot;</span><span class="p">,</span> <span class="s2">&quot;view_name&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>Accessing the currently open edit cell view</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cell_view</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
 </pre></div>
