@@ -1,6 +1,7 @@
-from socket import socket, SOCK_STREAM, AF_UNIX
+from socket import socket, SOCK_STREAM, AF_INET
 from select import select
-from typing import Iterable, Union, Any
+from typing import Iterable, Union, Any, Type
+from sys import platform
 
 
 class Channel:
@@ -34,28 +35,42 @@ class Channel:
             pass
 
 
-class UnixChannel(Channel):
-    address_family = AF_UNIX
+class TcpChannel(Channel):
+    address_family = AF_INET
     socket_kind = SOCK_STREAM
 
-    def __init__(self, filename: str):
+    def __init__(self, address: Any):
         super().__init__(1_000_000)
 
         self.connected = False
-        self.address = filename
-        self.socket = self.connect()
+        self.address = self.create_address(address)
+        self.socket = self.start()
 
-    def connect(self) -> socket:
-        s = socket(self.address_family, self.socket_kind)
-        s.settimeout(1)
-        s.connect(self.address)
-        s.settimeout(None)
+    @staticmethod
+    def create_address(id_: Any) -> Any:
+        raise NotImplementedError
+
+    def start(self) -> socket:
+        sock = self.create_socket()
+        self.configure(sock)
+        return self.connect(sock)
+
+    def create_socket(self) -> socket:
+        return socket(self.address_family, self.socket_kind)
+
+    def configure(self, _: socket) -> None:
+        pass
+
+    def connect(self, sock: socket) -> socket:
+        sock.settimeout(1)
+        sock.connect(self.address)
+        sock.settimeout(None)
         self.connected = True
-        return s
+        return sock
 
     def reconnect(self) -> None:
         self.socket.close()
-        self.socket = self.connect()
+        self.socket = self.start()
 
     def _receive_all(self, remaining: int) -> Iterable[bytes]:
         while remaining:
@@ -136,3 +151,34 @@ class UnixChannel(Channel):
                 self.socket.recv(length)
             else:
                 break
+
+
+if platform == 'win32':
+    def create_channel_class() -> Type[TcpChannel]:
+        class WindowsChannel(TcpChannel):
+            def configure(self, sock: socket) -> None:
+                try:
+                    from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
+                    sock.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore
+                except ImportError:
+                    pass
+
+            @staticmethod
+            def create_address(id_: Any) -> Any:
+                port = 7777 if id_ is None else id_
+                return 'localhost', port
+
+        return WindowsChannel
+else:
+    def create_channel_class() -> Type[TcpChannel]:
+        from socket import AF_UNIX
+
+        class UnixChannel(TcpChannel):
+            address_family = AF_UNIX
+
+            @staticmethod
+            def create_address(id_: Any) -> Any:
+                id_ = 'default' if id_ is None else id_
+                return f'/tmp/skill-server-{id_}.sock'
+
+        return UnixChannel

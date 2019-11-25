@@ -25,7 +25,7 @@ class Virtuoso(Thread):
     def wait_until_ready(self):
         while not self.running:
             if not self.should_run:
-                raise RuntimeError("could not start server")
+                raise RuntimeError(f"could not start server:\n {self.server.stdout.read()}")
 
     def _create_subprocess(self):
         script = python_server.__file__
@@ -35,12 +35,11 @@ class Virtuoso(Thread):
             stdin=slave, stdout=PIPE, stderr=STDOUT,
             universal_newlines=True
         )
-
         self.pin = fdopen(master, 'w')
 
     def _wait_for_notification(self):
         read = self.read()
-        assert read == 'running', f"expected 'running', got {read!r}"
+        assert read == 'running', f"expected 'running', got {self.server.stdout.read()}"
 
     def run(self):
         try:

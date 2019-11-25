@@ -5,7 +5,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _installName = strcat(_moduleFolder "client/definitions.txt")
-    _executable = strcat("'" _baseName "py'")
+    _executable = strcat("\"" _baseName "py\"")
     _logName = strcat(_baseName "py.log")
 
     putd('pyDumpFunctionDefinitions nil)
@@ -104,15 +104,13 @@ let((_filename _baseName _moduleFolder _installName _logName)
 
     putd('__pyOnError nil)
     defun(__pyOnError (id data)
-        fprintf(stderr "error %L\n" data)
+        printf("ERROR %s\n" data)
     )
 
     putd('__pyOnFinish nil)
     defun(__pyOnFinish (id data)
         printf("server was stopped with code %L\n" data)
-        deleteFile(pyStartServer.file)
         pyStartServer.ipc = nil
-        remExitProc('__pyDeleteSocketOnExit)
     )
 
     putd('__pyPropertyListToPython nil)
@@ -132,13 +130,17 @@ let((_filename _baseName _moduleFolder _installName _logName)
         let((repr variableName split objectType address)
             repr = sprintf(nil "%L" thing)
             if(rexExecute(repr) then
-                split = parseString(repr ":")
+                split = buildString(parseString(repr "_") "")
+                split = buildString(parseString(split "@") ":")
+                split = parseString(split ":")
                 objectType = car(split)
                 address = cadr(split)
                 variableName = sprintf(nil "__py_%s_%s" objectType address)
                 set(stringToSymbol(variableName) thing)
                 sprintf(nil "Remote(%L)" variableName)
-            else sprintf(nil "error(%L)" repr)
+            else
+                sprintf(nil "error(%L)" repr)
+                printf("I COULD NOT PARSE %L\n" repr)
             )
         )
     )
@@ -164,7 +166,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
             else __pyListToPython(thing)
             )
         else
-        rexCompile("^[a-zA-Z]+:[x0-9a-f]+$")
+        rexCompile("^[_a-zA-Z]+[:@][x0-9a-fA-F]+$")
         __pySaveToVariableAndReturn(thing)
         )))))
     )
@@ -176,38 +178,21 @@ let((_filename _baseName _moduleFolder _installName _logName)
             fprintf(stderr, "server is already running\n")
             nil
         else
-            let((executableWithArgs socketFile)
-                socketFile = sprintf(nil "/tmp/skill-server-%L.sock"  id)
-
-                if(isFileName(socketFile) then
-                    fprintf(stderr, "Server cannot start, because %s already exists. Delete the file if you are sure that it is not in use anymore.", socketFile)
-                    nil
-                else
-                    executableWithArgs = buildString(list(pyStartServer.exe socketFile logLevel))
-                    if(singleMode != nil then
-                        executableWithArgs = strcat(executableWithArgs "--single")
-                    )
-                    if(timeout != nil then
-                        executableWithArgs = sprintf(nil "%s --timeout %L" executableWithArgs timeout)
-                    )
-                    executableWithArgs = sprintf(nil "'%s' %s" python executableWithArgs)
-
-                    pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")
-                    pyStartServer.file = socketFile
-                    regExitBefore('__pyDeleteSocketOnExit)
-                    t
-                )
+            executableWithArgs = sprintf(nil "%s %L %s" pyStartServer.exe id logLevel)
+            if(singleMode != nil then
+                executableWithArgs = strcat(executableWithArgs "--single")
             )
+            if(timeout != nil then
+                executableWithArgs = sprintf(nil "%s --timeout %L" executableWithArgs timeout)
+            )
+            executableWithArgs = sprintf(nil "\"%s\" %s" python executableWithArgs)
+
+            pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")           
+            t
         )
     )
 
-    putd('__pyDeleteSocketOnExit nil)
-    defun(__pyDeleteSocketOnExit (@rest args)
-        deleteFile(pyStartServer.file)
-    )
-
     pyStartServer.ipc = nil
-    pyStartServer.file = nil
     pyStartServer.exe = _executable
 
     printf("Available commands:\n")
