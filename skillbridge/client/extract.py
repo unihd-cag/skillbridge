@@ -54,7 +54,7 @@ def parse_all_function() -> List[Function]:
             return list(_parse_all_functions(fin))
     except FileNotFoundError:
         warn("Function definitions are not generated"
-             ' Run `dumpFunctionDefinitions "<install>"`'
+             ' Run `pyDumpFunctionDefinitions "<install>"`'
              ' first, before using this module.', UserWarning, stacklevel=7)
         return []
 
