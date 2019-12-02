@@ -1,21 +1,31 @@
 from typing import Optional
+from os import unlink
 
 from pytest import fixture, raises
 
 from skillbridge.client.objects import RemoteObject
 from tests.virtuoso import Virtuoso
 
-from skillbridge.client.channel import UnixChannel, Channel
+from skillbridge.client.channel import Channel, create_channel_class
 from skillbridge import Workspace, current_workspace
 
 
 WORKSPACE_ID = '__test__'
-UNIX_SOCKET = Workspace.socket_name_for_id(WORKSPACE_ID)
+channel_class = create_channel_class()
+
+
+def _cleanup():
+    path = channel_class.create_address(WORKSPACE_ID)
+    if isinstance(path, str):
+        try:
+            unlink(path)
+        except FileNotFoundError:
+            pass
 
 
 @fixture(scope="session")
 def server() -> Virtuoso:
-    v = Virtuoso(UNIX_SOCKET)
+    v = Virtuoso(WORKSPACE_ID)
     v.start()
     v.wait_until_ready()
     yield v
@@ -24,7 +34,7 @@ def server() -> Virtuoso:
 
 @fixture
 def channel() -> Channel:
-    c = UnixChannel(UNIX_SOCKET)
+    c = channel_class(WORKSPACE_ID)
     try:
         yield c
     finally:
@@ -48,15 +58,15 @@ def ws() -> Workspace:
 
 def test_channel_cannot_connect_without_server():
     with raises(Exception):
-        UnixChannel(UNIX_SOCKET)
+        channel_class(WORKSPACE_ID)
 
 
 def test_reconnect():
-    first = Virtuoso(UNIX_SOCKET)
+    first = Virtuoso(WORKSPACE_ID)
     first.start()
     first.wait_until_ready()
 
-    c = UnixChannel(UNIX_SOCKET)
+    c = channel_class(WORKSPACE_ID)
     first.answer_success('pong')
     try:
         assert c.send('ping') == 'pong\n'
@@ -64,7 +74,7 @@ def test_reconnect():
     finally:
         first.stop()
 
-    second = Virtuoso(UNIX_SOCKET)
+    second = Virtuoso(WORKSPACE_ID)
     second.start()
     second.wait_until_ready()
 
@@ -78,7 +88,7 @@ def test_reconnect():
 
 
 def test_channel_connects(server):
-    c = UnixChannel(UNIX_SOCKET)
+    c = channel_class(WORKSPACE_ID)
     assert c.connected
     c.close()
 

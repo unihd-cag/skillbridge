@@ -7,9 +7,9 @@ dist/*
 skillbridge.egg-info/*
 
 .idea/*
-.coverage
+**/.coverage*
 **/.hypothesis/*
-.mypy_cache/*
+**/.mypy_cache/*
 **/htmlcov/*
 
 env/*
@@ -23,6 +23,6 @@ skillbridge/client/workspace.pyi
 
 test.py
 test.ipynb
-.ipynb_checkpoints/*
+**/.ipynb_checkpoints/*
 
 *.so

@@ -1,9 +1,9 @@
-from typing import Dict, Optional, Callable, Any, NoReturn
+from typing import Dict, Optional, Callable, Any, NoReturn, Union
 from inspect import signature
 from textwrap import dedent
 
 from .hints import Function, SkillCode
-from .channel import Channel, UnixChannel
+from .channel import Channel, create_channel_class
 from .functions import FunctionCollection
 from .extract import functions_by_prefix
 from .objects import RemoteObject
@@ -12,7 +12,8 @@ from .translator import snake_to_camel
 
 __all__ = ['Workspace', 'current_workspace']
 
-_open_workspaces: Dict[str, 'Workspace'] = {}
+WorkspaceId = Union[None, str, int]
+_open_workspaces: Dict[WorkspaceId, 'Workspace'] = {}
 
 
 class _NoWorkspace:
@@ -37,7 +38,6 @@ def _register_well_known_functions(ws: 'Workspace') -> None:
 
 
 class Workspace:
-    SOCKET_TEMPLATE = '/tmp/skill-server-{}.sock'
     _var_counter = 0
 
     abe: FunctionCollection
@@ -169,7 +169,7 @@ class Workspace:
     xpc: FunctionCollection
     xst: FunctionCollection
 
-    def __init__(self, channel: Channel, id_: str) -> None:
+    def __init__(self, channel: Channel, id_: WorkspaceId) -> None:
         definitions = functions_by_prefix()
 
         self._id = id_
@@ -186,7 +186,7 @@ class Workspace:
         _register_well_known_functions(self)
 
     @property
-    def id(self) -> str:
+    def id(self) -> WorkspaceId:
         return self._id
 
     def flush(self) -> None:
@@ -211,11 +211,12 @@ class Workspace:
             ip.Completer.greedy = True
 
     @classmethod
-    def open(cls, workspace_id: str = 'default') -> 'Workspace':
+    def open(cls, workspace_id: WorkspaceId = None) -> 'Workspace':
         if workspace_id not in _open_workspaces:
 
             try:
-                channel = UnixChannel(cls.socket_name_for_id(workspace_id))
+                channel_class = create_channel_class()
+                channel = channel_class(workspace_id)
             except FileNotFoundError:
                 raise RuntimeError("No server found. Is it running?") from None
 
@@ -229,10 +230,6 @@ class Workspace:
         if current_workspace.id == self.id:
             current_workspace.__class__ = _NoWorkspace  # type: ignore
             current_workspace.__dict__ = {}
-
-    @classmethod
-    def socket_name_for_id(cls, workspace_id: str) -> str:
-        return cls.SOCKET_TEMPLATE.format(workspace_id)
 
     @property
     def max_transmission_length(self) -> int:

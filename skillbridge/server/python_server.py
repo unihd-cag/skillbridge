@@ -1,11 +1,11 @@
-from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
-from logging import getLogger, basicConfig, WARNING, Logger
-from sys import stdout, stdin, argv
-from select import select
 from os import unlink
-from typing import Iterable, Optional
+from socketserver import StreamRequestHandler, ThreadingMixIn, BaseServer
+from socketserver import BaseRequestHandler
+from logging import getLogger, basicConfig, WARNING
+from sys import stdout, stdin, argv, platform, stderr
+from select import select
+from typing import Iterable, Optional, Type
 from argparse import ArgumentParser
-from atexit import register as atext_register
 
 import logging
 
@@ -25,7 +25,7 @@ def send_to_skill(data: str) -> None:
 
 
 def read_from_skill(timeout: Optional[float]) -> str:
-    readable, _, _ = select([stdin], [], [], timeout)
+    readable = data_ready(timeout)
 
     if readable:
         return stdin.readline()
@@ -34,12 +34,67 @@ def read_from_skill(timeout: Optional[float]) -> str:
     return 'failure <timeout>'
 
 
-class SingleUnixServer(UnixStreamServer):
-    request_queue_size = 0
+def create_windows_server_class(single: bool) -> Type[BaseServer]:
+    from socketserver import TCPServer
+
+    class SingleWindowsServer(TCPServer):
+        request_queue_size = 0
+        allow_reuse_address = True
+
+        def __init__(self, port: int, handler: Type[BaseRequestHandler]) -> None:
+            super().__init__(('localhost', port), handler)
+
+        def server_bind(self) -> None:
+            try:
+                from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
+                self.socket.ioctl(SIO_LOOPBACK_FAST_PATH, True)
+            except ImportError:
+                pass
+            super().server_bind()
+
+    class ThreadingWindowsServer(ThreadingMixIn, SingleWindowsServer):
+        pass
+
+    return SingleWindowsServer if single else ThreadingWindowsServer
 
 
-class ThreadingUnixServer(ThreadingMixIn, UnixStreamServer):
-    pass
+def data_windows_ready(timeout: Optional[float]) -> bool:
+    return True
+
+
+def create_unix_server_class(single: bool) -> Type[BaseServer]:
+    from socketserver import UnixStreamServer
+
+    class SingleUnixServer(UnixStreamServer):
+        request_queue_size = 0
+        allow_reuse_address = True
+
+        def __init__(self, file: str, handler: Type[BaseRequestHandler]) -> None:
+            self.path = f'/tmp/skill-server-' + file + '.sock'
+            try:
+                unlink(self.path)
+            except FileNotFoundError:
+                pass
+            super().__init__(self.path, handler)
+
+    class ThreadingUnixServer(ThreadingMixIn, SingleUnixServer):
+        pass
+
+    return SingleUnixServer if single else ThreadingUnixServer
+
+
+def data_unix_ready(timeout: Optional[float]) -> bool:
+    readable, _, _ = select([stdin], [], [], timeout)
+
+    return bool(readable)
+
+
+if platform == 'win32':
+    data_ready = data_windows_ready
+    create_server_class = create_windows_server_class
+else:
+    create_server_class = create_unix_server_class
+    data_ready = data_unix_ready
 
 
 class Handler(StreamRequestHandler):
@@ -91,27 +146,15 @@ class Handler(StreamRequestHandler):
             client_is_connected = self.try_handle_one_request()
 
 
-def cleanup(socket: str, log: Optional[Logger] = None) -> None:
-    if log:
-        log.info(f"server {socket} was killed")
-    try:
-        unlink(socket)
-    except FileNotFoundError:
-        pass
-
-
-def main(socket: str, log_level: str, notify: bool, single: bool,
+def main(id: str, log_level: str, notify: bool, single: bool,
          timeout: Optional[float]) -> None:
     logger.setLevel(getattr(logging, log_level))
 
-    atext_register(lambda: cleanup(socket, logger))
-    cleanup(socket)
+    server_class = create_server_class(single)
 
-    server_class = SingleUnixServer if single else ThreadingUnixServer
-
-    with server_class(socket, Handler) as server:
+    with server_class(id, Handler) as server:
         server.skill_timeout: Optional[float] = timeout  # type: ignore
-        logger.info(f"starting server socket={socket} log={log_level} notify={notify} "
+        logger.info(f"starting server id={id} log={log_level} notify={notify} "
                     f"single={single} timeout={timeout}")
         if notify:
             send_to_skill('running')
@@ -121,7 +164,10 @@ def main(socket: str, log_level: str, notify: bool, single: bool,
 if __name__ == '__main__':
     log_levels = "DEBUG WARNING INFO ERROR CRITICAL FATAL".split()
     argument_parser = ArgumentParser(argv[0])
-    argument_parser.add_argument('socket')
+    if platform == 'win32':
+        argument_parser.add_argument('id', type=int)
+    else:
+        argument_parser.add_argument('id')
     argument_parser.add_argument('log_level', choices=log_levels)
     argument_parser.add_argument('--notify', action='store_true')
     argument_parser.add_argument('--single', action='store_true')
@@ -129,7 +175,11 @@ if __name__ == '__main__':
 
     ns = argument_parser.parse_args()
 
+    if platform == 'win32' and ns.timeout is not None:
+        print("Timeout is not possible on Windows", file=stderr)
+        exit(1)
+
     try:
-        main(ns.socket, ns.log_level, ns.notify, ns.single, ns.timeout)
+        main(ns.id, ns.log_level, ns.notify, ns.single, ns.timeout)
     except KeyboardInterrupt:
         pass

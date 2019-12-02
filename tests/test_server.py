@@ -1,13 +1,16 @@
+from os import unlink
 from threading import Thread
 from time import sleep
+import asyncio
 
 from pytest import fixture
 
 from skillbridge.server import python_server
-from skillbridge.client.channel import UnixChannel
+from skillbridge.client.channel import create_channel_class
 
 
-UNIX_SOCKET = '/tmp/skill-test-socket.sock'
+WORKSPACE_ID = '__test2__'
+channel_class = create_channel_class()
 
 
 class Redirect:
@@ -36,7 +39,8 @@ class Server(Thread):
         super().__init__(daemon=True)
 
     def run(self):
-        python_server.main(UNIX_SOCKET, "DEBUG", notify=True, single=False, timeout=None)
+        co = python_server.main(WORKSPACE_ID, "DEBUG", notify=True, single=False, timeout=None)
+        asyncio.run(co)
 
 
 @fixture
@@ -52,6 +56,7 @@ def redirect():
     finally:
         python_server.send_to_skill = send
         python_server.read_from_skill = read
+        unlink(channel_class.create_address(WORKSPACE_ID))
 
 
 def test_server_notifies(redirect):
@@ -60,7 +65,7 @@ def test_server_notifies(redirect):
     sleep(2)
     assert redirect.pop() == 'running', "Server didn't start in time"
 
-    c = UnixChannel(UNIX_SOCKET)
+    c = channel_class(WORKSPACE_ID)
     c.close()
 
     s.join(0.1)
@@ -71,7 +76,7 @@ def test_one_request(redirect):
     s.start()
     sleep(2)
 
-    c = UnixChannel(UNIX_SOCKET)
+    c = channel_class(WORKSPACE_ID)
     redirect.prepare('success pong')
     response = c.send('ping')
     assert response == 'pong'
