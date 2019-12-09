@@ -14,11 +14,14 @@ def _raise_error(message: str) -> NoReturn:
 
 
 def skill_value_to_python(string: str, replicate: Replicator) -> Skill:
-    return eval(string, {  # type: ignore
-        'Remote': replicate,
-        'Symbol': Symbol,
-        'error': _raise_error
-    })
+    return eval(
+        string,
+        {  # type: ignore
+            'Remote': replicate,
+            'Symbol': Symbol,
+            'error': _raise_error,
+        },
+    )
 
 
 def snake_to_camel(snake: str) -> str:
@@ -41,8 +44,7 @@ def python_value_to_skill(value: Skill) -> SkillCode:
         pass
 
     if isinstance(value, dict):
-        items = ' '.join(f"'{key} {python_value_to_skill(value)}"
-                         for key, value in value.items())
+        items = ' '.join(f"'{key} {python_value_to_skill(value)}" for key, value in value.items())
         return SkillCode(f'list(nil {items})')
 
     if value is False or value is None:
@@ -65,15 +67,12 @@ def python_value_to_skill(value: Skill) -> SkillCode:
 def _not_implemented(string: str) -> Replicator:
     def inner(_name: str) -> NoReturn:
         raise NotImplementedError(f"Failed to parse skill literal {string!r}")
+
     return inner
 
 
 def skill_help(obj: SkillCode) -> SkillCode:
-    parts = ' '.join((
-        f'{obj}->?',
-        f'{obj}->systemHandleNames',
-        f'{obj}->userHandleNames',
-    ))
+    parts = ' '.join((f'{obj}->?', f'{obj}->systemHandleNames', f'{obj}->userHandleNames'))
     code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
     return SkillCode(code)
 

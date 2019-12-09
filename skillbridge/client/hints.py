@@ -4,15 +4,21 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing_extensions import Protocol
 else:
+
     class Protocol:
         pass
 
 
 __all__ = [
-    'Number', 'Symbol', 'Var',
-    'SkillComponent', 'SkillCode', 'Skill',
+    'Number',
+    'Symbol',
+    'Var',
+    'SkillComponent',
+    'SkillCode',
+    'Skill',
     'Replicator',
-    'Definition', 'Function'
+    'Definition',
+    'Function',
 ]
 
 Number = Union[int, float]
@@ -30,13 +36,11 @@ Definition = List[Function]
 
 
 class SupportsReprSkill(Protocol):
-    def __repr_skill__(self) -> SkillCode: ...
+    def __repr_skill__(self) -> SkillCode:
+        ...
 
 
-Skill = Union[
-    SupportsReprSkill, Number, str, bool, None,
-    'SkillList', 'SkillDict', 'SkillTuple'
-]
+Skill = Union[SupportsReprSkill, Number, str, bool, None, 'SkillList', 'SkillDict', 'SkillTuple']
 Replicator = Callable[[str], Skill]
 
 

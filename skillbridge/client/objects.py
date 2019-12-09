@@ -23,7 +23,7 @@ def is_jupyter_magic(attribute: str) -> bool:
         '_repr_javascript_',
         '_rapped',
         '__wrapped__',
-        '__call__'
+        '__call__',
     }
     return attribute in ignore
 
