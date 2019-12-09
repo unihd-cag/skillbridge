@@ -27,6 +27,11 @@ config = dict(
     extras_require={
         'dev': dev_requirements
     },
+    entry_points={
+        'console_scripts': [
+            'skillbridge = skillbridge.__main__:main'
+        ]
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3",

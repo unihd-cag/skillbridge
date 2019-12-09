@@ -20,4 +20,6 @@ Source Installation
 Verify Installation
 ~~~~~~~~~~~~~~~~~~~
 
-``python -m skillbridge``
+``skillbridge``
+
+This should print the path to the Skill server script and the command to load it.

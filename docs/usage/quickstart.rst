@@ -17,7 +17,7 @@ You can obtain the correct path from the python library like this:
 
 .. code-block:: sh
 
-    python -m skillbridge
+    skillbridge
 
 
 Read more about :ref:`server`.
@@ -39,7 +39,7 @@ function definitions.
 
 .. code-block:: sh
 
-    python -m skillbridge -g
+    skillbridge -g
 
 
 .. note::
