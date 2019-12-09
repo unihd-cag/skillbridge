@@ -14,9 +14,9 @@ def _raise_error(message: str) -> NoReturn:
 
 
 def skill_value_to_python(string: str, replicate: Replicator) -> Skill:
-    return eval(
+    return eval(  # type: ignore
         string,
-        {  # type: ignore
+        {
             'Remote': replicate,
             'Symbol': Symbol,
             'error': _raise_error,
