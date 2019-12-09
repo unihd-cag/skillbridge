@@ -36,6 +36,7 @@ jobs:
 
     - name: Test with pytest
       run: |
+        cp tests/test_definitions.txt skillbridge/client/definitions.txt
         pip install pytest pytest-cov hypothesis
         pip install -e .
         pytest
