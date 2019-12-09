@@ -31,7 +31,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pip install pytest pytest-cov
+        pip install pytest pytest-cov hypothesis
         pip install -e .
         pytest
 
