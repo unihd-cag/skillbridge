@@ -18,7 +18,7 @@ def print_skill_script_location() -> None:
     print(f'load("{escaped}")')
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser('skillbridge', description="""
         Without arguments, prints the location of the skill script.
         The correct location is required for the load command.
