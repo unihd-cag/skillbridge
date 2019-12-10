@@ -47,6 +47,7 @@ def create_windows_server_class(single: bool) -> Type[BaseServer]:
         def server_bind(self) -> None:
             try:
                 from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
+
                 self.socket.ioctl(SIO_LOOPBACK_FAST_PATH, True)
             except ImportError:
                 pass
@@ -146,16 +147,17 @@ class Handler(StreamRequestHandler):
             client_is_connected = self.try_handle_one_request()
 
 
-def main(id: str, log_level: str, notify: bool, single: bool,
-         timeout: Optional[float]) -> None:
+def main(id: str, log_level: str, notify: bool, single: bool, timeout: Optional[float]) -> None:
     logger.setLevel(getattr(logging, log_level))
 
     server_class = create_server_class(single)
 
     with server_class(id, Handler) as server:
         server.skill_timeout: Optional[float] = timeout  # type: ignore
-        logger.info(f"starting server id={id} log={log_level} notify={notify} "
-                    f"single={single} timeout={timeout}")
+        logger.info(
+            f"starting server id={id} log={log_level} notify={notify} "
+            f"single={single} timeout={timeout}"
+        )
         if notify:
             send_to_skill('running')
         server.serve_forever()

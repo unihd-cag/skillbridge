@@ -267,7 +267,7 @@ class Workspace:
             function.__name__ + "(",
             *param_doc,
             f"=> {'nil' if s.return_annotation is None else s.return_annotation}",
-            ""
+            "",
         ]
 
         doc_string = '\n'.join(doc) + dedent(function.__doc__)

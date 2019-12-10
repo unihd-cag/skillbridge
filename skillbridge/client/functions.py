@@ -11,13 +11,10 @@ def name_without_prefix(name: str) -> str:
 
 
 class FunctionCollection:
-    def __init__(self, channel: Channel, definition: Definition, replicator: Replicator)\
-            -> None:
+    def __init__(self, channel: Channel, definition: Definition, replicator: Replicator) -> None:
         self._channel = channel
         self._replicate = replicator
-        self._definitions = {
-            name_without_prefix(func.name): func for func in definition
-        }
+        self._definitions = {name_without_prefix(func.name): func for func in definition}
 
     def __iadd__(self, func: Function) -> 'FunctionCollection':
         self._definitions[camel_to_snake(func.name)] = func

@@ -1,0 +1,60 @@
+name: Python package
+
+on: [push]
+
+jobs:
+  test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.7, 3.8, 3.6]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Check with black
+      run: |
+        pip install black
+        black skillbridge --line-length 100 --skip-string-normalization --check
+
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        flake8 --max-line-length=100 skillbridge
+
+    - name: Check with mypy
+      run: |
+        pip install mypy
+        mypy --strict skillbridge
+
+    - name: Test with pytest
+      run: |
+        cp tests/test_definitions.txt skillbridge/client/definitions.txt
+        pip install pytest pytest-cov hypothesis
+        pip install -e .
+        pytest
+
+  build-documentation:
+    name: Build Sphinx Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Build
+        run: |
+          pip install sphinx
+          cd docs
+          make html

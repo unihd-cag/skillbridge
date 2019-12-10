@@ -11,12 +11,20 @@ def print_skill_script_location() -> None:
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser('skillbridge', description="""
+    parser = ArgumentParser(
+        'skillbridge',
+        description="""
     Without arguments, prints the location of the skill script.
     The correct location is required for the load command.
-    """)
-    parser.add_argument('-g', '--generate', help="generate static completion file",
-                        action='store_true', default=False)
+    """,
+    )
+    parser.add_argument(
+        '-g',
+        '--generate',
+        help="generate static completion file",
+        action='store_true',
+        default=False,
+    )
     args = parser.parse_args()
 
     if args.generate:

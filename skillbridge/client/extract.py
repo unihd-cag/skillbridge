@@ -53,9 +53,13 @@ def parse_all_function() -> List[Function]:
         with open(definitions) as fin:
             return list(_parse_all_functions(fin))
     except FileNotFoundError:
-        warn("Function definitions are not generated"
-             ' Run `pyDumpFunctionDefinitions "<install>"`'
-             ' first, before using this module.', UserWarning, stacklevel=7)
+        warn(
+            "Function definitions are not generated"
+            ' Run `pyDumpFunctionDefinitions "<install>"`'
+            ' first, before using this module.',
+            UserWarning,
+            stacklevel=7,
+        )
         return []
 
 
@@ -63,16 +67,10 @@ def functions_by_prefix() -> Dict[str, List[Function]]:
     functions = parse_all_function()
     functions.sort()
 
-    return {
-        (prefix or '_'): list(group)
-        for prefix, group in groupby(functions, _extract_prefix)
-    }
+    return {(prefix or '_'): list(group) for prefix, group in groupby(functions, _extract_prefix)}
 
 
-TYPE_TO_KEY = {
-    'd': 'db',
-    'w': 'window'
-}
+TYPE_TO_KEY = {'d': 'db', 'w': 'window'}
 
 BORKED_DESCRIPTIONS = {
     'dbSetPinGroupGuideMinPinWidth',
@@ -82,7 +80,7 @@ BORKED_DESCRIPTIONS = {
     'hiRemoveNonRepeatPrefix',
     'leGetCoordinateForm',
     'leHiCreateGroup',
-    'leHiUngroup'
+    'leHiUngroup',
 }
 
 
@@ -96,7 +94,7 @@ def _receiver_type(func: Function) -> Optional[str]:
         return None
 
     index = description.index(func.name)
-    description = description[index + len(func.name):]
+    description = description[index + len(func.name) :]
     description = description.lstrip(' (')
 
     if description[0] in set('[{'):

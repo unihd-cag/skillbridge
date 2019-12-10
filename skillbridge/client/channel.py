@@ -107,9 +107,11 @@ class TcpChannel(Channel):
         try:
             received_length_raw = self.socket.recv(10)
         except KeyboardInterrupt:
-            raise RuntimeError("Receive aborted, you should restart the skill server or"
-                               " call `ws.try_repair()` if you are sure that the response"
-                               " will arrive.") from None
+            raise RuntimeError(
+                "Receive aborted, you should restart the skill server or"
+                " call `ws.try_repair()` if you are sure that the response"
+                " will arrive."
+            ) from None
 
         if not received_length_raw:
             raise RuntimeError("The server unexpectedly died")
@@ -120,8 +122,10 @@ class TcpChannel(Channel):
 
         if status == 'failure':
             if response == '<timeout>':
-                raise RuntimeError("Timeout: you should restart the skill server and "
-                                   "increase the timeout `pyStartServer ?timeout X`.")
+                raise RuntimeError(
+                    "Timeout: you should restart the skill server and "
+                    "increase the timeout `pyStartServer ?timeout X`."
+                )
             raise RuntimeError(response)
         return response
 
@@ -154,11 +158,13 @@ class TcpChannel(Channel):
 
 
 if platform == 'win32':
+
     def create_channel_class() -> Type[TcpChannel]:
         class WindowsChannel(TcpChannel):
             def configure(self, sock: socket) -> None:
                 try:
                     from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
+
                     sock.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore
                 except ImportError:
                     pass
@@ -169,7 +175,10 @@ if platform == 'win32':
                 return 'localhost', port
 
         return WindowsChannel
+
+
 else:
+
     def create_channel_class() -> Type[TcpChannel]:
         from socket import AF_UNIX
 
