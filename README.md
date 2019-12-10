@@ -1,4 +1,4 @@
-# Python-Skill Bridge ![build](https://travis-ci.org/unihd-cag/skillbridge.svg?branch=master) ![codecov](https://codecov.io/gh/unihd-cag/skillbridge/branch/master/graph/badge.svg)
+# Python-Skill Bridge ![build](https://github.com/unihd-cag/simple-geometry/workflows/Python%20package/badge.svg)
 
 ### Prerequisites
 
