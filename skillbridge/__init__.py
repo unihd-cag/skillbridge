@@ -4,7 +4,7 @@ from .client.workspace import Workspace, current_workspace
 from .client.translator import ParseError
 from .client.hints import Var, Symbol
 
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 __all__ = [
     'Workspace',
     'Var',
