@@ -46,7 +46,7 @@ jobs:
           pip install setuptools wheel twine
 
       - name: Write version
-         run: python -c "print('__version__ =', repr('$GITHUB_REF'.split('/')[-1]))" > skillbridge/version.py
+        run: python -c "print('__version__ =', repr('$GITHUB_REF'.split('/')[-1]))" > skillbridge/version.py
 
       - name: Build and publish
         env:
