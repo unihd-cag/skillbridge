@@ -57,4 +57,5 @@ jobs:
         run: |
           pip install sphinx
           cd docs
+          make clean
           make html
