@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
 
-import skillbridge
-
+with open('skillbridge/version.py') as fin:
+    data = {}
+    exec(fin.read(), data)
+    version = data['__version__']
 
 with open('README.md') as fin:
     long_description = fin.read()
@@ -12,7 +14,7 @@ with open('dev-requirements.txt') as fin:
 
 config = dict(
     name="skillbridge",
-    version=skillbridge.__version__,
+    version=version,
     author="Niels Buwen",
     author_email="dev@niels-buwen.de",
     description="A seamless Python remote bridge to Cadence's Skill in Virtuoso",

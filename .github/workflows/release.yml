@@ -44,6 +44,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
+
+      - name: Write version
+         run: python -c "print('__version__ =', repr('$GITHUB_REF'.split('/')[-1]))" > skillbridge/version.py
+
       - name: Build and publish
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}

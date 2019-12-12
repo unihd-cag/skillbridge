@@ -1,13 +1,10 @@
 from sys import path
 path.insert(0, '..')
-import skillbridge
 
 
 project = 'Python-Skill Bridge'
 copyright = '2019, Niels Buwen'
 author = 'Niels Buwen'
-version = skillbridge.__version__
-release = version
 
 
 # -- General configuration ---------------------------------------------------
