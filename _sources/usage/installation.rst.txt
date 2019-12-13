@@ -20,4 +20,6 @@ Source Installation
 Verify Installation
 ~~~~~~~~~~~~~~~~~~~
 
-``python -m skillbridge``
+``skillbridge``
+
+This should print the help message of the ``skillbridge`` CLI tool.

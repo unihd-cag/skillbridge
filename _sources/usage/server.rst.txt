@@ -3,7 +3,8 @@
 The Python Server
 =================
 
-Initially the server script must be run by loading the ``python_server.il``.
+Initially the server script must be run by loading the ``python_server.il``. (Type ``skillbridge path``
+into your terminal to get the correct paths).
 
 .. code-block::
     lisp

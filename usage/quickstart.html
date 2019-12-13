@@ -42,7 +42,7 @@
 </pre></div>
 </div>
 <p>You can obtain the correct path from the python library like this:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python -m skillbridge
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>skillbridge path
 </pre></div>
 </div>
 <p>Read more about <a class="reference internal" href="server.html#server"><span class="std std-ref">The Python Server</span></a>.</p>
@@ -58,7 +58,7 @@ after you loaded the Skill script.</p>
 <p>After that you can generate the static completion stub file. That is useful
 for IDEs like PyCharm. Type this once into a terminal after you generated the
 function definitions.</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python -m skillbridge -g
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>skillbridge generate
 </pre></div>
 </div>
 <div class="admonition note">
@@ -66,6 +66,15 @@ function definitions.</p>
 <p>Generating the static completion stub files requires a tool called <code class="docutils literal notranslate"><span class="pre">stubgen</span></code>.
 You can install it alongside the python static type check <code class="docutils literal notranslate"><span class="pre">mypy</span></code> by typing
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">mypy</span></code> into your shell.</p>
+</div>
+<p>If you have another working installation of the <code class="docutils literal notranslate"><span class="pre">skillbridge</span></code> you can export its definitions
+and import them into your new installation</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># in the old environment</span>
+skillbridge <span class="nb">export</span> /absolute/path/to/temporary/file.txt
+
+<span class="c1"># in the new environment</span>
+skillbridge import /absolute/path/to/temporary/file.txt
+</pre></div>
 </div>
 </div>
 <div class="section" id="connecting-to-the-server">
