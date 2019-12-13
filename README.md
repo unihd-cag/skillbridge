@@ -30,7 +30,7 @@ Add the `--user`  option if you don't want to install it systemwide.
 Before you can use the Skill bridge you must generate the function definitions from
 Virtuoso via the Skill console.
 
-1. Type `skillbridge` into your shell to acquire the correct `PATH-TO-IPC-SERVER`
+1. Type `skillbridge path` into your shell to acquire the correct `PATH-TO-IPC-SERVER`
 2. Open Virtuoso
 2. Type these commands into the Skill console
     - `load("PATH-TO-IPC-SERVER")`
@@ -41,7 +41,7 @@ Virtuoso via the Skill console.
 After that you can also generate the static completion stub files. This is useful for code completion
 in certain IDEs (e.g. PyCharm)
 
-- Type `python -m skillbridge -g` into your shell.
+- Type `skillbridge generate` into your shell.
 
 ### Updating
 

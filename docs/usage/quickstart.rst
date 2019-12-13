@@ -17,7 +17,7 @@ You can obtain the correct path from the python library like this:
 
 .. code-block:: sh
 
-    skillbridge
+    skillbridge path
 
 
 Read more about :ref:`server`.
@@ -39,7 +39,7 @@ function definitions.
 
 .. code-block:: sh
 
-    skillbridge -g
+    skillbridge generate
 
 
 .. note::
@@ -47,6 +47,19 @@ function definitions.
     Generating the static completion stub files requires a tool called ``stubgen``.
     You can install it alongside the python static type check ``mypy`` by typing
     ``pip install mypy`` into your shell.
+
+
+If you have another working installation of the ``skillbridge`` you can export its definitions
+and import them into your new installation
+
+.. code-block:: sh
+
+    # in the old environment
+    skillbridge export /absolute/path/to/temporary/file.txt
+
+    # in the new environment
+    skillbridge import /absolute/path/to/temporary/file.txt
+
 
 Connecting to the Server
 ------------------------

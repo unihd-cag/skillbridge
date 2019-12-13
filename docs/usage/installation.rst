@@ -22,4 +22,4 @@ Verify Installation
 
 ``skillbridge``
 
-This should print the path to the Skill server script and the command to load it.
+This should print the help message of the ``skillbridge`` CLI tool.
