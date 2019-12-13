@@ -8,8 +8,8 @@ from skillbridge.client.translator import Symbol
 
 
 def test_reports_skill_server_correctly():
-    out = check_output('python -m skillbridge'.split())
-    assert exists(out.strip())
+    out = check_output('python -m skillbridge path'.split())
+    assert exists(out.splitlines()[1].strip())
 
 
 def test_cannot_use_abc():
