@@ -65,9 +65,12 @@ def import_definitions(path: Path) -> None:
 
 
 def main() -> None:
-    parser = ArgumentParser('skillbridge', description="""
+    parser = ArgumentParser(
+        'skillbridge',
+        description="""
         CLI utility for the various skillbridge management commands
-        """)
+        """,
+    )
 
     sub = parser.add_subparsers(title='commands', dest='command')
 
@@ -86,7 +89,7 @@ def main() -> None:
         'path': (path, print_skill_script_location),
         'generate': (generate, generate_static_completion),
         'export': (export, lambda: export_definitions(args.path)),
-        'import': (imp, lambda: import_definitions(args.path))
+        'import': (imp, lambda: import_definitions(args.path)),
     }
 
     sub_parser, func = commands[args.command]
