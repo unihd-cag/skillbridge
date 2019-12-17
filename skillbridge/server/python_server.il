@@ -175,6 +175,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
         )))))
     )
 
+    putd('__pyCaptureWarnings nil)
     defmacro(__pyCaptureWarnings (@rest body)
         `let(((tempPort outstring()))
             unwindProtect(
