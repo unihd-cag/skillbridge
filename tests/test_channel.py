@@ -1,3 +1,4 @@
+import warnings
 from typing import Optional
 from os import unlink
 
@@ -379,3 +380,16 @@ def test_use_current_workspace(server, ws):
 
     with raises(RuntimeError):
         current_workspace.ge.get_edit_cell_view()
+
+
+def test_warning_is_printed(server, ws):
+    server.answer_success('warning("This is a warning", 1234)')
+
+    with warnings.catch_warnings(record=True) as w:
+        result = ws.ge.get_edit_cell_view()
+
+    assert len(w) == 1
+    assert w[0].category == UserWarning
+    assert "This is a warning" in str(w[0].message)
+
+    assert result == 1234
