@@ -90,13 +90,17 @@ let((_filename _baseName _moduleFolder _installName _logName)
     putd('__pyOnData nil)
     defun(__pyOnData (id data)
         foreach(line parseString(data "\n")
-            let((result)
-                errset(result=evalstring(line))
+            let((result capturedWarning pythonCode)
+                capturedWarning = __pyCaptureWarnings(errset(result=evalstring(line)))
                 if((errset.errset) then
                     printf("command %L resulted in error %L\n" line errset.errset)
                     ipcWriteProcess(pyStartServer.ipc sprintf(nil "failure %L\n" errset.errset))
                 else
-                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "success %s\n" __pySkillToPython(result)))
+                    pythonCode = __pySkillToPython(result)
+                    if((capturedWarning != "") then
+                        pythonCode = sprintf(nil "warning(%L, %s)" capturedWarning pythonCode)
+                    )
+                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "success %s\n" pythonCode))
                 )
             )
         )
@@ -169,6 +173,23 @@ let((_filename _baseName _moduleFolder _installName _logName)
         rexCompile("^[_a-zA-Z]+[:@][x0-9a-fA-F]+$")
         __pySaveToVariableAndReturn(thing)
         )))))
+    )
+
+    defmacro(__pyCaptureWarnings (@rest body)
+        `let(((tempPort outstring()))
+            unwindProtect(
+                {
+                    let(((woport tempPort))
+                        ,@body
+                        ; next two lines are to force final warning to be flushed
+                        warn("")
+                        getWarn()
+                    )
+                    getOutstring(tempPort)
+                }
+                close(tempPort)
+            )
+        )
     )
 
     putd('pyStartServer nil)

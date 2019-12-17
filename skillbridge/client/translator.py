@@ -1,6 +1,7 @@
 from typing import NoReturn, Any, List, Iterable, cast
 from re import sub
 from json import dumps
+from warnings import warn_explicit
 
 from .hints import Replicator, SkillCode, Skill, Symbol
 
@@ -13,9 +14,17 @@ def _raise_error(message: str) -> NoReturn:
     raise ParseError(message)
 
 
+def _show_warning(message: str, result: Any) -> Any:
+    for i, line in enumerate(message.splitlines(keepends=False)):
+        warn_explicit(line.lstrip("*WARNING*"), UserWarning, "Skill response", i)
+
+    return result
+
+
 def skill_value_to_python(string: str, replicate: Replicator) -> Skill:
     return eval(  # type: ignore
-        string, {'Remote': replicate, 'Symbol': Symbol, 'error': _raise_error}
+        string,
+        {'Remote': replicate, 'Symbol': Symbol, 'error': _raise_error, 'warning': _show_warning},
     )
 
 
