@@ -33,8 +33,6 @@ def show_status() -> None:
 
 
 def export_definitions(path: Path) -> None:
-    if not path.is_absolute():
-        raise RuntimeError("You must enter an absolute path")
     if path.is_dir():
         path /= 'definitions.txt'
 
@@ -49,8 +47,6 @@ def export_definitions(path: Path) -> None:
 
 
 def import_definitions(path: Path) -> None:
-    if not path.is_absolute():
-        raise RuntimeError("You must enter an absolute path")
     if path.is_dir():
         path /= 'definitions.txt'
 
