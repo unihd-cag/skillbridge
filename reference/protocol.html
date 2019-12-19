@@ -100,11 +100,11 @@ grouped together. As TCP has no concept of messages, the length of the message i
 followed by the message itself. As the length of the length can also vary, it is fixed to
 exactly 10 digits. Smaller lengths must be padded with either zeros or spaces.</p>
 <p>See the following examples:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;1 + 2&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;1 + 2&quot;</span><span class="p">)</span>
 <span class="go">b&#39;00000000051 + 2&#39;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;__py_cell = geGetEditCellView()&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;__py_cell = geGetEditCellView()&quot;</span><span class="p">)</span>
 <span class="go">b&#39;0000000031__py_cell = geGetEditCellView()&#39;</span>
 </pre></div>
 </div>
@@ -185,7 +185,7 @@ exactly 10 digits. Smaller lengths must be padded with either zeros or spaces.</
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

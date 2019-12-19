@@ -51,14 +51,14 @@
 </div>
 <p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">cellView</span> <span class="pre">=</span> <span class="pre">geGetEditCellView()</span></code></p>
 <p><strong>Inspecting available properties</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">cell_view</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">cell_view</span><span class="p">)</span>
 <span class="go">[&#39;DBUPerUU&#39;, &#39;any_inst_count&#39;, &#39;area_boundaries&#39;, &#39;assoc_text_displays&#39;, &#39;b_box&#39;, ...]</span>
 </pre></div>
 </div>
 <p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">cellView-&gt;?</span></code></p>
 <p>or type <code class="docutils literal notranslate"><span class="pre">cell_view.&lt;TAB&gt;</span></code> in ipython/jupyter</p>
 <p><strong>Reading properties</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cell_view</span><span class="o">.</span><span class="n">b_box</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cell_view</span><span class="o">.</span><span class="n">b_box</span><span class="p">)</span>
 <span class="go">[[0, 10], [0, 10]]</span>
 </pre></div>
 </div>
@@ -69,7 +69,7 @@
 transformed to snake case on the python side <code class="docutils literal notranslate"><span class="pre">b_box</span></code> and <code class="docutils literal notranslate"><span class="pre">cell_view_type</span></code>.
 You may choose whether you want to use the original camel-case names or the
 transformed snake-case variants.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">bBox</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">bBox</span>
 <span class="go">[[0, 10], [0, 10]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">b_box</span>
 <span class="go">[[0, 10], [0, 10]]</span>
@@ -80,19 +80,19 @@ transformed snake-case variants.</p>
 <p>The Skill functions are separated based on their prefix (compare
 <code class="docutils literal notranslate"><span class="pre">dbOpenCellView</span></code> vs <code class="docutils literal notranslate"><span class="pre">schCreateWire</span></code>). Functions with the same
 prefix are grouped together inside a python <code class="xref py py-class docutils literal notranslate"><span class="pre">client.functions.FunctionCollection</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">open_cell_view</span><span class="p">(</span><span class="s2">&quot;lib&quot;</span><span class="p">,</span> <span class="s2">&quot;cell_name&quot;</span><span class="p">,</span> <span class="s2">&quot;view_name&quot;</span><span class="p">)</span>  <span class="c1"># dbOpenCellView</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">open_cell_view</span><span class="p">(</span><span class="s2">&quot;lib&quot;</span><span class="p">,</span> <span class="s2">&quot;cell_name&quot;</span><span class="p">,</span> <span class="s2">&quot;view_name&quot;</span><span class="p">)</span>  <span class="c1"># dbOpenCellView</span>
 <span class="go">&lt;remote object ...&gt;</span>
 </pre></div>
 </div>
 <p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">dbOpenCellView(&quot;lib&quot;,</span> <span class="pre">&quot;cell_name&quot;,</span> <span class="pre">&quot;view_name&quot;)</span></code></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">sch</span><span class="o">.</span><span class="n">create_wire</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># schCreateWire</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">sch</span><span class="o">.</span><span class="n">create_wire</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># schCreateWire</span>
 <span class="go">[&lt;remote object ...&gt;]</span>
 </pre></div>
 </div>
 <p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">schCreateWire(...)</span></code></p>
 <p><strong>Calling functions with keyword arguments</strong></p>
 <p>Some Skill functions have named arguments. This can be seen in the documentation.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span>
 <span class="go">&lt;remote function&gt;</span>
 <span class="go">leComputeAreaDensity(</span>
 <span class="go">w_windowId</span>
@@ -106,7 +106,7 @@ prefix are grouped together inside a python <code class="xref py py-class docuti
 <p>We can see that the function takes four arguments: <code class="docutils literal notranslate"><span class="pre">w_windowId</span></code> and <code class="docutils literal notranslate"><span class="pre">l_lppSpec</span></code>
 are positional arguments and can be passed as shown above. But <code class="docutils literal notranslate"><span class="pre">depth</span></code> and <code class="docutils literal notranslate"><span class="pre">region</span></code>
 are named parameters. These are translated to keyword arguments in python:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">llp_spec</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">some_value</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">some_value</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">llp_spec</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">some_value</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">some_value</span><span class="p">)</span>
 <span class="go">[...]</span>
 </pre></div>
 </div>
@@ -118,7 +118,7 @@ function has a named parameter.</p>
 </div>
 <p><strong>Calling methods</strong></p>
 <p>Some Skill functions receive a remote object as their first argument.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">full_path</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">full_path</span>
 <span class="go">&lt;remote method &#39;dbFullPath&#39;&gt;</span>
 <span class="go">dbFullPath(</span>
 <span class="go">d_cellView</span>
@@ -127,7 +127,7 @@ function has a named parameter.</p>
 </div>
 <p>These functions can be treated like methods by calling them directly from the
 corresponding remote object:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">db_full_path</span><span class="p">()</span>  <span class="c1"># not the &#39;_&#39; instead of &#39;.&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell_view</span><span class="o">.</span><span class="n">db_full_path</span><span class="p">()</span>  <span class="c1"># not the &#39;_&#39; instead of &#39;.&#39;</span>
 <span class="go"># same output as ws.db.full_path(cell_view)</span>
 </pre></div>
 </div>
@@ -209,7 +209,7 @@ under that prefix.</p>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
