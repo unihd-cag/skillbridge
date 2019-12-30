@@ -80,7 +80,7 @@ def main() -> None:
     export.add_argument('path', help="The absolute path for the exported file", type=Path)
     imp = sub.add_parser('import', help="import the function definitions from a file")
     imp.add_argument('path', help="The absolute path for the exported file", type=Path)
-    imp.add_argument('-y', '-yes', '--yes', help="always overwrite", action='store_true')
+    imp.add_argument('-f', '-force', '--force', help="always overwrite", action='store_true')
     args = parser.parse_args()
 
     commands: Dict[Optional[str], Tuple[Any, Callable[[], None]]] = {
