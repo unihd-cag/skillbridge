@@ -46,14 +46,17 @@ def export_definitions(path: Path) -> None:
     print("copied")
 
 
-def import_definitions(path: Path) -> None:
+def import_definitions(path: Path, always_overwrite: bool) -> None:
     if path.is_dir():
         path /= 'definitions.txt'
 
     definitions = Path(__file__).parent / 'client' / 'definitions.txt'
 
-    if definitions.exists():
-        if input("definitions already exist, overwrite? [yN]").lower() != 'y':
+    if definitions.exists() and not always_overwrite:
+        try:
+            if input("definitions already exist, overwrite? [yN]").lower() != 'y':
+                exit()
+        except KeyboardInterrupt:
             exit()
 
     copy(path, definitions)
@@ -77,6 +80,7 @@ def main() -> None:
     export.add_argument('path', help="The absolute path for the exported file", type=Path)
     imp = sub.add_parser('import', help="import the function definitions from a file")
     imp.add_argument('path', help="The absolute path for the exported file", type=Path)
+    imp.add_argument('-f', '-force', '--force', help="always overwrite", action='store_true')
     args = parser.parse_args()
 
     commands: Dict[Optional[str], Tuple[Any, Callable[[], None]]] = {
@@ -85,7 +89,7 @@ def main() -> None:
         'path': (path, print_skill_script_location),
         'generate': (generate, generate_static_completion),
         'export': (export, lambda: export_definitions(args.path)),
-        'import': (imp, lambda: import_definitions(args.path)),
+        'import': (imp, lambda: import_definitions(args.path, args.yes)),
     }
 
     sub_parser, func = commands[args.command]
