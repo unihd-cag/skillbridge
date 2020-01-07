@@ -36,7 +36,7 @@ class RemoteObject:
         self._channel = channel
         self._variable = SkillCode(variable)
 
-        object_type, _ = variable[5:].split('_')
+        object_type, _ = variable[5:].split('_', maxsplit=1))
         self._methods = RemoteObject._method_map.get(object_type, {})
 
     @property
@@ -53,7 +53,7 @@ class RemoteObject:
         return self._channel.send(command).strip()
 
     def __str__(self) -> str:
-        type_, address = self._variable[5:].split('_')
+        type_, address = self._variable[5:].split('_', maxsplit=1)
         if type_.startswith('db'):
             type_ = self.obj_type or type_
         elif type_.startswith('dd'):
