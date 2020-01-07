@@ -36,7 +36,7 @@ class RemoteObject:
         self._channel = channel
         self._variable = SkillCode(variable)
 
-        object_type, _ = variable[5:].split('_', maxsplit=1))
+        object_type, _ = variable[5:].split('_', maxsplit=1)
         self._methods = RemoteObject._method_map.get(object_type, {})
 
     @property
