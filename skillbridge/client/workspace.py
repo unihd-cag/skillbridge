@@ -1,14 +1,13 @@
-from typing import Dict, Optional, Callable, Any, NoReturn, Union
+from typing import Dict, Optional, Callable, Any, NoReturn, Union, Iterable, cast
 from inspect import signature
 from textwrap import dedent
 
-from .hints import Function, SkillCode
+from .hints import Function, SkillCode, Symbol
 from .channel import Channel, create_channel_class
 from .functions import FunctionCollection
 from .extract import functions_by_prefix
 from .objects import RemoteObject
-from .translator import camel_to_snake
-from .translator import snake_to_camel
+from .translator import camel_to_snake, snake_to_camel, skill_value_to_python
 
 __all__ = ['Workspace', 'current_workspace']
 
@@ -35,6 +34,10 @@ def _register_well_known_functions(ws: 'Workspace') -> None:
         """
         Checks the integrity of the database.
         """
+
+
+def _not_implemented(_: Any) -> NoReturn:
+    raise NotImplementedError("Did not expect a remote object here")
 
 
 class Workspace:
@@ -192,10 +195,17 @@ class Workspace:
     def flush(self) -> None:
         self._channel.flush()
 
-    def define(self, code: str) -> None:
+    def define(self, name: str, args: Iterable[str], code: str, doc: Optional[str] = None) -> None:
         code = code.replace('\n', ' ')
-        name = self._channel.send(SkillCode(code)).strip()
-        self.user += Function(name, 'user defined', set())
+        skill_name = snake_to_camel(name)
+        skill_name = skill_name[0].upper() + skill_name[1:]
+        arg_list = ' '.join(snake_to_camel(arg) for arg in args)
+        code = f'defun(user{skill_name} ({arg_list}) {code})'
+        symbol = cast(
+            Symbol,
+            skill_value_to_python(self._channel.send(SkillCode(code)).strip(), _not_implemented),
+        )
+        self.user.add_by_key(name, Function(symbol.name, doc or 'user defined', set()))
 
     def _create_remote_object(self, variable: str) -> RemoteObject:
         return RemoteObject(self._channel, variable)

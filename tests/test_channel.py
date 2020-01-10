@@ -278,8 +278,8 @@ def test_function_produces_same_code_as_method(server, ws):
 def test_defined_functions_are_in_namespace(server, ws):
     assert not hasattr(ws.user, 'new_function')
 
-    server.answer_success('newFunction')
-    ws.define('defun(newFunction (x y) x + y)')
+    server.answer_success('Symbol("newFunction")')
+    ws.define('new_function', ('x', 'z'), 'x + y')
 
     assert hasattr(ws.user, 'new_function')
 
