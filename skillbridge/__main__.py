@@ -89,7 +89,7 @@ def main() -> None:
         'path': (path, print_skill_script_location),
         'generate': (generate, generate_static_completion),
         'export': (export, lambda: export_definitions(args.path)),
-        'import': (imp, lambda: import_definitions(args.path, args.yes)),
+        'import': (imp, lambda: import_definitions(args.path, args.force)),
     }
 
     sub_parser, func = commands[args.command]
