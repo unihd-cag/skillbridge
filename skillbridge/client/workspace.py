@@ -1,9 +1,10 @@
+import sys
 from typing import Dict, Optional, Callable, Any, NoReturn, Union, Iterable, cast
 from inspect import signature
 from textwrap import dedent
 
 from .hints import Function, SkillCode, Symbol
-from .channel import Channel, create_channel_class
+from .channel import Channel, create_channel_class, DirectChannel
 from .functions import FunctionCollection
 from .extract import functions_by_prefix
 from .objects import RemoteObject
@@ -221,7 +222,13 @@ class Workspace:
             ip.Completer.greedy = True
 
     @classmethod
-    def open(cls, workspace_id: WorkspaceId = None) -> 'Workspace':
+    def open(cls, workspace_id: WorkspaceId = None, direct: bool = False) -> 'Workspace':
+        if direct and not sys.stdin.isatty():
+            stdout = sys.stdout
+            sys.stdout = sys.stderr
+
+            return Workspace(DirectChannel(stdout), workspace_id)
+
         if workspace_id not in _open_workspaces:
 
             try:

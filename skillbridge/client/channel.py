@@ -1,7 +1,7 @@
 from socket import socket, SOCK_STREAM, AF_INET
 from select import select
-from typing import Iterable, Union, Any, Type
-from sys import platform
+from typing import Iterable, Union, Any, Type, TextIO
+from sys import platform, stdin
 
 
 class Channel:
@@ -33,6 +33,27 @@ class Channel:
             self.close()
         except BrokenPipeError:
             pass
+
+
+class DirectChannel(Channel):
+    def __init__(self, stdout: TextIO):
+        super().__init__(10_000)
+        self.stdout = stdout
+
+    def send(self, data: str) -> str:
+        data = data.replace('\n', '\\n')
+        self.stdout.write(data)
+        self.stdout.write('\n')
+        return stdin.readline()
+
+    def close(self) -> None:
+        pass
+
+    def flush(self) -> None:
+        pass
+
+    def try_repair(self) -> Any:
+        pass
 
 
 class TcpChannel(Channel):

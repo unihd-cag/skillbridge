@@ -72,3 +72,31 @@ Connecting to the Server
     ws = Workspace.open()
 
 Here are some :ref:`basic`.
+
+
+Direct mode without a Server
+----------------------------
+
+It is possible to use the skillbridge without an
+intermediate server. This is useful, if the script is called directly from Virtuoso.
+
+.. code-block:: python
+
+    from skillbridge import Workspace
+
+    ws = Workspace.open(direct=True)
+    print("cell view:", ws.ge.get_edit_cell_view())
+
+.. note::
+
+    The direct mode will only be enabled if stdin is *not* a TTY. This is the case when the
+    script is called from Virtuoso using ``ipcBeginProcess``.
+
+    You can simulate this behaviour by piping text into stdin
+
+    ```
+    echo 1234 | python file.py
+    ```
+
+    If used with the above code, this will print "geGetEditCellView()" to *stdout* and
+    "cell view: 1234" to *stderr*.
