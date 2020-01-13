@@ -1,4 +1,5 @@
-from subprocess import check_output
+from subprocess import check_output, run, PIPE
+from textwrap import dedent
 from os.path import exists
 
 from pytest import raises
@@ -21,6 +22,24 @@ def test_cannot_use_abc():
 
     with raises(NotImplementedError):
         Channel(1).flush()
+
+
+def test_direct_mode(no_cover):  # with coverage enabled this test breaks
+    code = dedent("""
+    from skillbridge import Workspace
+
+    ws = Workspace.open(direct=True)
+    cv = ws.ge.get_edit_cell_view()
+
+    print(f"cell_view={cv}")
+
+    assert ws.ge.get_cell_view_window(cv) == 42
+    """)
+    p = run(['python', '-c', code], stderr=PIPE, stdout=PIPE, input=b'1337\n42\n')
+
+    out = p.stdout.replace(b' ', b'')
+    assert b'cell_view=1337\n' == p.stderr
+    assert out == b'geGetEditCellView()\ngeGetCellViewWindow(1337)\n'
 
 
 def test_symbol_correct_repr():
