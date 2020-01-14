@@ -1,7 +1,7 @@
 from socket import socket, SOCK_STREAM, AF_INET
 from select import select
 from typing import Iterable, Union, Any, Type, TextIO
-from sys import platform, stdin
+from sys import platform
 
 
 class Channel:
@@ -34,6 +34,19 @@ class Channel:
         except BrokenPipeError:
             pass
 
+    @staticmethod
+    def decode_response(response: str) -> str:
+        status, response = response.split(' ', maxsplit=1)
+
+        if status == 'failure':
+            if response == '<timeout>':
+                raise RuntimeError(
+                    "Timeout: you should restart the skill server and "
+                    "increase the timeout `pyStartServer ?timeout X`."
+                )
+            raise RuntimeError(response)
+        return response
+
 
 class DirectChannel(Channel):
     def __init__(self, stdout: TextIO):
@@ -41,10 +54,8 @@ class DirectChannel(Channel):
         self.stdout = stdout
 
     def send(self, data: str) -> str:
-        data = data.replace('\n', '\\n')
-        self.stdout.write(data)
-        self.stdout.write('\n')
-        return stdin.readline()
+        print(data.replace('\n', '\\n'), file=self.stdout, flush=True)
+        return self.decode_response(input())
 
     def close(self) -> None:
         pass
@@ -139,16 +150,7 @@ class TcpChannel(Channel):
         received_length = int(received_length_raw)
         response = b''.join(self._receive_all(received_length)).decode()
 
-        status, response = response.split(' ', maxsplit=1)
-
-        if status == 'failure':
-            if response == '<timeout>':
-                raise RuntimeError(
-                    "Timeout: you should restart the skill server and "
-                    "increase the timeout `pyStartServer ?timeout X`."
-                )
-            raise RuntimeError(response)
-        return response
+        return self.decode_response(response)
 
     def send(self, data: str) -> str:
         self._send_only(data)

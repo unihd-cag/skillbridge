@@ -94,13 +94,13 @@ let((_filename _baseName _moduleFolder _installName _logName)
                 capturedWarning = __pyCaptureWarnings(errset(result=evalstring(line)))
                 if((errset.errset) then
                     printf("command %L resulted in error %L\n" line errset.errset)
-                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "failure %L\n" errset.errset))
+                    ipcWriteProcess(id sprintf(nil "failure %L\n" errset.errset))
                 else
                     pythonCode = __pySkillToPython(result)
                     if((capturedWarning != "") then
                         pythonCode = sprintf(nil "warning(%L, %s)" capturedWarning pythonCode)
                     )
-                    ipcWriteProcess(pyStartServer.ipc sprintf(nil "success %s\n" pythonCode))
+                    ipcWriteProcess(id sprintf(nil "success %s\n" pythonCode))
                 )
             )
         )
@@ -108,7 +108,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
 
     putd('__pyOnError nil)
     defun(__pyOnError (id data)
-        printf("ERROR %s\n" data)
+        fprintf(stderr "ERROR %s\n" data)
     )
 
     putd('__pyOnFinish nil)
@@ -116,6 +116,13 @@ let((_filename _baseName _moduleFolder _installName _logName)
         printf("server was stopped with code %L\n" data)
         pyStartServer.ipc = nil
     )
+
+    putd('__pyOnFinishScript nil)
+    defun(__pyOnFinishScript (id data)
+        printf("script finished with code %L\n" data)
+    )
+
+
 
     putd('__pyPropertyListToPython nil)
     defun(__pyPropertyListToPython (propList)
@@ -214,6 +221,14 @@ let((_filename _baseName _moduleFolder _installName _logName)
         )
     )
 
+    putd('pyRun nil)
+    defun(pyRunScript (script @key (python "python") (args nil))
+        let((command)
+            command = sprintf(nil "%s %s %s" python script buildString(args))
+            ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript "python_script.log")
+        )
+    )
+
     pyStartServer.ipc = nil
     pyStartServer.exe = _executable
 
@@ -223,4 +238,5 @@ let((_filename _baseName _moduleFolder _installName _logName)
     printf("\tpyReloadScript\n")
     printf("\tpyShowLog [numberOfLines]\n")
     printf("\tpyDumpFunctionDefinitions filename\n")
+    printf("\tpyRun path ?args list() ?python \"python\"\n")
 )
