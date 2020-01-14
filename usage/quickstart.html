@@ -86,6 +86,28 @@ skillbridge import /absolute/path/to/temporary/file.txt
 </div>
 <p>Here are some <a class="reference internal" href="../examples/basic.html#basic"><span class="std std-ref">Basic Examples</span></a>.</p>
 </div>
+<div class="section" id="direct-mode-without-a-server">
+<h2>Direct mode without a Server<a class="headerlink" href="#direct-mode-without-a-server" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to use the skillbridge without an
+intermediate server. This is useful, if the script is called directly from Virtuoso.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Workspace</span>
+
+<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">direct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cell view:&quot;</span><span class="p">,</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The direct mode will only be enabled if stdin is <em>not</em> a TTY. This is the case when the
+script is called from Virtuoso using <code class="docutils literal notranslate"><span class="pre">ipcBeginProcess</span></code>.</p>
+<p>You can simulate this behaviour by piping text into stdin</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">echo</span> <span class="pre">1234</span> <span class="pre">|</span> <span class="pre">python</span> <span class="pre">file.py</span>
+<span class="pre">`</span></code></p>
+<p>If used with the above code, this will print “geGetEditCellView()” to <em>stdout</em> and
+“cell view: 1234” to <em>stderr</em>.</p>
+</div>
+</div>
 </div>
 
 
@@ -155,7 +177,7 @@ skillbridge import /absolute/path/to/temporary/file.txt
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
