@@ -35,7 +35,8 @@ def test_direct_mode(no_cover):  # with coverage enabled this test breaks
 
     assert ws.ge.get_cell_view_window(cv) == 42
     """)
-    p = run(['python', '-c', code], stderr=PIPE, stdout=PIPE, input=b'1337\n42\n')
+    virtuoso = b'success 1337\nsuccess 42'
+    p = run(['python', '-c', code], stderr=PIPE, stdout=PIPE, input=virtuoso)
 
     out = p.stdout.replace(b' ', b'')
     assert b'cell_view=1337\n' == p.stderr
