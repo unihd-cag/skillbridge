@@ -82,7 +82,7 @@ def skill_help(obj: SkillCode) -> SkillCode:
 
 
 def skill_help_to_list(code: str) -> List[str]:
-    attributes = skill_value_to_python(code, _not_implemented("help list"))
+    attributes = skill_value_to_python(code, _not_implemented("help list")) or ()
     return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
 
 
