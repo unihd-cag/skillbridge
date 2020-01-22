@@ -164,12 +164,13 @@ def test_property_list_is_mapped(server, ws):
 
 
 def test_object_is_mapped(server, ws):
-    server.answer_object('object', 1234)
+    server.answer_object('object', 0x1234)
     result = ws.ge.get_edit_cell_view()
 
     assert isinstance(result, RemoteObject)
+    server.answer_success('"object"')
     string = str(result)
-    assert 'object@1234' in string
+    assert 'object@0x1234' in string
 
     server.answer_success('["x","y","z"]')
     doc = result.getdoc()
@@ -191,7 +192,7 @@ def test_dd_object_repr(server, ws):
     dd = ws.ge.get_edit_cell_view()
     server.answer_success('Symbol("DDthingTYPE")')
     assert 'thing' in str(dd)
-    assert 'type' in server.last_question
+    assert 'objType' in server.last_question
 
 
 def test_nested_remote_object(server, ws):
