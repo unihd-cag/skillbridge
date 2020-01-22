@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import Any, List, Optional, cast
 
-from .hints import SkillCode
+from .hints import SkillCode, Symbol
 from .channel import Channel
 from .extract import method_map
 from .functions import RemoteFunction, RemoteMethod
@@ -40,8 +40,21 @@ class RemoteObject:
         self._methods = RemoteObject._method_map.get(object_type, {})
 
     @property
-    def skill_id(self) -> str:
-        return self._variable.split('_')[-1]
+    def skill_id(self) -> int:
+        return int(self._variable[5:].split('_', maxsplit=1)[1], 0)
+
+    @property
+    def skill_parent_type(self) -> str:
+        return self._variable[5:].rsplit('_', maxsplit=1)[0]
+
+    @property
+    def skill_type(self) -> Optional[str]:
+        typ = self.obj_type
+        if typ is None:
+            return None
+        if isinstance(typ, Symbol):
+            return typ.name[2:-4]
+        return cast(str, typ)
 
     def _replicate(self, variable: str) -> 'RemoteObject':
         return RemoteObject(self._channel, variable)
@@ -53,13 +66,8 @@ class RemoteObject:
         return self._channel.send(command).strip()
 
     def __str__(self) -> str:
-        type_, address = self._variable[5:].split('_', maxsplit=1)
-        if type_.startswith('db'):
-            type_ = self.obj_type or type_
-        elif type_.startswith('dd'):
-            dd_type = self.type
-            type_ = dd_type.name[2:-4] if dd_type else type_
-        return f"<remote {type_}@{address}>"
+        typ = self.skill_type or self.skill_parent_type
+        return f"<remote {typ}@{hex(self.skill_id)}>"
 
     __repr__ = __str__
 
