@@ -2,15 +2,22 @@ from os import chdir
 
 from .client.workspace import Workspace, current_workspace
 from .client.translator import ParseError
-from .client.hints import Var, Symbol
+from .client.hints import Var, Symbol, Key, SkillTuple, SkillList, SkillCode, Function
+from .client.functions import keys
 
 __all__ = [
     'Workspace',
     'Var',
     'ParseError',
     'Symbol',
+    'Key',
     'generate_static_completion',
     'current_workspace',
+    'keys',
+    'SkillTuple',
+    'SkillList',
+    'SkillCode',
+    'Function',
 ]
 
 

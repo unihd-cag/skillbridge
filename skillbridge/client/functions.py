@@ -1,6 +1,6 @@
 from typing import List
 
-from .hints import Replicator, Definition, Function, SkillCode, Skill
+from .hints import Replicator, Definition, Function, SkillCode, Skill, Key
 from .channel import Channel
 from .translator import camel_to_snake, call, skill_value_to_python
 
@@ -8,6 +8,10 @@ from .translator import camel_to_snake, call, skill_value_to_python
 def name_without_prefix(name: str) -> str:
     *_, name = camel_to_snake(name).split('_', maxsplit=1)
     return name
+
+
+def keys(**attrs: Skill) -> List[Skill]:
+    return [flat for key, value in attrs.items() for flat in (Key(key), value)]
 
 
 class FunctionCollection:

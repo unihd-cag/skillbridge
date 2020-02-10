@@ -32,8 +32,10 @@ class Virtuoso(Thread):
         master, slave = openpty()
         self.server = Popen(
             [executable, script, self.socket, "DEBUG", '--notify'],
-            stdin=slave, stdout=PIPE, stderr=STDOUT,
-            universal_newlines=True
+            stdin=slave,
+            stdout=PIPE,
+            stderr=STDOUT,
+            universal_newlines=True,
         )
         self.pin = fdopen(master, 'w')
 

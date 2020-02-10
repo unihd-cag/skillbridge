@@ -12,6 +12,7 @@ else:
 __all__ = [
     'Number',
     'Symbol',
+    'Key',
     'Var',
     'SkillComponent',
     'SkillCode',
@@ -67,6 +68,19 @@ class Symbol(NamedTuple):
 
     def __repr__(self) -> str:
         return f"Symbol({self.name!r})"
+
+
+class Key(NamedTuple):
+    name: str
+
+    def __repr_skill__(self) -> SkillCode:
+        return SkillCode(f"?{self.name}")
+
+    def __str__(self) -> str:
+        return f"Key({self.name})"
+
+    def __repr__(self) -> str:
+        return f"Key({self.name})"
 
 
 class Var(NamedTuple):
