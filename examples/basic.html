@@ -7,11 +7,11 @@
     <title>Basic Examples &#8212; Python-Skill Bridge  documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Create some paths" href="create_path.html" />
@@ -91,7 +91,7 @@ prefix are grouped together inside a python <code class="xref py py-class docuti
 </div>
 <p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">schCreateWire(...)</span></code></p>
 <p><strong>Calling functions with keyword arguments</strong></p>
-<p>Some Skill functions have named arguments. This can be seen in the documentation.</p>
+<p>Some Skill functions have named arguments (key arguments). This can be seen in the documentation.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span>
 <span class="go">&lt;remote function&gt;</span>
 <span class="go">leComputeAreaDensity(</span>
@@ -105,7 +105,7 @@ prefix are grouped together inside a python <code class="xref py py-class docuti
 <p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">help(leComputeAreaDensity)</span></code></p>
 <p>We can see that the function takes four arguments: <code class="docutils literal notranslate"><span class="pre">w_windowId</span></code> and <code class="docutils literal notranslate"><span class="pre">l_lppSpec</span></code>
 are positional arguments and can be passed as shown above. But <code class="docutils literal notranslate"><span class="pre">depth</span></code> and <code class="docutils literal notranslate"><span class="pre">region</span></code>
-are named parameters. These are translated to keyword arguments in python:</p>
+are key parameters. These are translated to keyword arguments in python:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">le</span><span class="o">.</span><span class="n">compute_area_density</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">llp_spec</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">some_value</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">some_value</span><span class="p">)</span>
 <span class="go">[...]</span>
 </pre></div>
@@ -116,6 +116,22 @@ are named parameters. These are translated to keyword arguments in python:</p>
 <p>On the python side you must use keyword arguments <strong>if and only if</strong> the Skill
 function has a named parameter.</p>
 </div>
+<p>Some functions even take lists of key arguments. For this case we provide the <code class="docutils literal notranslate"><span class="pre">keys</span></code> function in
+python:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">keys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">some_function</span><span class="p">([</span><span class="n">keys</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">keys</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">[...]</span>
+</pre></div>
+</div>
+<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">someFunction(</span> <span class="pre">list(</span> <span class="pre">list(?x</span> <span class="pre">1</span> <span class="pre">?y</span> <span class="pre">1)</span> <span class="pre">list(?x</span> <span class="pre">2</span> <span class="pre">?y</span> <span class="pre">2)</span> <span class="pre">)</span> <span class="pre">)</span></code></p>
+<p>Should the need arise it is also possible to directly create these key symbols for Skill with the
+<code class="docutils literal notranslate"><span class="pre">Key</span></code> class.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Key</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">)</span>
+<span class="go">Key(xyz)</span>
+</pre></div>
+</div>
+<p><em>Skill equivalent:</em> <code class="docutils literal notranslate"><span class="pre">?xyz</span></code></p>
 <p><strong>Calling methods</strong></p>
 <p>Some Skill functions receive a remote object as their first argument.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">full_path</span>
@@ -192,7 +208,7 @@ under that prefix.</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -209,7 +225,7 @@ under that prefix.</p>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -73,7 +73,7 @@ prefix are grouped together inside a python :class:`client.functions.FunctionCol
 
 **Calling functions with keyword arguments**
 
-Some Skill functions have named arguments. This can be seen in the documentation.
+Some Skill functions have named arguments (key arguments). This can be seen in the documentation.
 
 >>> ws.le.compute_area_density
 <remote function>
@@ -88,7 +88,7 @@ l_lppSpec
 
 We can see that the function takes four arguments: ``w_windowId`` and ``l_lppSpec``
 are positional arguments and can be passed as shown above. But ``depth`` and ``region``
-are named parameters. These are translated to keyword arguments in python:
+are key parameters. These are translated to keyword arguments in python:
 
 >>> ws.le.compute_area_density(window, llp_spec, depth=some_value, region=some_value)
 [...]
@@ -99,6 +99,25 @@ are named parameters. These are translated to keyword arguments in python:
 
     On the python side you must use keyword arguments **if and only if** the Skill
     function has a named parameter.
+
+Some functions even take lists of key arguments. For this case we provide the ``keys`` function in
+python:
+
+>>> from skillbridge import keys
+>>> ws._.some_function([keys(x=1, y=1), keys(x=2, y=2])
+[...]
+
+*Skill equivalent:* ``someFunction( list( list(?x 1 ?y 1) list(?x 2 ?y 2) ) )``
+
+Should the need arise it is also possible to directly create these key symbols for Skill with the
+``Key`` class.
+
+>>> from skillbridge import Key
+>>> Key('xyz')
+Key(xyz)
+
+*Skill equivalent:* ``?xyz``
+
 
 **Calling methods**
 
