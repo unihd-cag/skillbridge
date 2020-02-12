@@ -21,7 +21,7 @@ def _show_warning(message: str, result: Any) -> Any:
     return result
 
 
-def skill_value_to_python(string: str, replicate: Replicator) -> Skill:
+def _skill_value_to_python(string: str, replicate: Replicator) -> Skill:
     return eval(  # type: ignore
         string,
         {'Remote': replicate, 'Symbol': Symbol, 'error': _raise_error, 'warning': _show_warning},
@@ -41,14 +41,14 @@ def camel_to_snake(camel: str) -> str:
     return sub(r'(?<=[a-z])([A-Z])|([A-Z][a-z])', r'_\1\2', camel).lower()
 
 
-def python_value_to_skill(value: Skill) -> SkillCode:
+def _python_value_to_skill(value: Skill) -> SkillCode:
     try:
         return value.__repr_skill__()  # type: ignore
     except AttributeError:
         pass
 
     if isinstance(value, dict):
-        items = ' '.join(f"'{key} {python_value_to_skill(value)}" for key, value in value.items())
+        items = ' '.join(f"'{key} {_python_value_to_skill(value)}" for key, value in value.items())
         return SkillCode(f'list(nil {items})')
 
     if value is False or value is None:
@@ -61,7 +61,7 @@ def python_value_to_skill(value: Skill) -> SkillCode:
         return SkillCode(dumps(value))
 
     if isinstance(value, (list, tuple)):
-        inner = ' '.join(python_value_to_skill(item) for item in value)
+        inner = ' '.join(_python_value_to_skill(item) for item in value)
         return SkillCode(f'(list {inner})')
 
     type_ = type(value).__name__
@@ -73,35 +73,6 @@ def _not_implemented(string: str) -> Replicator:
         raise NotImplementedError(f"Failed to parse skill literal {string!r}")
 
     return inner
-
-
-def skill_help(obj: SkillCode) -> SkillCode:
-    parts = ' '.join((f'{obj}->?', f'{obj}->systemHandleNames', f'{obj}->userHandleNames'))
-    code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
-    return SkillCode(code)
-
-
-def skill_help_to_list(code: str) -> List[str]:
-    attributes = skill_value_to_python(code, _not_implemented("help list")) or ()
-    return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
-
-
-def skill_getattr(obj: SkillCode, key: str) -> SkillCode:
-    return build_skill_path([obj, key])
-
-
-def skill_setattr(obj: SkillCode, key: str, value: Any) -> SkillCode:
-    code = build_skill_path([obj, key])
-    value = python_value_to_skill(value)
-    return SkillCode(f'{code} = {value}')
-
-
-def call(func_name: str, *args: Skill, **kwargs: Skill) -> SkillCode:
-    args_code = ' '.join(map(python_value_to_skill, args))
-    kw_keys = map(snake_to_camel, kwargs)
-    kw_values = map(python_value_to_skill, kwargs.values())
-    kwargs_code = ' '.join(f'?{key} {value}' for key, value in zip(kw_keys, kw_values))
-    return SkillCode(f'{func_name}({args_code} {kwargs_code})')
 
 
 def build_skill_path(components: Iterable[str]) -> SkillCode:
@@ -128,3 +99,51 @@ def build_python_path(components: Iterable[str]) -> SkillCode:
             path = f'{path}.{component}'
 
     return SkillCode(path)
+
+
+class Translator:
+    @staticmethod
+    def encode_call(func_name: str, *args: Skill, **kwargs: Skill) -> SkillCode:
+        args_code = ' '.join(map(_python_value_to_skill, args))
+        kw_keys = map(snake_to_camel, kwargs)
+        kw_values = map(_python_value_to_skill, kwargs.values())
+        kwargs_code = ' '.join(f'?{key} {value}' for key, value in zip(kw_keys, kw_values))
+        return SkillCode(f'{func_name}({args_code} {kwargs_code})')
+
+    @staticmethod
+    def encode_help(obj: SkillCode) -> SkillCode:
+        parts = ' '.join((f'{obj}->?', f'{obj}->systemHandleNames', f'{obj}->userHandleNames'))
+        code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
+        return SkillCode(code)
+
+    @staticmethod
+    def decode_help(code: str) -> List[str]:
+        attributes = _skill_value_to_python(code, _not_implemented("help list")) or ()
+        return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
+
+    @staticmethod
+    def encode_getattr(obj: SkillCode, key: str) -> SkillCode:
+        return build_skill_path([obj, key])
+
+    @staticmethod
+    def encode_setattr(obj: SkillCode, key: str, value: Any) -> SkillCode:
+        code = build_skill_path([obj, key])
+        value = _python_value_to_skill(value)
+        return SkillCode(f'{code} = {value}')
+
+    def encode(self, value: Skill) -> SkillCode:
+        raise NotImplementedError
+
+    def decode(self, code: str) -> Skill:
+        raise NotImplementedError
+
+
+class DefaultTranslator(Translator):
+    def __init__(self, replicate: Replicator) -> None:
+        self.replicate = replicate
+
+    def encode(self, value: Skill) -> SkillCode:
+        return _python_value_to_skill(value)
+
+    def decode(self, code: str) -> Skill:
+        return _skill_value_to_python(code, self.replicate)

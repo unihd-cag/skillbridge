@@ -1,8 +1,8 @@
 from typing import List
 
-from .hints import Replicator, Definition, Function, SkillCode, Skill, Key
+from .hints import Definition, Function, SkillCode, Skill, Key
 from .channel import Channel
-from .translator import camel_to_snake, call, skill_value_to_python
+from .translator import camel_to_snake, Translator
 
 
 def name_without_prefix(name: str) -> str:
@@ -15,9 +15,9 @@ def keys(**attrs: Skill) -> List[Skill]:
 
 
 class FunctionCollection:
-    def __init__(self, channel: Channel, definition: Definition, replicator: Replicator) -> None:
+    def __init__(self, channel: Channel, definition: Definition, translator: Translator) -> None:
         self._channel = channel
-        self._replicate = replicator
+        self._translate = translator
         self._definitions = {name_without_prefix(func.name): func for func in definition}
 
     def __iadd__(self, func: Function) -> 'FunctionCollection':
@@ -35,7 +35,7 @@ class FunctionCollection:
 
     def __getattr__(self, item: str) -> 'RemoteFunction':
         try:
-            return RemoteFunction(self._channel, self._definitions[item], self._replicate)
+            return RemoteFunction(self._channel, self._definitions[item], self._translate)
         except KeyError:
             raise AttributeError(item) from None
 
@@ -43,22 +43,22 @@ class FunctionCollection:
 class RemoteFunction:
     _counter = 0
 
-    def __init__(self, channel: Channel, func: Function, replicator: Replicator) -> None:
+    def __init__(self, channel: Channel, func: Function, translator: Translator) -> None:
         self._channel = channel
-        self._replicator = replicator
+        self._translate = translator
         self._function = func
 
     def __call__(self, *args: Skill, **kwargs: Skill) -> Skill:
         command = self.lazy(*args, **kwargs)
         result = self._channel.send(command)
 
-        return skill_value_to_python(result, self._replicator)
+        return self._translate.decode(result)
 
     def lazy(self, *args: Skill, **kwargs: Skill) -> SkillCode:
         name = self._function.name
         RemoteFunction._counter += 1
 
-        return call(name, *args, **kwargs)
+        return self._translate.encode_call(name, *args, **kwargs)
 
     def getdoc(self) -> str:
         return self._function.description

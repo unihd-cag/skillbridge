@@ -1,6 +1,7 @@
 from string import ascii_letters, ascii_lowercase, ascii_uppercase
+from typing import Callable, Any
 
-from pytest import raises, mark
+from pytest import raises, mark, fixture
 from hypothesis import given
 from hypothesis.strategies import lists, integers, floats, none, text
 
@@ -8,14 +9,9 @@ from skillbridge.client.hints import SkillCode
 from skillbridge.client.translator import (
     snake_to_camel,
     camel_to_snake,
-    python_value_to_skill,
-    skill_value_to_python,
-    skill_setattr,
-    skill_help,
-    skill_help_to_list,
-    skill_getattr,
     build_python_path,
-    call,
+    Translator,
+    DefaultTranslator,
 )
 from skillbridge import Symbol, Var
 
@@ -25,6 +21,21 @@ ints = integers(min_value=-(2 ** 63), max_value=2 ** 63 - 1)
 asciis = text(ascii_uppercase + ascii_lowercase + ascii_letters, max_size=99)
 symbols = text(ascii_uppercase + ascii_lowercase + ascii_letters, min_size=4, max_size=99)
 simple_types = floats | ints | none() | asciis
+
+
+@fixture
+def simple_translator() -> Translator:
+    return DefaultTranslator(lambda code: code)
+
+
+@fixture
+def encode_simple(simple_translator: Translator) -> Callable[[Any], Any]:
+    return simple_translator.encode
+
+
+@fixture
+def decode_simple(simple_translator: Translator) -> Callable[[str], Any]:
+    return simple_translator.decode
 
 
 def test_snake_to_camel_simple_does_not_change():
@@ -56,8 +67,8 @@ def test_camel_to_snake_input_camel():
     assert camel_to_snake('thisIsHTML') == 'this_is_html'
 
 
-def test_named_parameters_are_optionally_converted():
-    code = call('func', 1, 2, 3, x=10, long_name=20, longName=30)
+def test_named_parameters_are_optionally_converted(simple_translator: Translator):
+    code = simple_translator.encode_call('func', 1, 2, 3, x=10, long_name=20, longName=30)
     assert code.replace(' ', '') == 'func(123?x10?longName20?longName30)'
 
 
@@ -77,136 +88,132 @@ def test_snake_to_camel_input_pascal_does_not_change():
 
 
 @given(ints | floats | asciis)
-def test_simple_to_skill(i):
-    assert python_value_to_skill(i) == repr(i).replace("'", '"')
+def test_simple_to_skill(encode_simple, i):
+    assert encode_simple(i) == repr(i).replace("'", '"')
 
 
-def test_constants_to_skill():
-    assert python_value_to_skill(None) == 'nil'
-    assert python_value_to_skill(True) == 't'
-    assert python_value_to_skill(False) == 'nil'
+def test_constants_to_skill(encode_simple):
+    assert encode_simple(None) == 'nil'
+    assert encode_simple(True) == 't'
+    assert encode_simple(False) == 'nil'
 
 
-def test_lists_to_skill():
-    assert python_value_to_skill([]) == '(list )'
-    assert python_value_to_skill([1]) == '(list 1)'
-    assert python_value_to_skill([1, 2]) == '(list 1 2)'
-    assert python_value_to_skill([[1, 2], [3, 4]]) == '(list (list 1 2) (list 3 4))'
+def test_lists_to_skill(encode_simple):
+    assert encode_simple([]) == '(list )'
+    assert encode_simple([1]) == '(list 1)'
+    assert encode_simple([1, 2]) == '(list 1 2)'
+    assert encode_simple([[1, 2], [3, 4]]) == '(list (list 1 2) (list 3 4))'
 
 
 @given(asciis)
-def test_var_to_skill(a):
-    assert (python_value_to_skill(Var(a))) == a
+def test_var_to_skill(encode_simple, a):
+    assert (encode_simple(Var(a))) == a
 
 
-def test_property_list_to_python():
-    pl = skill_value_to_python('{"x":1,"y":2}', replicate)
+def test_property_list_to_python(decode_simple):
+    pl = decode_simple('{"x":1,"y":2}')
     assert isinstance(pl, dict)
     assert pl['x'] == 1
     assert pl['y'] == 2
     assert pl == dict(x=1, y=2)
 
-    pl = skill_value_to_python('{"x":Remote("__py_object_123")}', replicate)
+    pl = decode_simple('{"x":Remote("__py_object_123")}')
     assert isinstance(pl, dict)
     assert 'object' in pl['x'] and '123' in pl['x']
 
-    pl = skill_value_to_python('{"x": {"y": 2}}', replicate)
+    pl = decode_simple('{"x": {"y": 2}}')
     assert isinstance(pl, dict)
     assert isinstance(pl['x'], dict)
     assert pl['x']['y'] == 2
     assert pl == dict(x=dict(y=2))
 
 
-def test_property_list_to_skill():
+def test_property_list_to_skill(encode_simple):
     p = {'x': 1, 'y': 2}
-    assert python_value_to_skill(p) == "list(nil 'x 1 'y 2)"
+    assert encode_simple(p) == "list(nil 'x 1 'y 2)"
 
     p = {'x': 'x', 'y': 'y'}
-    assert python_value_to_skill(p) == """list(nil 'x "x" 'y "y")"""
+    assert encode_simple(p) == """list(nil 'x "x" 'y "y")"""
 
 
-def replicate(name):
-    return name
-
-
-def test_object_to_python():
-    python = skill_value_to_python('Remote("dbobject:123")', replicate)
+def test_object_to_python(decode_simple):
+    python = decode_simple('Remote("dbobject:123")')
     assert '123' in python and 'dbobject' in python
 
-    python = skill_value_to_python('[1,2,3,Remote("dbobject:123")]', replicate)
+    python = decode_simple('[1,2,3,Remote("dbobject:123")]')
     assert python[:3] == [1, 2, 3]
     assert '123' in python[3] and 'dbobject' in python[3]
 
     skill = '[[1,2,3,Remote("dbobject:123")],[Remote("dbobject:234"),4,5,6]]'
-    python = skill_value_to_python(skill, replicate)
+    python = decode_simple(skill)
     assert python[0][:3] == [1, 2, 3]
     assert '123' in python[0][3] and 'dbobject' in python[0][3]
     assert '234' in python[1][0] and 'dbobject' in python[1][0]
 
 
-def test_object_with_upper_case_id():
-    python = skill_value_to_python('Remote("rodObject:123")', replicate)
+def test_object_with_upper_case_id(decode_simple):
+    python = decode_simple('Remote("rodObject:123")')
     assert 'rodObject' in python and '123' in python
 
 
 @given(lists(simple_types | lists(simple_types)))
-def test_list_roundtrip(i):
-    python = skill_value_to_python(repr(i), replicate)
+def test_list_roundtrip(decode_simple, i):
+    python = decode_simple(repr(i))
     assert python == i or (python is None and i == [])
 
 
-def test_constants_to_python():
-    assert skill_value_to_python('None', replicate) is None
-    assert skill_value_to_python('True', replicate) is True
+def test_constants_to_python(decode_simple):
+    assert decode_simple('None') is None
+    assert decode_simple('True') is True
 
 
 @mark.parametrize('value', [..., Exception, open])
-def test_unknown_to_skill(value):
+def test_unknown_to_skill(value, encode_simple):
     with raises(Exception):
-        python_value_to_skill(value)
+        encode_simple(value)
 
 
 @given(asciis, asciis)
-def test_get_attribute(obj, name):
-    assert skill_getattr(obj, name).replace(' ', '') == '->'.join([obj, name])
+def test_get_attribute(simple_translator: Translator, obj, name):
+    assert simple_translator.encode_getattr(obj, name).replace(' ', '') == '->'.join([obj, name])
 
 
 @given(asciis, asciis, ints)
-def test_set_attribute(obj, name, value):
-    got = skill_setattr(obj, name, value).replace(' ', '')
+def test_set_attribute(simple_translator: Translator, obj, name, value):
+    got = simple_translator.encode_setattr(obj, name, value).replace(' ', '')
     left = '->'.join([obj, name])
     expected = f'{left}={value}'
     assert got == expected
 
 
 @given(symbols)
-def test_symbol_is_parsed(name):
-    parsed = skill_value_to_python(f"Symbol({name!r})", replicate)
+def test_symbol_is_parsed(decode_simple, name):
+    parsed = decode_simple(f"Symbol({name!r})")
     assert isinstance(parsed, Symbol)
     assert parsed.name == name
 
 
 @given(symbols)
-def test_symbol_is_dumped(name):
-    skill = python_value_to_skill(Symbol(name))
+def test_symbol_is_dumped(encode_simple, name):
+    skill = encode_simple(Symbol(name))
     assert skill == f"'{name}"
 
 
-def test_skill_help_adds_question_mark():
-    assert 'x->?' in skill_help(SkillCode('x'))
-    assert 'x->y->?' in skill_help(SkillCode('x->y'))
+def test_skill_help_adds_question_mark(simple_translator: Translator):
+    assert 'x->?' in simple_translator.encode_help(SkillCode('x'))
+    assert 'x->y->?' in simple_translator.encode_help(SkillCode('x->y'))
 
 
-def test_skill_help_to_list():
+def test_skill_help_to_list(simple_translator: Translator):
     expected = ['abc', 'def', 'camel_case', 'snake_case']
-    assert skill_help_to_list('["abc","def","camelCase","snake_case"]') == expected
+    assert simple_translator.decode_help('["abc","def","camelCase","snake_case"]') == expected
 
 
-def test_skill_setattr_ok():
-    skill = skill_setattr(SkillCode('x'), 'key', 123).replace(' ', '')
+def test_skill_setattr_ok(simple_translator: Translator):
+    skill = simple_translator.encode_setattr(SkillCode('x'), 'key', 123).replace(' ', '')
     assert skill == 'x->key=123'
 
-    skill = skill_setattr(SkillCode('x->y'), 'key', 123).replace(' ', '')
+    skill = simple_translator.encode_setattr(SkillCode('x->y'), 'key', 123).replace(' ', '')
     assert skill == 'x->y->key=123'
 
 
