@@ -4,7 +4,7 @@ from .hints import SkillCode, Symbol
 from .channel import Channel
 from .extract import method_map
 from .functions import RemoteFunction, RemoteMethod
-from . import translator
+from .translator import Translator
 
 
 def is_jupyter_magic(attribute: str) -> bool:
@@ -29,12 +29,13 @@ def is_jupyter_magic(attribute: str) -> bool:
 
 
 class RemoteObject:
-    _attributes = {'_channel', '_variable', '_methods'}
+    _attributes = {'_channel', '_variable', '_methods', '_translate'}
     _method_map = method_map()
 
-    def __init__(self, channel: Channel, variable: str) -> None:
+    def __init__(self, channel: Channel, variable: str, translator: Translator) -> None:
         self._channel = channel
         self._variable = SkillCode(variable)
+        self._translate = translator
 
         object_type, _ = variable[5:].split('_', maxsplit=1)
         self._methods = RemoteObject._method_map.get(object_type, {})
@@ -56,9 +57,6 @@ class RemoteObject:
             return typ.name[2:-4]
         return cast(str, typ)
 
-    def _replicate(self, variable: str) -> 'RemoteObject':
-        return RemoteObject(self._channel, variable)
-
     def __repr_skill__(self) -> SkillCode:
         return SkillCode(self._variable)
 
@@ -72,8 +70,8 @@ class RemoteObject:
     __repr__ = __str__
 
     def __dir__(self) -> List[str]:
-        response = self._send(translator.skill_help(self._variable))
-        attributes = translator.skill_help_to_list(response)
+        response = self._send(self._translate.encode_help(self._variable))
+        attributes = self._translate.decode_help(response)
         return attributes
 
     def __getattr__(self, key: str) -> Any:
@@ -81,11 +79,11 @@ class RemoteObject:
             raise AttributeError(key)
 
         if key in self._methods:
-            func = RemoteFunction(self._channel, self._methods[key], self._replicate)
+            func = RemoteFunction(self._channel, self._methods[key], self._translate)
             return RemoteMethod(self, func)
 
-        result = self._send(translator.skill_getattr(self._variable, key))
-        return translator.skill_value_to_python(result, self._replicate)
+        result = self._send(self._translate.encode_getattr(self._variable, key))
+        return self._translate.decode(result)
 
     def __setattr__(self, key: str, value: Any) -> None:
         if key in RemoteObject._attributes:
@@ -94,8 +92,8 @@ class RemoteObject:
         if key in self._methods:
             raise TypeError("remote method is readonly")
 
-        result = self._send(translator.skill_setattr(self._variable, key, value))
-        translator.skill_value_to_python(result, self._replicate)
+        result = self._send(self._translate.encode_setattr(self._variable, key, value))
+        self._translate.decode(result)
 
     def getdoc(self) -> str:
         return "Properties:\n- " + '\n- '.join(dir(self))

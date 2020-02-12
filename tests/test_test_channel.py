@@ -2,7 +2,7 @@ from typing import Any
 
 from pytest import fixture, raises, warns
 
-from skillbridge.test import DummyWorkspace
+from skillbridge.test import DummyWorkspace, PassWorkspace
 from skillbridge import ParseError
 
 
@@ -22,6 +22,20 @@ def ws() -> DummyWorkspace:
         """
         find any inst
         """
+
+    return w
+
+
+@fixture
+def passws() -> PassWorkspace:
+    w = PassWorkspace()
+
+    @w.register
+    def user_call(x) -> Any:
+        """
+        just pass
+        """
+        return x
 
     return w
 
@@ -56,3 +70,23 @@ def test_warning(ws):
 
     with warns(UserWarning, match="deprecated"):
         assert ws.test.add_one(100) == 101
+
+
+def test_pass_works(passws):
+    passws.prepare(Ellipsis)
+    assert passws.user.call()
+
+    class UserDefined:
+        def __init__(self, x: int) -> None:
+            self.x = x
+
+        def __repr__(self):
+            return "user defined"
+
+        def __str__(self):
+            return "user defined"
+
+    u = UserDefined(123)
+    passws.prepare(u)
+
+    assert passws.user.call() is u
