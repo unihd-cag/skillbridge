@@ -37,12 +37,12 @@ class RemoteObject:
         self._variable = SkillCode(variable)
         self._translate = translator
 
-        object_type, _ = variable[5:].split('_', maxsplit=1)
+        object_type, _ = variable[5:].rsplit('_', maxsplit=1)
         self._methods = RemoteObject._method_map.get(object_type, {})
 
     @property
     def skill_id(self) -> int:
-        return int(self._variable[5:].split('_', maxsplit=1)[1], 0)
+        return int(self._variable[5:].rsplit('_', maxsplit=1)[1], 0)
 
     @property
     def skill_parent_type(self) -> str:
