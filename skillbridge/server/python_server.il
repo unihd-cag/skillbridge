@@ -149,10 +149,14 @@ let((_filename _baseName _moduleFolder _installName _logName)
                 variableName = sprintf(nil "__py_%s_%s" objectType address)
                 set(stringToSymbol(variableName) thing)
                 sprintf(nil "Remote(%L)" variableName)
+            else if(otherp(thing) then
+                variableSymbol = gensym("__py_OTHER_")
+                set(variableSymbol thing)
+                sprintf(nil "Remote(%L)" symbolToString(variableSymbol))
             else
                 sprintf(nil "error(%L)" repr)
                 printf("I COULD NOT PARSE %L\n" repr)
-            )
+            ))
         )
     )
 
