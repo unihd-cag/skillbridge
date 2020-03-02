@@ -1,6 +1,7 @@
-from typing import Any, Deque
-from collections import deque
+from typing import Any, Deque, Dict, Callable, Union
+from collections import deque, defaultdict
 
+from .translator import FunctionCall
 from ..client.channel import Channel
 
 
@@ -10,16 +11,35 @@ class DummyChannel(Channel):
 
         self.outputs: Deque[str] = deque()
         self.inputs: Deque[str] = deque()
+        self.functions: Dict[str, Callable[..., Any]] = {}
+        self.function_outputs: Dict[str, Deque[Any]] = defaultdict(deque)
 
-    def send(self, data: str) -> str:
+    def _try_function(self, data: Union[str, FunctionCall]) -> Any:
+        if not isinstance(data, FunctionCall):
+            raise ValueError
+
+        func = self.functions[data.name]
+        self.function_outputs[data.name].append(data)
+        return func(data)
+
+    def _try_queue(self, data: str) -> str:
         try:
-            response = self.inputs.popleft()
+            result = self.inputs.popleft()
         except IndexError:
             short_data = data if len(data) < 100 else data[:100] + "..."
             raise RuntimeError(
                 f"No input provided for TestChannel: request was {short_data}"
             ) from None
-        self.outputs.append(data)
+        else:
+            self.outputs.append(data)
+            return result
+
+    def send(self, data: str) -> Any:
+        try:
+            response = self._try_function(data)
+        except (ValueError, KeyError):
+            response = self._try_queue(data)
+
         return response
 
     def close(self) -> None:
