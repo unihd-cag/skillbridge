@@ -90,3 +90,23 @@ def test_pass_works(passws):
     passws.prepare(u)
 
     assert passws.user.call() is u
+
+
+def test_pass_function_based_prepare(passws):
+    window_arg = None
+
+    def get_current_window(arg):
+        nonlocal window_arg
+        window_arg = arg.args[0]
+        return 'window'
+
+    passws.prepare_function_value('geGetEditCellView', (1, 2, 3))
+    passws.prepare_function('hiGetCurrentWindow', get_current_window)
+
+    assert passws.ge.get_edit_cell_view() == (1, 2, 3)
+    assert passws.ge.get_edit_cell_view() == (1, 2, 3)
+    assert passws.hi.get_current_window(123) == 'window'
+    assert window_arg == 123
+    assert passws.hi.get_current_window(234) == 'window'
+    assert window_arg == 234
+    assert passws.ge.get_edit_cell_view() == (1, 2, 3)

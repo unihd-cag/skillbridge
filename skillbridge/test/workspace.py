@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Callable
 from re import match
 
 from ..client.workspace import Workspace
@@ -50,5 +50,17 @@ class PassWorkspace(Workspace):
     def pop_request(self) -> str:
         return self._test_channel.outputs.popleft()
 
+    def pop_function_request(self, name: str) -> str:
+        return self._test_channel.function_outputs[name].popleft()
+
     def pop_match(self, pattern: str) -> bool:
         return match(pattern, self.pop_request()) is not None
+
+    def prepare_function(self, name: str, func: Callable[..., Any]) -> None:
+        self._test_channel.functions[name] = func
+
+    def prepare_function_value(self, name: str, value: Any) -> None:
+        def func(*args, **kwargs):
+            return value
+
+        self._test_channel.functions[name] = func
