@@ -14,7 +14,7 @@ class DummyChannel(Channel):
         self.functions: Dict[str, Callable[..., Any]] = {}
         self.function_outputs: Dict[str, Deque[Any]] = defaultdict(deque)
 
-    def _try_function(self, data: Union[str, FunctionCall]) -> str:
+    def _try_function(self, data: Union[str, FunctionCall]) -> Any:
         if not isinstance(data, FunctionCall):
             raise ValueError
 
@@ -34,7 +34,7 @@ class DummyChannel(Channel):
             self.outputs.append(data)
             return result
 
-    def send(self, data: str) -> str:
+    def send(self, data: str) -> Any:
         try:
             response = self._try_function(data)
         except (ValueError, KeyError):

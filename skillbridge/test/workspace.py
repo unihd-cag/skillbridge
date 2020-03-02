@@ -50,7 +50,7 @@ class PassWorkspace(Workspace):
     def pop_request(self) -> str:
         return self._test_channel.outputs.popleft()
 
-    def pop_function_request(self, name: str) -> str:
+    def pop_function_request(self, name: str) -> Any:
         return self._test_channel.function_outputs[name].popleft()
 
     def pop_match(self, pattern: str) -> bool:
@@ -60,7 +60,7 @@ class PassWorkspace(Workspace):
         self._test_channel.functions[name] = func
 
     def prepare_function_value(self, name: str, value: Any) -> None:
-        def func(*args, **kwargs):
+        def func(*args: Any, **kwargs: Any) -> Any:
             return value
 
         self._test_channel.functions[name] = func
