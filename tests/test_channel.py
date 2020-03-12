@@ -1,5 +1,4 @@
 import warnings
-from typing import Optional
 from os import unlink
 
 from pytest import fixture, raises

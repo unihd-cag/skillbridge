@@ -135,12 +135,16 @@ class Translator:
 
     @staticmethod
     def encode_help(symbol: str) -> SkillCode:
-        code = f"_text = outstring() poport = _text help({snake_to_camel(symbol)}) poport = stdout getOutstring(_text)"
+        code = f"""
+            _text = outstring()
+            poport = _text help({snake_to_camel(symbol)})
+            poport = stdout getOutstring(_text)
+        """.replace("\n", " ")
         return SkillCode(code)
 
     @staticmethod
     def decode_help(help_: str) -> str:
-        return loads(help_)
+        return loads(help_)  # type: ignore
 
     @staticmethod
     def encode_setattr(obj: SkillCode, key: str, value: Any) -> SkillCode:

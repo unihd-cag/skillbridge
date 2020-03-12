@@ -20,7 +20,8 @@ def print_skill_script_location() -> None:
 
 
 def deprecated_command() -> None:
-    print("This command is deprecated, because it is no longer necessary to export function definitions")
+    print("This command is deprecated")
+    print("It is no longer necessary to export function definitions")
     print("You don't have to do anything")
 
 
@@ -38,10 +39,10 @@ def main() -> None:
     generate = sub.add_parser('generate', help="generate static completion file")
     status = sub.add_parser('status', help="deprecated, not needed anymore")
     export = sub.add_parser('export', help="deprecated, not needed anymore")
-    export.add_argument('path', help="The absolute path for the exported file (deprecated)", type=str)
+    export.add_argument('path', help="deprecated", type=str)
     imp = sub.add_parser('import', help="deprecated, not needed anymore")
-    imp.add_argument('path', help="The absolute path for the exported file (deprecated)", type=str)
-    imp.add_argument('-f', '-force', '--force', help="always overwrite (deprecated)", action='store_true')
+    imp.add_argument('path', help="deprecated", type=str)
+    imp.add_argument('-f', '-force', '--force', help="deprecated", action='store_true')
     args = parser.parse_args()
 
     commands: Dict[Optional[str], Tuple[Any, Callable[[], None]]] = {
