@@ -2,7 +2,6 @@ from typing import Iterable, Iterator, List, Dict, Optional, Set, Tuple
 from itertools import takewhile, groupby
 from re import match
 from os.path import dirname, abspath, join
-from warnings import warn
 
 from .hints import Function
 from .translator import camel_to_snake
@@ -45,26 +44,16 @@ def _parse_all_functions(fin: Iterable[str]) -> Iterator[Function]:
             yield Function(function_name, body, aliases)
 
 
-def parse_all_function() -> List[Function]:
+def parse_all_function_() -> List[Function]:
     folder = dirname(abspath(__file__))
     definitions = join(folder, 'definitions.txt')
 
-    try:
-        with open(definitions) as fin:
-            return list(_parse_all_functions(fin))
-    except FileNotFoundError:
-        warn(
-            "Function definitions are not generated"
-            ' Run `pyDumpFunctionDefinitions "<install>"`'
-            ' first, before using this module.',
-            UserWarning,
-            stacklevel=7,
-        )
-        return []
+    with open(definitions) as fin:
+        return list(_parse_all_functions(fin))
 
 
-def functions_by_prefix() -> Dict[str, List[Function]]:
-    functions = parse_all_function()
+def functions_by_prefix_() -> Dict[str, List[Function]]:
+    functions = parse_all_function_()
     functions.sort()
 
     return {(prefix or '_'): list(group) for prefix, group in groupby(functions, _extract_prefix)}
@@ -94,7 +83,7 @@ def _receiver_type(func: Function) -> Optional[str]:
         return None
 
     index = description.index(func.name)
-    description = description[index + len(func.name) :]
+    description = description[index + len(func.name):]
     description = description.lstrip(' (')
 
     if description[0] in set('[{'):
@@ -112,10 +101,10 @@ def _receiver_type(func: Function) -> Optional[str]:
     return None
 
 
-def method_map() -> Dict[str, Dict[str, Function]]:
+def method_map_() -> Dict[str, Dict[str, Function]]:
     methods: Dict[str, Dict[str, Function]] = {}
 
-    for group in functions_by_prefix().values():
+    for group in functions_by_prefix_().values():
         for func in group:
             receiver = _receiver_type(func)
             if receiver is not None:

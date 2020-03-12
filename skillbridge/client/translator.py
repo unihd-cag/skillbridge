@@ -1,6 +1,6 @@
 from typing import NoReturn, Any, List, Iterable, cast
 from re import sub
-from json import dumps
+from json import dumps, loads
 from warnings import warn_explicit
 
 from .hints import Replicator, SkillCode, Skill, Symbol
@@ -111,19 +111,36 @@ class Translator:
         return SkillCode(f'{func_name}({args_code} {kwargs_code})')
 
     @staticmethod
-    def encode_help(obj: SkillCode) -> SkillCode:
+    def encode_dir(obj: SkillCode) -> SkillCode:
         parts = ' '.join((f'{obj}->?', f'{obj}->systemHandleNames', f'{obj}->userHandleNames'))
         code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
         return SkillCode(code)
 
     @staticmethod
-    def decode_help(code: str) -> List[str]:
+    def decode_dir(code: str) -> List[str]:
         attributes = _skill_value_to_python(code, _not_implemented("help list")) or ()
         return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
 
     @staticmethod
     def encode_getattr(obj: SkillCode, key: str) -> SkillCode:
         return build_skill_path([obj, key])
+
+    @staticmethod
+    def encode_globals(prefix: str) -> SkillCode:
+        return SkillCode(f'buildString(listFunctions("^{prefix}[A-Z]"))')
+
+    @staticmethod
+    def decode_globals(code: str) -> List[str]:
+        return [camel_to_snake(f).split('_', maxsplit=1)[1] for f in loads(code).split()]
+
+    @staticmethod
+    def encode_help(symbol: str) -> SkillCode:
+        code = f"_text = outstring() poport = _text help({snake_to_camel(symbol)}) poport = stdout getOutstring(_text)"
+        return SkillCode(code)
+
+    @staticmethod
+    def decode_help(help_: str) -> str:
+        return loads(help_)
 
     @staticmethod
     def encode_setattr(obj: SkillCode, key: str, value: Any) -> SkillCode:

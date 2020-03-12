@@ -20,6 +20,8 @@ __all__ = [
     'Replicator',
     'Definition',
     'Function',
+    'SkillTuple',
+    'SkillList',
 ]
 
 Number = Union[int, float]

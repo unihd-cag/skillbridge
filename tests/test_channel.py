@@ -123,7 +123,9 @@ def test_raise_on_failure(server, channel):
 def test_workspace_contains_prefixes(server, ws):
     assert 'db' in dir(ws)
     assert hasattr(ws, 'db')
+    server.answer_success('"geGetEditCellView"')
     assert 'get_edit_cell_view' in dir(ws.ge)
+    server.answer_success('"geGetEditCellView"')
     assert 'get_edit_cell_view' in repr(ws.ge)
 
 
@@ -134,13 +136,14 @@ def test_function_call_is_send(server, ws):
     assert 'geGetEditCellView' in server.last_question
     assert cell == 1
 
+    server.answer_success('"geGetEditCellView ... doc"')
     assert 'geGetEditCellView' in repr(ws.ge.get_edit_cell_view)
-    assert 'geGetEditCellView' in ws.ge.get_edit_cell_view.getdoc()
 
 
 def test_unknown_function_raises(server, ws):
-    with raises(AttributeError):
-        _ = ws.ge.this_does_not_exist_and_will_hopefully_never_exist
+    server.answer_failure("")
+    with raises(RuntimeError):
+        ws.ge.this_does_not_exist_and_will_hopefully_never_exist()
 
     server.answer_success('Remote("__py_object_123")')
     result = ws.ge.get_edit_cell_view()
@@ -239,55 +242,6 @@ def test_object_equality(server, ws):
     assert not (first == 1)
 
 
-def test_methods_depend_on_type(server, ws):
-    server.answer_object('nothing', 123)
-    nothing = ws.ge.get_edit_cell_view()
-    server.answer_object('db', 123)
-    db = ws.ge.get_edit_cell_view()
-    server.answer_object('window', 123)
-    window = ws.ge.get_edit_cell_view()
-
-    assert not nothing._methods
-    assert db._methods
-    assert window._methods
-    assert db._methods != window._methods
-
-
-def test_methods_are_readonly(server, ws):
-    server.answer_object('db', 123)
-    db = ws.ge.get_edit_cell_view()
-
-    with raises(TypeError, match="readonly"):
-        db.db_full_path = None
-
-
-def test_function_produces_same_code_as_method(server, ws):
-    server.answer_object('db', 123)
-    db = ws.ge.get_edit_cell_view()
-
-    server.answer_success('"/path/to/thing"')
-    server.answer_success('"/path/to/thing"')
-
-    ws.db.full_path(db)
-    from_function = server.last_question
-    db.db_full_path()
-    from_method = server.last_question
-
-    assert from_function == from_method
-
-
-def test_defined_functions_are_in_namespace(server, ws):
-    assert not hasattr(ws.user, 'new_function')
-
-    server.answer_success('Symbol("newFunction")')
-    ws.define('new_function', ('x', 'z'), 'x + y')
-
-    assert hasattr(ws.user, 'new_function')
-
-    server.answer_success('3')
-    assert ws.user.new_function(1, 2) == 3
-
-
 def test_fix_completion_does_not_raise(server, ws):
     ws.fix_completion()
 
@@ -306,34 +260,6 @@ def test_max_transmission_length_is_honored(server, ws):
 
 def test_flush_does_no_harm(server, ws):
     ws.flush()
-
-
-def test_add_function_manually(server, ws):
-    assert not hasattr(ws, "custom")
-    assert not hasattr(ws.db, "custom")
-
-    @ws.register
-    def custom_function(positional, optional: Optional, keyword="name") -> None:
-        """
-        Custom Doc String
-        """
-
-    @ws.register
-    def db_custom() -> None:
-        """
-        Pass
-        """
-
-    assert hasattr(ws, "custom") and hasattr(ws.custom, "function")
-
-    doc = repr(ws.custom.function)
-    assert "Custom Doc String" in doc
-    assert "nil" in doc
-    assert "positional" in doc
-    assert "[optional]" in doc.replace(" ", "")
-    assert "?namekeyword" in doc.replace(" ", "")
-
-    assert hasattr(ws.db, "custom")
 
 
 def test_cannot_add_malformed_manual_functions(server, ws):
