@@ -1,4 +1,4 @@
-let((_filename _baseName _moduleFolder _installName _logName)
+let((_filename _baseName _moduleFolder _installName _logName _executable)
 
     _filename = get_filename(piport)
     _filename = pcreReplace(pcreCompile("^ +| +$") _filename "" 0)
@@ -9,7 +9,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
     _logName = strcat(_baseName "py.log")
 
     putd('pyDumpFunctionDefinitions nil)
-    defun(pyDumpFunctionDefinitions (filename)
+    defun(pyDumpFunctionDefinitions (filename "t")
         let((code functions total aliases progress)
             poport = outfile(if(filename == "<install>" pyDumpFunctionDefinitions.installName filename))
             functions = listFunctions("[a-z]+[A-Z][a-zA-Z]+")
@@ -20,14 +20,14 @@ let((_filename _baseName _moduleFolder _installName _logName)
                 code = sprintf(nil "help(%s)" func)
                 errset(evalstring(code))
                 aliases = listAlias(func)
-                if(aliases != nil then
+                if(aliases then
                     printf("ALIASES %L\n", aliases)
                 )
                 printf("END FUNCTION %s\n\n" func)
 
                 progress = progress + 1
 
-                if(mod(progress 100) == 0 then
+                if(zerop(mod(progress 100)) then
                     fprintf(stdout "dumped %6.2f%% found %d functions\n" (progress * 100.0 / total) progress)
                 )
             )
@@ -43,7 +43,7 @@ let((_filename _baseName _moduleFolder _installName _logName)
 
     putd('pyKillServer nil)
     defun(pyKillServer ()
-        if(pyStartServer.ipc == nil then
+        if(!pyStartServer.ipc then
             printf("server was not running\n")
             nil
         else
@@ -64,21 +64,17 @@ let((_filename _baseName _moduleFolder _installName _logName)
     pyReloadServer.filename = _filename
 
     putd('pyShowLog nil)
-    defun(pyShowLog (@optional (length 20))
-        let((fin line lines)
+    defun(pyShowLog (@optional (length 20) "x")
+        let((fin line (lines declare(lines[length]) (ptr 0)))
             fin = infile(pyShowLog.logName)
-            lines = nil
-
-            for(i 1 length
-                lines = append1(lines "")
-            )
 
             while(gets(line fin)
-                lines = cdr(append1(lines line))
+                lines[ptr] = line
+                ptr = mod(ptr + 1 length)
             )
 
-            foreach(line lines
-                printf("%s" line)
+            for(i 0 length-1
+                printf("%s" lines[mod(ptr + i length)])
             )
             printf("")
         )
@@ -86,6 +82,24 @@ let((_filename _baseName _moduleFolder _installName _logName)
     )
 
     pyShowLog.logName = _logName
+
+    putd('__pyCaptureWarnings nil)
+    defmacro(__pyCaptureWarnings (@rest body)
+        `let(((tempPort outstring()))
+            unwindProtect(
+                {
+                    let(((woport tempPort))
+                        ,@body
+                        ; next two lines are to force final warning to be flushed
+                        warn("")
+                        getWarn()
+                    )
+                    getOutstring(tempPort)
+                }
+                close(tempPort)
+            )
+        )
+    )
 
     putd('__pyOnData nil)
     defun(__pyOnData (id data)
@@ -107,18 +121,18 @@ let((_filename _baseName _moduleFolder _installName _logName)
     )
 
     putd('__pyOnError nil)
-    defun(__pyOnError (id data)
+    defun(__pyOnError (_ data)
         fprintf(stderr "ERROR %s\n" data)
     )
 
     putd('__pyOnFinish nil)
-    defun(__pyOnFinish (id data)
+    defun(__pyOnFinish (_ data)
         printf("server was stopped with code %L\n" data)
         pyStartServer.ipc = nil
     )
 
     putd('__pyOnFinishScript nil)
-    defun(__pyOnFinishScript (id data)
+    defun(__pyOnFinishScript (_ data)
         printf("script finished with code %L\n" data)
     )
 
@@ -138,12 +152,11 @@ let((_filename _baseName _moduleFolder _installName _logName)
 
     putd('__pySaveToVariableAndReturn nil)
     defun(__pySaveToVariableAndReturn (thing)
-        let((repr variableName split objectType address)
+        let((repr variableName split objectType address variableSymbol)
             repr = sprintf(nil "%L" thing)
             if(rexExecute(repr) then
                 split = buildString(parseString(repr "_") "")
-                split = buildString(parseString(split "@") ":")
-                split = parseString(split ":")
+                split = parseString(split "@:")
                 objectType = car(split)
                 address = cadr(split)
                 variableName = sprintf(nil "__py_%s_%s" objectType address)
@@ -172,11 +185,11 @@ let((_filename _baseName _moduleFolder _installName _logName)
     putd('__pySkillToPython nil)
     defun(__pySkillToPython (thing)
         if(thing == t then "True" else
-        if(thing == nil then "None" else
+        if(!thing then "None" else
         if(or(numberp(thing) stringp(thing)) then sprintf(nil "%L" thing) else
         if(symbolp(thing) then sprintf(nil "Symbol('%s')" thing) else
         if(listp(thing) then
-            if(and(car(thing) == nil symbolp(cadr(thing)))
+            if(and(!car(thing) symbolp(cadr(thing)))
             then __pyPropertyListToPython(thing)
             else __pyListToPython(thing)
             )
@@ -186,47 +199,29 @@ let((_filename _baseName _moduleFolder _installName _logName)
         )))))
     )
 
-    putd('__pyCaptureWarnings nil)
-    defmacro(__pyCaptureWarnings (@rest body)
-        `let(((tempPort outstring()))
-            unwindProtect(
-                {
-                    let(((woport tempPort))
-                        ,@body
-                        ; next two lines are to force final warning to be flushed
-                        warn("")
-                        getWarn()
-                    )
-                    getOutstring(tempPort)
-                }
-                close(tempPort)
-            )
-        )
-    )
-
     putd('pyStartServer nil)
-    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil) (timeout nil) (python "python"))
-
-        if(pyStartServer.ipc != nil then
+    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil) (timeout nil) (python "python") "ttggt")
+        if(pyStartServer.ipc then
             fprintf(stderr, "server is already running\n")
             nil
         else
-            executableWithArgs = sprintf(nil "%s %L %s" pyStartServer.exe id logLevel)
-            if(singleMode != nil then
-                executableWithArgs = strcat(executableWithArgs "--single")
-            )
-            if(timeout != nil then
-                executableWithArgs = sprintf(nil "%s --timeout %L" executableWithArgs timeout)
-            )
-            executableWithArgs = sprintf(nil "\"%s\" %s" python executableWithArgs)
+            let(((executableWithArgs sprintf(nil "%s %L %s" pyStartServer.exe id logLevel)))
+                if(singleMode then
+                    executableWithArgs = strcat(executableWithArgs "--single")
+                )
+                if(timeout then
+                    executableWithArgs = sprintf(nil "%s --timeout %L" executableWithArgs timeout)
+                )
+                executableWithArgs = sprintf(nil "\"%s\" %s" python executableWithArgs)
 
-            pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")           
-            t
+                pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")           
+                t
+            )
         )
     )
 
-    putd('pyRun nil)
-    defun(pyRunScript (script @key (python "python") (args nil))
+    putd('pyRunScript nil)
+    defun(pyRunScript (script @key (python "python") (args nil) "tl")
         let((command)
             command = sprintf(nil "%s %s %s" python script buildString(args))
             ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript "python_script.log")
