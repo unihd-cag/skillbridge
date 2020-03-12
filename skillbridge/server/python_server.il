@@ -1,45 +1,16 @@
-let((_filename _baseName _moduleFolder _installName _logName _executable)
+let((_filename _baseName _moduleFolder _logName _executable)
 
     _filename = get_filename(piport)
     _filename = pcreReplace(pcreCompile("^ +| +$") _filename "" 0)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
-    _installName = strcat(_moduleFolder "client/definitions.txt")
     _executable = strcat("\"" _baseName "py\"")
     _logName = strcat(_baseName "py.log")
 
     putd('pyDumpFunctionDefinitions nil)
     defun(pyDumpFunctionDefinitions (filename "t")
-        let((code functions total aliases progress)
-            poport = outfile(if(filename == "<install>" pyDumpFunctionDefinitions.installName filename))
-            functions = listFunctions("[a-z]+[A-Z][a-zA-Z]+")
-            total = length(functions)
-            progress = 0
-            foreach(func functions
-                printf("BEGIN FUNCTION %s\n", func)
-                code = sprintf(nil "help(%s)" func)
-                errset(evalstring(code))
-                aliases = listAlias(func)
-                if(aliases then
-                    printf("ALIASES %L\n", aliases)
-                )
-                printf("END FUNCTION %s\n\n" func)
-
-                progress = progress + 1
-
-                if(zerop(mod(progress 100)) then
-                    fprintf(stdout "dumped %6.2f%% found %d functions\n" (progress * 100.0 / total) progress)
-                )
-            )
-           fprintf(stdout "finished with %d functions total" progress)
-        )
-        close(poport)
-        poport = stdout
-        t
+        printf("This is deprecated. Functions can be called dynamically now\n")
     )
-
-
-    pyDumpFunctionDefinitions.installName = _installName
 
     putd('pyKillServer nil)
     defun(pyKillServer ()
