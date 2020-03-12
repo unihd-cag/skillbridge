@@ -19,6 +19,11 @@ def print_skill_script_location() -> None:
     print(f'load("{escaped}")')
 
 
+def deprecated_command() -> None:
+    print("This command is deprecated, because it is no longer necessary to export function definitions")
+    print("You don't have to do anything")
+
+
 def main() -> None:
     parser = ArgumentParser(
         'skillbridge',
@@ -31,12 +36,21 @@ def main() -> None:
 
     path = sub.add_parser('path', help="show the path to the skill script")
     generate = sub.add_parser('generate', help="generate static completion file")
+    status = sub.add_parser('status', help="deprecated, not needed anymore")
+    export = sub.add_parser('export', help="deprecated, not needed anymore")
+    export.add_argument('path', help="The absolute path for the exported file (deprecated)", type=str)
+    imp = sub.add_parser('import', help="deprecated, not needed anymore")
+    imp.add_argument('path', help="The absolute path for the exported file (deprecated)", type=str)
+    imp.add_argument('-f', '-force', '--force', help="always overwrite (deprecated)", action='store_true')
     args = parser.parse_args()
 
     commands: Dict[Optional[str], Tuple[Any, Callable[[], None]]] = {
         None: (parser, parser.print_help),
+        'status': (status, deprecated_command),
         'path': (path, print_skill_script_location),
         'generate': (generate, generate_static_completion),
+        'export': (export, deprecated_command),
+        'import': (imp, deprecated_command),
     }
 
     sub_parser, func = commands[args.command]
