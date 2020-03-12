@@ -83,7 +83,7 @@ def _receiver_type(func: Function) -> Optional[str]:
         return None
 
     index = description.index(func.name)
-    description = description[index + len(func.name):]
+    description = description[index + len(func.name) :]
     description = description.lstrip(' (')
 
     if description[0] in set('[{'):

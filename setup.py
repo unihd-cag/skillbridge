@@ -24,14 +24,8 @@ config = dict(
     packages=find_packages(),
     package_data={'skillbridge': ['py.typed']},
     include_package_data=True,
-    extras_require={
-        'dev': dev_requirements
-    },
-    entry_points={
-        'console_scripts': [
-            'skillbridge = skillbridge.__main__:main'
-        ]
-    },
+    extras_require={'dev': dev_requirements},
+    entry_points={'console_scripts': ['skillbridge = skillbridge.__main__:main']},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3",
@@ -44,7 +38,7 @@ config = dict(
         "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
         "Topic :: Software Development",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
-    ]
+    ],
 )
 
 if __name__ == '__main__':

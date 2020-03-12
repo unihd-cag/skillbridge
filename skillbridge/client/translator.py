@@ -139,7 +139,9 @@ class Translator:
             _text = outstring()
             poport = _text help({snake_to_camel(symbol)})
             poport = stdout getOutstring(_text)
-        """.replace("\n", " ")
+        """.replace(
+            "\n", " "
+        )
         return SkillCode(code)
 
     @staticmethod
