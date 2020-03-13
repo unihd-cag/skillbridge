@@ -115,24 +115,3 @@ After that, these management commands are available in the Skill console.
 
         ; show the last 20 lines of the log file
         pyShowLog 20
-
-.. function:: pyDumpFunctionDefinitions(filename)
-
-    This dumps all function names, parameters and documentations into the file
-    given by ``filename``. These function definitions are used by the python
-    module to generate the mapping of the global functions.
-
-    If ``filename`` is set to the special value ``"<install>"`` then the file
-    will be placed inside the python module ready to be used. This command
-    must be executed once before you can use the python module.
-
-    Example:
-
-    .. code-block:: lisp
-
-        ; install the function definitions
-        ; i.e. place them where the skillbridge needs them to be
-        pyDumpFunctionDefinitions "<install>"
-
-        ; dump them to a specific file (useful if you want to inspect the definitions)
-        pyDumpFunctionDefinitions "~/dump.txt"

@@ -140,26 +140,6 @@ how many lines will be printed. It always refers to the <strong>last</strong>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="pyDumpFunctionDefinitions">
-<code class="sig-name descname">pyDumpFunctionDefinitions</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#pyDumpFunctionDefinitions" title="Permalink to this definition">¶</a></dt>
-<dd><p>This dumps all function names, parameters and documentations into the file
-given by <code class="docutils literal notranslate"><span class="pre">filename</span></code>. These function definitions are used by the python
-module to generate the mapping of the global functions.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">filename</span></code> is set to the special value <code class="docutils literal notranslate"><span class="pre">&quot;&lt;install&gt;&quot;</span></code> then the file
-will be placed inside the python module ready to be used. This command
-must be executed once before you can use the python module.</p>
-<p>Example:</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; install the function definitions</span>
-<span class="c1">; i.e. place them where the skillbridge needs them to be</span>
-<span class="nv">pyDumpFunctionDefinitions</span> <span class="s">&quot;&lt;install&gt;&quot;</span>
-
-<span class="c1">; dump them to a specific file (useful if you want to inspect the definitions)</span>
-<span class="nv">pyDumpFunctionDefinitions</span> <span class="s">&quot;~/dump.txt&quot;</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </div>
 
 
@@ -229,7 +209,7 @@ must be executed once before you can use the python module.</p>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
