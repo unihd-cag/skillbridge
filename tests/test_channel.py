@@ -8,7 +8,7 @@ from tests.virtuoso import Virtuoso
 
 from skillbridge.client.channel import Channel, create_channel_class
 from skillbridge import Workspace, current_workspace
-
+from skillbridge import FunctionCollection
 
 WORKSPACE_ID = '__test__'
 channel_class = create_channel_class()
@@ -23,7 +23,7 @@ def _cleanup():
             pass
 
 
-@fixture(scope="session")
+@fixture(scope="function")
 def server() -> Virtuoso:
     v = Virtuoso(WORKSPACE_ID)
     v.start()
@@ -43,6 +43,7 @@ def channel() -> Channel:
 
 @fixture
 def ws() -> Workspace:
+
     for _ in range(10):
         try:
             ws = Workspace.open(WORKSPACE_ID)
@@ -53,6 +54,7 @@ def ws() -> Workspace:
     else:
         raise
     yield ws
+
     ws.close()
 
 
