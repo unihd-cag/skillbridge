@@ -3,7 +3,7 @@ from os import chdir
 from .client.workspace import Workspace, current_workspace
 from .client.translator import ParseError
 from .client.hints import Var, Symbol, Key, SkillTuple, SkillList, SkillCode, Function
-from .client.functions import keys
+from .client.functions import keys, FunctionCollection
 
 __all__ = [
     'Workspace',
@@ -23,8 +23,6 @@ __all__ = [
 
 def generate_static_completion() -> None:
     from subprocess import run
-    from .client.extract import functions_by_prefix
-    from .client.functions import name_without_prefix
     from pathlib import Path
     from re import fullmatch
     from keyword import iskeyword
@@ -35,23 +33,24 @@ def generate_static_completion() -> None:
     chdir(client)
     run(['stubgen', 'workspace.py', '-o', '.'])
 
-    functions = functions_by_prefix()
+    ws = Workspace.open()
     with open('workspace.pyi', 'a') as fout:
-        for key, values in functions.items():
+        for key, value in ws.__dict__.items():
+            if not isinstance(value, FunctionCollection):
+                continue
+
             if not fullmatch(ident, key) or iskeyword(key):
                 continue
 
             fout.write(f'    class {key}:\n')
-            lines = 0
+            lines = False
 
-            for func in values:
-                name = name_without_prefix(func.name)
-
-                if not fullmatch(ident, name) or iskeyword(name):
+            for func in dir(value):
+                if not fullmatch(ident, func) or iskeyword(func):
                     continue
 
-                lines += 1
-                fout.write(f'        def {name}(*args, **kwargs): ...\n')
+                lines = True
+                fout.write(f'        def {func}(*args, **kwargs): ...\n')
 
             if not lines:
                 fout.write('        pass\n')

@@ -1,11 +1,8 @@
 from os.path import abspath, dirname, join
 from argparse import ArgumentParser
-from pathlib import Path
-from shutil import copy
 from typing import Dict, Tuple, Any, Callable, Optional
 
 from . import generate_static_completion
-from .client.extract import functions_by_prefix
 
 
 def print_skill_script_location() -> None:
@@ -22,45 +19,10 @@ def print_skill_script_location() -> None:
     print(f'load("{escaped}")')
 
 
-def show_status() -> None:
-    prefixes = functions_by_prefix()
-    function_count = sum(len(collection) for collection in prefixes.values())
-
-    if prefixes:
-        print(f"There are {function_count} functions in {len(prefixes)} prefixes")
-    else:
-        print("No function definitions are exported")
-
-
-def export_definitions(path: Path) -> None:
-    if path.is_dir():
-        path /= 'definitions.txt'
-
-    if path.exists():
-        if input("{} already exists, overwrite? [yN]").lower() != 'y':
-            exit()
-
-    definitions = Path(__file__).parent / 'client' / 'definitions.txt'
-
-    copy(definitions, path)
-    print("copied")
-
-
-def import_definitions(path: Path, always_overwrite: bool) -> None:
-    if path.is_dir():
-        path /= 'definitions.txt'
-
-    definitions = Path(__file__).parent / 'client' / 'definitions.txt'
-
-    if definitions.exists() and not always_overwrite:
-        try:
-            if input("definitions already exist, overwrite? [yN]").lower() != 'y':
-                exit()
-        except KeyboardInterrupt:
-            exit()
-
-    copy(path, definitions)
-    show_status()
+def deprecated_command() -> None:
+    print("This command is deprecated")
+    print("It is no longer necessary to export function definitions")
+    print("You don't have to do anything")
 
 
 def main() -> None:
@@ -75,21 +37,21 @@ def main() -> None:
 
     path = sub.add_parser('path', help="show the path to the skill script")
     generate = sub.add_parser('generate', help="generate static completion file")
-    status = sub.add_parser('status', help="show the number of exported function definitions")
-    export = sub.add_parser('export', help="export the function definitions into a text file")
-    export.add_argument('path', help="The absolute path for the exported file", type=Path)
-    imp = sub.add_parser('import', help="import the function definitions from a file")
-    imp.add_argument('path', help="The absolute path for the exported file", type=Path)
-    imp.add_argument('-f', '-force', '--force', help="always overwrite", action='store_true')
+    status = sub.add_parser('status', help="deprecated, not needed anymore")
+    export = sub.add_parser('export', help="deprecated, not needed anymore")
+    export.add_argument('path', help="deprecated", type=str)
+    imp = sub.add_parser('import', help="deprecated, not needed anymore")
+    imp.add_argument('path', help="deprecated", type=str)
+    imp.add_argument('-f', '-force', '--force', help="deprecated", action='store_true')
     args = parser.parse_args()
 
     commands: Dict[Optional[str], Tuple[Any, Callable[[], None]]] = {
         None: (parser, parser.print_help),
-        'status': (status, show_status),
+        'status': (status, deprecated_command),
         'path': (path, print_skill_script_location),
         'generate': (generate, generate_static_completion),
-        'export': (export, lambda: export_definitions(args.path)),
-        'import': (imp, lambda: import_definitions(args.path, args.force)),
+        'export': (export, deprecated_command),
+        'import': (imp, deprecated_command),
     }
 
     sub_parser, func = commands[args.command]

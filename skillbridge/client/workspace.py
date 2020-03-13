@@ -6,7 +6,6 @@ from textwrap import dedent
 from .hints import Function, Symbol
 from .channel import Channel, create_channel_class, DirectChannel
 from .functions import FunctionCollection
-from .extract import functions_by_prefix
 from .objects import RemoteObject
 from .translator import camel_to_snake, snake_to_camel, Translator, DefaultTranslator
 
@@ -176,19 +175,16 @@ class Workspace:
     def __init__(
         self, channel: Channel, id_: WorkspaceId, translator: Optional[Translator] = None
     ) -> None:
-        definitions = functions_by_prefix()
-
         self._id = id_
         self._channel = channel
         self._translator = translator or DefaultTranslator(self._create_remote_object)
         self._max_transmission_length = 1_000_000
 
         for key in Workspace.__annotations__:
-            definition = definitions.get(key, [])
-            value = FunctionCollection(channel, definition, self._translator)
+            value = FunctionCollection(channel, key, self._translator)
             setattr(self, key, value)
 
-        self.user = FunctionCollection(channel, [], self._translator)
+        self.user = FunctionCollection(channel, 'user', self._translator)
 
         _register_well_known_functions(self)
 
@@ -199,14 +195,13 @@ class Workspace:
     def flush(self) -> None:
         self._channel.flush()
 
-    def define(self, name: str, args: Iterable[str], code: str, doc: Optional[str] = None) -> None:
+    def define(self, name: str, args: Iterable[str], code: str) -> None:
         code = code.replace('\n', ' ')
         skill_name = snake_to_camel(name)
         skill_name = skill_name[0].upper() + skill_name[1:]
         arg_list = ' '.join(snake_to_camel(arg) for arg in args)
         code = f'defun(user{skill_name} ({arg_list}) {code})'
-        symbol = cast(Symbol, self._translator.decode(self._channel.send(code)))
-        self.user.add_by_key(name, Function(symbol.name, doc or 'user defined', set()))
+        cast(Symbol, self._translator.decode(self._channel.send(code)))
 
     def _create_remote_object(self, variable: str) -> RemoteObject:
         return RemoteObject(self._channel, variable, self._translator)
@@ -305,11 +300,10 @@ class Workspace:
         except AssertionError:
             raise RuntimeError("You cannot use that prefix.") from None
         except AttributeError:
-            collection = FunctionCollection(self._channel, [], self._translator)
+            collection = FunctionCollection(self._channel, prefix, self._translator)
             setattr(self, prefix, collection)
 
         function_tuple = self._build_function(function)
-        collection.add_by_key(rest, function_tuple)
 
         return function_tuple
 
