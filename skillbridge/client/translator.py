@@ -1,5 +1,5 @@
 from typing import NoReturn, Any, List, Iterable, cast
-from re import sub
+from re import sub, findall
 from json import dumps, loads
 from warnings import warn_explicit
 
@@ -28,17 +28,21 @@ def _skill_value_to_python(string: str, replicate: Replicator) -> Skill:
     )
 
 
+def _upper_without_first(match: Any) -> str:
+    return match.group()[1:].upper()
+
+
 def snake_to_camel(snake: str) -> str:
     if snake.startswith('_') or '_' not in snake:
         return snake
-    return snake[0] + snake.replace('_', ' ').title().replace(' ', '')[1:]
+    return sub(r'_[a-zA-Z]', _upper_without_first, snake)
 
 
 def camel_to_snake(camel: str) -> str:
     if camel[0].isupper():
         return camel
-
-    return sub(r'(?<=[a-z])([A-Z])|([A-Z][a-z])', r'_\1\2', camel).lower()
+    parts = findall("[a-z]+|[A-Z][a-z]+|[A-Z]+(?=[A-Z][a-z]|$)", camel)
+    return '_'.join(part.lower() if part[-1].islower() else part for part in parts)
 
 
 def _python_value_to_skill(value: Skill) -> SkillCode:

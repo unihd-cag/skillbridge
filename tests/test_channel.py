@@ -8,7 +8,6 @@ from tests.virtuoso import Virtuoso
 
 from skillbridge.client.channel import Channel, create_channel_class
 from skillbridge import Workspace, current_workspace
-from skillbridge import FunctionCollection
 
 WORKSPACE_ID = '__test__'
 channel_class = create_channel_class()
