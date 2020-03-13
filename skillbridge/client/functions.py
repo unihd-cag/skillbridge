@@ -1,4 +1,5 @@
 from typing import List
+from functools import lru_cache
 
 from .hints import SkillCode, Skill, Key
 from .channel import Channel
@@ -18,6 +19,7 @@ class FunctionCollection:
     def __repr__(self) -> str:
         return f"<function collection {self._prefix}*>\n{dir(self)}"
 
+    @lru_cache(maxsize=128)
     def __dir__(self) -> List[str]:
         code = self._translate.encode_globals(self._prefix)
         result = self._channel.send(code)
