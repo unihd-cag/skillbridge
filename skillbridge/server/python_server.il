@@ -192,7 +192,7 @@ let((_filename _baseName _moduleFolder _logName _executable)
     )
 
     putd('pyRunScript nil)
-    defun(pyRunScript (script @key (python "python") (args nil) "tl")
+    defun(pyRunScript (script @key (python "python") (args nil) "ttl")
         let((command)
             command = sprintf(nil "%s %s %s" python script buildString(args))
             ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript "python_script.log")
