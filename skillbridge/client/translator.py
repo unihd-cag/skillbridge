@@ -1,4 +1,4 @@
-from typing import NoReturn, Any, List, Iterable, cast
+from typing import NoReturn, Any, List, Iterable, cast, Match
 from re import sub, findall
 from json import dumps, loads
 from warnings import warn_explicit
@@ -28,7 +28,7 @@ def _skill_value_to_python(string: str, replicate: Replicator) -> Skill:
     )
 
 
-def _upper_without_first(match: Any) -> str:
+def _upper_without_first(match: Match[str]) -> str:
     return match.group()[1:].upper()
 
 

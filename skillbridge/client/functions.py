@@ -20,7 +20,7 @@ class FunctionCollection:
         return f"<function collection {self._prefix}*>\n{dir(self)}"
 
     @lru_cache(maxsize=128)
-    def __dir__(self) -> List[str]:
+    def __dir__(self) -> List[str]:  # type: ignore
         code = self._translate.encode_globals(self._prefix)
         result = self._channel.send(code)
         functions = self._translate.decode_globals(result)
