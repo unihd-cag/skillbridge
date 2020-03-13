@@ -38,6 +38,16 @@ def decode_simple(simple_translator: Translator) -> Callable[[str], Any]:
     return simple_translator.decode
 
 
+def test_snake_to_wrong_camel_case():
+    assert snake_to_camel('load_XML_from_string') == 'loadXMLFromString'
+    assert snake_to_camel('load_xml_from_string') == 'loadXmlFromString'
+
+
+def test_wrong_camel_to_snake_case():
+    assert camel_to_snake('loadXMLConfigFromString') == 'load_XML_config_from_string'
+    assert camel_to_snake('loadXmlConfigFromString') == 'load_xml_config_from_string'
+
+
 def test_snake_to_camel_simple_does_not_change():
     assert snake_to_camel('x') == 'x'
     assert snake_to_camel('simple') == 'simple'
@@ -64,7 +74,7 @@ def test_camel_to_snake_simple_does_not_change():
 def test_camel_to_snake_input_camel():
     assert camel_to_snake('camelCase') == 'camel_case'
     assert camel_to_snake('thisIsCamelCase') == 'this_is_camel_case'
-    assert camel_to_snake('thisIsHTML') == 'this_is_html'
+    assert camel_to_snake('thisIsHTML') == 'this_is_HTML'
 
 
 def test_named_parameters_are_optionally_converted(simple_translator: Translator):
