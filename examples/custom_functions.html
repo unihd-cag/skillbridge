@@ -35,8 +35,14 @@
   <div class="section" id="manually-registering-functions">
 <h1>Manually Registering Functions<a class="headerlink" href="#manually-registering-functions" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">skillbridge</span></code> will only export functions that are documented in
-the running Vivado instance. If you need functions that are not documented there
-but still exist, you can register them manually.</p>
+the running Virtuoso instance. If you need functions that are not documented there
+but still exist, you can register them manually.
+There are two methods for this either with the prefix method which is a clean way to
+categorize and define the function. Since some skill function definitions do not follow
+the default camel case naming conventions or have not prefix, we also provide a way
+to specify the function name.</p>
+<div class="section" id="prefix-register-method">
+<h2>Prefix register method<a class="headerlink" href="#prefix-register-method" title="Permalink to this headline">¶</a></h2>
 <p>Let’s take a look at the following example.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@ws</span><span class="o">.</span><span class="n">register</span>
 <span class="k">def</span> <span class="nf">dbCheck</span><span class="p">(</span><span class="n">d_cellview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -85,6 +91,29 @@ actually does.</p>
 <p>Obviously this only <strong>registers</strong> the function, but it does not define it
 in Skill. If you actually call <code class="docutils literal notranslate"><span class="pre">myFunction</span></code> you will get the error:</p>
 <p><code class="docutils literal notranslate"><span class="pre">undefined</span> <span class="pre">function</span> <span class="pre">myFunction</span></code></p>
+</div>
+</div>
+<div class="section" id="direct-method">
+<h2>Direct method<a class="headerlink" href="#direct-method" title="Permalink to this headline">¶</a></h2>
+<p>In this example the skill method load is directly called.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbrige</span> <span class="kn">import</span> <span class="n">Workspace</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="p">()</span>
+<span class="n">ws</span><span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">](</span><span class="s1">&#39;exmapleFile.il&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let us say you have a SKILL function called <code class="docutils literal notranslate"><span class="pre">myFunction_def</span></code>.
+You can call it in python like this. Pay attention this function must be
+defined exist in your Virtuoso instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbrige</span> <span class="kn">import</span> <span class="n">Workspace</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="p">()</span>
+<span class="n">ws</span><span class="p">[</span><span class="s1">&#39;myFunction_def&#39;</span><span class="p">](</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keep in mind that the functions you get this way behave exactly like the functions from the
+prefix method, including keyword arguments.</p>
+</div>
 </div>
 </div>
 
