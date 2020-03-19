@@ -189,8 +189,7 @@ class Workspace:
         _register_well_known_functions(self)
 
     def __getitem__(self, item: str) -> LiteralRemoteFunction:
-        remote = LiteralRemoteFunction(self._channel, item, self._translator)
-        return remote
+        return LiteralRemoteFunction(self._channel, item, self._translator)
 
     @property
     def id(self) -> WorkspaceId:
