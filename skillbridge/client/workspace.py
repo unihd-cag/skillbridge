@@ -5,7 +5,7 @@ from textwrap import dedent
 
 from .hints import Function, Symbol
 from .channel import Channel, create_channel_class, DirectChannel
-from .functions import FunctionCollection
+from .functions import FunctionCollection, LiteralRemoteFunction
 from .objects import RemoteObject
 from .translator import camel_to_snake, snake_to_camel, Translator, DefaultTranslator
 
@@ -187,6 +187,9 @@ class Workspace:
         self.user = FunctionCollection(channel, 'user', self._translator)
 
         _register_well_known_functions(self)
+
+    def __getitem__(self, item: str) -> LiteralRemoteFunction:
+        return LiteralRemoteFunction(self._channel, item, self._translator)
 
     @property
     def id(self) -> WorkspaceId:

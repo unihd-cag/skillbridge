@@ -7,6 +7,14 @@ from pytest import raises
 from skillbridge.client.channel import Channel
 from skillbridge.client.translator import Symbol
 from skillbridge import keys, Key
+from skillbridge.test.workspace import DummyWorkspace
+
+
+def test_workspace_get_item():
+    ws = DummyWorkspace()
+    f = ws['myFunction_def']
+    assert f._function == 'myFunction_def'
+    assert 'myFunction_def' in f.lazy()
 
 
 def test_reports_skill_server_correctly():
