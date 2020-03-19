@@ -50,3 +50,8 @@ class RemoteFunction:
         command = self._translate.encode_help(self._function)
         result = self._channel.send(command)
         return self._translate.decode_help(result)
+
+
+class LiteralRemoteFunction(RemoteFunction):
+    def lazy(self, *args: Skill, **kwargs: Skill) -> SkillCode:
+        return self._translate.encode_call(self._function, *args, **kwargs)

@@ -5,7 +5,7 @@ from textwrap import dedent
 
 from .hints import Function, Symbol
 from .channel import Channel, create_channel_class, DirectChannel
-from .functions import FunctionCollection, RemoteFunction
+from .functions import FunctionCollection, LiteralRemoteFunction
 from .objects import RemoteObject
 from .translator import camel_to_snake, snake_to_camel, Translator, DefaultTranslator
 
@@ -188,8 +188,8 @@ class Workspace:
 
         _register_well_known_functions(self)
 
-    def __getitem__(self, item: str) -> RemoteFunction:
-        remote = RemoteFunction(self._channel, item, self._translator)
+    def __getitem__(self, item: str) -> LiteralRemoteFunction:
+        remote = LiteralRemoteFunction(self._channel, item, self._translator)
         return remote
 
     @property
