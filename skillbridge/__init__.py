@@ -50,7 +50,7 @@ def generate_static_completion() -> None:
                     continue
 
                 lines = True
-                fout.write(f'        def {func}(*args, **kwargs): ...\n')
+                fout.write(f'        {func}: staticmethod\n')
 
             if not lines:
                 fout.write('        pass\n')
