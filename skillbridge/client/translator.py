@@ -42,7 +42,9 @@ def camel_to_snake(camel: str) -> str:
     if camel[0].isupper():
         return camel
     parts = findall("[a-z]+|[A-Z][a-z]+|[A-Z]+(?=[A-Z_][a-z]|$)", camel)
-    return '_'.join(part.lower() if part[-1].islower() or len(part) == 1 else part for part in parts)
+    return '_'.join(
+        part.lower() if part[-1].islower() or len(part) == 1 else part for part in parts
+    )
 
 
 def _python_value_to_skill(value: Skill) -> SkillCode:

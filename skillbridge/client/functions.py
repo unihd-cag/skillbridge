@@ -3,7 +3,7 @@ from functools import lru_cache
 
 from .hints import SkillCode, Skill, Key
 from .channel import Channel
-from .translator import camel_to_snake, Translator, snake_to_camel
+from .translator import Translator, snake_to_camel
 
 
 def keys(**attrs: Skill) -> List[Skill]:
