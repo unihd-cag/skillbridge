@@ -3,7 +3,7 @@ from functools import lru_cache
 
 from .hints import SkillCode, Skill, Key
 from .channel import Channel
-from .translator import camel_to_snake, Translator, snake_to_camel
+from .translator import Translator, snake_to_camel
 
 
 def keys(**attrs: Skill) -> List[Skill]:
@@ -23,8 +23,7 @@ class FunctionCollection:
     def __dir__(self) -> List[str]:
         code = self._translate.encode_globals(self._prefix)
         result = self._channel.send(code)
-        functions = self._translate.decode_globals(result)
-        return [camel_to_snake(func) for func in functions]
+        return self._translate.decode_globals(result)
 
     def __getattr__(self, item: str) -> 'RemoteFunction':
         return RemoteFunction(self._channel, f'{self._prefix}_{item}', self._translate)

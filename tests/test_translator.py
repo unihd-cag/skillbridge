@@ -75,6 +75,7 @@ def test_camel_to_snake_input_camel():
     assert camel_to_snake('camelCase') == 'camel_case'
     assert camel_to_snake('thisIsCamelCase') == 'this_is_camel_case'
     assert camel_to_snake('thisIsHTML') == 'this_is_HTML'
+    assert camel_to_snake('abcXYz') == 'abc_x_yz'
 
 
 def test_named_parameters_are_optionally_converted(simple_translator: Translator):
@@ -85,6 +86,7 @@ def test_named_parameters_are_optionally_converted(simple_translator: Translator
 def test_camel_to_snake_input_snake_does_not_change():
     assert camel_to_snake('snake_case') == 'snake_case'
     assert camel_to_snake('this_is_snake_case') == 'this_is_snake_case'
+    assert camel_to_snake('x_Y_and_z') == 'x_y_and_z'
 
 
 def test_camel_to_snake_input_pascal_does_not_change():
