@@ -23,8 +23,7 @@ class FunctionCollection:
     def __dir__(self) -> List[str]:
         code = self._translate.encode_globals(self._prefix)
         result = self._channel.send(code)
-        functions = self._translate.decode_globals(result)
-        return [camel_to_snake(func) for func in functions]
+        return self._translate.decode_globals(result)
 
     def __getattr__(self, item: str) -> 'RemoteFunction':
         return RemoteFunction(self._channel, f'{self._prefix}_{item}', self._translate)
