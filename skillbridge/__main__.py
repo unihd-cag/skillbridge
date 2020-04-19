@@ -1,6 +1,8 @@
 from os.path import abspath, dirname, join
 from argparse import ArgumentParser
 from typing import Dict, Tuple, Any, Callable, Optional
+from code import interact
+from random import randrange
 
 from . import generate_static_completion
 
@@ -25,6 +27,22 @@ def deprecated_command() -> None:
     print("You don't have to do anything")
 
 
+def shell_command(ws_id: Optional[str], ping: bool) -> None:
+    import skillbridge
+
+    variables = {name: getattr(skillbridge, name) for name in dir(skillbridge)}
+    ws = skillbridge.Workspace.open(ws_id)
+    variables['ws'] = ws
+
+    if ping:
+        x = randrange(1000)
+        y = randrange(1000)
+
+        assert ws['plus'](x, y) == x + y, "simple command failed"
+
+    interact("Interactive Python interpreter with skillbridge Workspace `ws`", local=variables)
+
+
 def main() -> None:
     parser = ArgumentParser(
         'skillbridge',
@@ -35,6 +53,11 @@ def main() -> None:
 
     sub = parser.add_subparsers(title='commands', dest='command')
 
+    shell = sub.add_parser('shell', help="opens a python interpreter with a connected workspace")
+    shell.add_argument('-i', '--id', help="id used to open the workspace", default=None)
+    shell.add_argument(
+        '-p', '--ping', help="ping the server and quit if it does not respond", action='store_true'
+    )
     path = sub.add_parser('path', help="show the path to the skill script")
     generate = sub.add_parser('generate', help="generate static completion file")
     status = sub.add_parser('status', help="deprecated, not needed anymore")
@@ -52,6 +75,7 @@ def main() -> None:
         'generate': (generate, generate_static_completion),
         'export': (export, deprecated_command),
         'import': (imp, deprecated_command),
+        'shell': (shell, lambda: shell_command(args.id, args.ping)),
     }
 
     sub_parser, func = commands[args.command]

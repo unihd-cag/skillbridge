@@ -1,8 +1,9 @@
-from typing import Any, List, Optional, cast
+from typing import Any, List, Optional, cast, Union, overload, Sequence
 
-from .hints import SkillCode, Symbol
+from .functions import RemoteFunction
+from .hints import SkillCode, Symbol, Var
 from .channel import Channel
-from .translator import Translator
+from .translator import Translator, snake_to_camel
 
 
 def is_jupyter_magic(attribute: str) -> bool:
@@ -96,3 +97,84 @@ class RemoteObject:
         if isinstance(other, RemoteObject):
             return self._variable != other._variable
         return NotImplemented
+
+    @property
+    def lazy(self) -> 'LazyList':
+        return LazyList(self._channel, self._variable, self._translate)
+
+
+class LazyList:
+    arg = Var('arg')
+
+    def __init__(self, channel: Channel, variable: SkillCode, translator: Translator) -> None:
+        self._channel = channel
+        self._variable = variable
+        self._translator = translator
+
+    def __getattr__(self, attribute: str) -> 'LazyList':
+        variable = SkillCode(f"{self._variable}~>{attribute}")
+        return LazyList(self._channel, variable, self._translator)
+
+    def __str__(self) -> str:
+        return f"<lazy list {self._variable}>"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    @staticmethod
+    def _condition(filters: Sequence[SkillCode]) -> SkillCode:
+        if len(filters) == 1:
+            return SkillCode(f'arg->{filters[0]}')
+        parameters = ' '.join(f'arg->{f}' for f in filters)
+        return SkillCode(f'and({parameters})')
+
+    def filter(self, *args: str, **kwargs: Any) -> 'LazyList':
+        if not args and not kwargs:
+            return self
+
+        arg_filters = [SkillCode(snake_to_camel(arg)) for arg in args]
+        kwarg_filters = [
+            SkillCode(f"{snake_to_camel(key)} == {self._translator.encode(value)}")
+            for key, value in kwargs.items()
+        ]
+        filters = self._condition(arg_filters + kwarg_filters)
+        variable = SkillCode(f'setof(arg {self._variable} {filters})')
+
+        return LazyList(self._channel, variable, self._translator)
+
+    @overload
+    def __getitem__(self, item: int) -> RemoteObject:
+        ...  # pragma: nocover
+
+    @overload  # noqa
+    def __getitem__(self, item: slice) -> List[RemoteObject]:  # noqa
+        ...  # pragma: nocover
+
+    def __getitem__(  # noqa
+        self, item: Union[int, slice]
+    ) -> Union[RemoteObject, List[RemoteObject]]:
+        if isinstance(item, int):
+            code = self._translator.encode_call('nth', item, Var(self._variable))
+        else:
+            if item.start is not None or item.stop is not None or item.step is not None:
+                raise RuntimeError("cannot slice lazy list with arbitrary bounds")
+
+            code = self._variable
+
+        result = self._channel.send(code)
+        return self._translator.decode(result)  # type: ignore
+
+    def __len__(self) -> int:
+        code = self._translator.encode_call('length', Var(self._variable))
+        return self._translator.decode(self._channel.send(code))  # type: ignore
+
+    def foreach(self, func: Union['RemoteFunction', SkillCode], *args: Any) -> None:
+        if isinstance(func, RemoteFunction):
+            args = args or (LazyList.arg,)
+            func = func.lazy(*args)
+        elif args:
+            raise RuntimeError("cannot combine args with remote function")
+
+        code = self._translator.encode_call('foreach', LazyList.arg, Var(self._variable), Var(func))
+        result = self._channel.send(code + ',nil')
+        self._translator.decode(result)
