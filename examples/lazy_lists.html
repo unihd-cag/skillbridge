@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Handling Large Lists &#8212; Python-Skill Bridge  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Check/Save Libs" href="lib_save.html" />
+    <link rel="prev" title="Layout Inst Example" href="inst-statistics.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="handling-large-lists">
+<span id="lazy-lists"></span><h1>Handling Large Lists<a class="headerlink" href="#handling-large-lists" title="Permalink to this headline">¶</a></h1>
+<p>Sometimes for-loops on the Python side are too slow, because every iteration sends a SKILL command and waits for the
+answer to it. In some cases we can “move” the for-loop to the SKILL side.</p>
+<p>This naive code example queries all shapes and deletes some of them. The attribute access and the delete function both
+trigger a SKILL command on each iteration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cv</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">cv</span><span class="o">.</span><span class="n">shapes</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">layer</span> <span class="o">==</span> <span class="s1">&#39;M1&#39;</span><span class="p">:</span>
+        <span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete_object</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Another problem occurs when only a single item of a long list is needed. The following code example receives the
+complete list from SKILL twice and then takes a single element/and the length out of it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cv</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">shapes</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The class <code class="docutils literal notranslate"><span class="pre">LazyList</span></code> can help us in these situations. The first step is to use the <code class="docutils literal notranslate"><span class="pre">lazy</span></code> attribute of the remote
+object. After that filtering, for-loops and accessing single items becomes very efficient.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cv</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
+<span class="n">shapes</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">lazy</span><span class="o">.</span><span class="n">shapes</span>  <span class="c1"># notice the `lazy` attribute</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># only one item is transferred</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shapes</span><span class="p">))</span>  <span class="c1"># length is calculated in SKILL</span>
+
+<span class="n">shapes</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="s1">&#39;M1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete_object</span><span class="p">)</span>  <span class="c1"># filtering and deletion is done in SKILL</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">shapes</span><span class="p">[:])</span>  <span class="c1"># in case you still need it: the whole list</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Try to combine multiple filters into a single call to <code class="docutils literal notranslate"><span class="pre">LazyList.filter</span></code>. Multiple filter calls in Python will
+result in multiple filter calls in SKILL.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shapes</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="s1">&#39;M1&#39;</span><span class="p">,</span> <span class="n">purpose</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>  <span class="c1"># better</span>
+<span class="n">shapes</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="s1">&#39;M1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">purpose</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>  <span class="c1"># worse</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Don’t use C-like for loops with <code class="docutils literal notranslate"><span class="pre">LazyList</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shapes</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">shapes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># very slow</span>
+</pre></div>
+</div>
+<p>This runs in quadratic time.</p>
+</div>
+<div class="section" id="advanced-usage-of-lazylist-foreach">
+<h2>Advanced usage of <code class="docutils literal notranslate"><span class="pre">LazyList.foreach</span></code><a class="headerlink" href="#advanced-usage-of-lazylist-foreach" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">LazyList.foreach</span></code> has three forms. You can pass a remote function with arguments, without arguments or a lazily
+evaluated remote function.</p>
+<p>The simple form is without arguments. In this case every item of the list is passed as the single argument to the
+function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shapes</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">ws</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete_object</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you need additional arguments, you can use the following form. In this example the function is called with two
+arguments. The first is the element of the list and the second is a constant we provided.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shapes</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">ws</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">move_object</span><span class="p">,</span> <span class="n">LazyList</span><span class="o">.</span><span class="n">arg</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Alternatively you can use the following syntax which is equivalent to the second form.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shapes</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">ws</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">move_object</span><span class="o">.</span><span class="n">lazy</span><span class="p">(</span><span class="n">LazyList</span><span class="o">.</span><span class="n">arg</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]))</span>  <span class="c1"># notice the `lazy` attribute</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python-Skill Bridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basic.html">Basic Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_path.html">Create some paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html">Manually Registering Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inst-statistics.html">Layout Inst Example</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Handling Large Lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lib_save.html">Check/Save Libs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiple-instances.html">Multiple Virtuoso Instances</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Examples</a><ul>
+      <li>Previous: <a href="inst-statistics.html" title="previous chapter">Layout Inst Example</a></li>
+      <li>Next: <a href="lib_save.html" title="next chapter">Check/Save Libs</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Niels Buwen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/examples/lazy_lists.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>The Python Server &#8212; Python-Skill Bridge  documentation</title>
@@ -40,7 +40,7 @@ into your terminal to get the correct paths).</p>
 </pre></div>
 </div>
 <p>After that, these management commands are available in the Skill console.</p>
-<dl class="function">
+<dl class="py function">
 <dt id="pyStartServer">
 <code class="sig-name descname">pyStartServer</code><span class="sig-paren">(</span><em class="sig-param">id=&quot;default&quot; logLevel=&quot;WARNING&quot; singleMode=nil timeout=nil python=&quot;python&quot;</em><span class="sig-paren">)</span><a class="headerlink" href="#pyStartServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>This starts the python server. If you are only running a single instance of
@@ -107,7 +107,7 @@ to change their default value by explicitly naming them when calling the functio
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pyKillServer">
 <code class="sig-name descname">pyKillServer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyKillServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>This terminates the python subprocess and thus, kills the server.
@@ -116,16 +116,16 @@ and active connections will result in a <code class="xref py py-class docutils l
 the next time they are used.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pyReloadScript">
 <code class="sig-name descname">pyReloadScript</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyReloadScript" title="Permalink to this definition">¶</a></dt>
 <dd><p>This calls <a class="reference internal" href="#pyKillServer" title="pyKillServer"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyKillServer()</span></code></a> and reloads the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>
 Skill script. Normally this function would not be used.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pyShowLog">
-<code class="sig-name descname">pyShowLog</code><span class="sig-paren">(</span><em class="sig-param">numberOfLines=10</em><span class="sig-paren">)</span><a class="headerlink" href="#pyShowLog" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pyShowLog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">numberOfLines</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyShowLog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used for debugging. This shows the logging output from the
 python server. The parameter <code class="docutils literal notranslate"><span class="pre">numberOfLines</span></code> controls
 how many lines will be printed. It always refers to the <strong>last</strong>
@@ -209,7 +209,7 @@ how many lines will be printed. It always refers to the <strong>last</strong>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
