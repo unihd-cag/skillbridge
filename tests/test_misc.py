@@ -100,8 +100,8 @@ def test_lazy_list():
     assert l.filter('x', 'y')._variable == 'setof(arg TEST and(arg->x arg->y))'
 
     channel.inputs.append('123')
-    assert len(l.shapes) == 123
-    assert channel.outputs.popleft() == 'length(TEST~>shapes )'
+    assert len(l.fig_groups) == 123
+    assert channel.outputs.popleft() == 'length(TEST~>figGroups )'
 
     channel.inputs.append('42')
     assert l.shapes[10] == 42

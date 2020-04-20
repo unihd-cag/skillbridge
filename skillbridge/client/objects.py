@@ -112,7 +112,7 @@ class LazyList:
         self._translator = translator
 
     def __getattr__(self, attribute: str) -> 'LazyList':
-        variable = SkillCode(f"{self._variable}~>{attribute}")
+        variable = SkillCode(f"{self._variable}~>{snake_to_camel(attribute)}")
         return LazyList(self._channel, variable, self._translator)
 
     def __str__(self) -> str:
