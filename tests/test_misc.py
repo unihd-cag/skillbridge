@@ -2,7 +2,7 @@ from subprocess import check_output, run, PIPE
 from textwrap import dedent
 from os.path import exists
 
-from pytest import raises
+from pytest import raises, mark
 
 from skillbridge.client.channel import Channel
 from skillbridge.client.functions import LiteralRemoteFunction
@@ -11,6 +11,11 @@ from skillbridge.client.translator import Symbol, DefaultTranslator
 from skillbridge import keys, Key, SkillCode
 from skillbridge.test.channel import DummyChannel
 from skillbridge.test.workspace import DummyWorkspace
+
+
+@mark.parametrize('id_,repr_', [('0x10', 16), ('00001F', 31), ('10', 10)])
+def test_skill_id(id_, repr_):
+    assert RemoteObject(..., f'__py_db_{id_}', ...).skill_id == repr_
 
 
 def test_workspace_get_item():
