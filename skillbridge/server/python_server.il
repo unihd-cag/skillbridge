@@ -82,7 +82,7 @@ let((_filename _baseName _moduleFolder _logName _executable)
                     ipcWriteProcess(id sprintf(nil "failure %L\n" errset.errset))
                 else
                     pythonCode = __pySkillToPython(result)
-                    if((capturedWarning != "") then
+                    if((capturedWarning != "" && capturedWarning != "*WARNING* ") then
                         pythonCode = sprintf(nil "warning(%L, %s)" capturedWarning pythonCode)
                     )
                     ipcWriteProcess(id sprintf(nil "success %s\n" pythonCode))
