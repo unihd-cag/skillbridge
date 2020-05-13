@@ -122,7 +122,7 @@ class Translator:
         parts = ' '.join(
             (
                 f'{obj}->?',
-                f'if( type({obj}) == \'rodObj then {obj}->systemHandleNames)',
+                f"if( type({obj}) == 'rodObj then {obj}->systemHandleNames)",
                 f'if( type({obj}) == \'rodObj then {obj}->userHandleNames)',
             )
         )
