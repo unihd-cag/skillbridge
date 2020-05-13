@@ -118,7 +118,14 @@ class Translator:
 
     @staticmethod
     def encode_dir(obj: SkillCode) -> SkillCode:
-        parts = ' '.join((f'{obj}->?', f'{obj}->systemHandleNames', f'{obj}->userHandleNames'))
+
+        parts = ' '.join(
+            (
+                f'{obj}->?',
+                f"if( type({obj}) == 'rodObj then {obj}->systemHandleNames)",
+                f'if( type({obj}) == \'rodObj then {obj}->userHandleNames)',
+            )
+        )
         code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
         return SkillCode(code)
 

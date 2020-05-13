@@ -51,7 +51,10 @@ class RemoteObject:
 
     @property
     def skill_type(self) -> Optional[str]:
-        typ = self.obj_type
+        try:
+            typ = self.obj_type
+        except RuntimeError:
+            return None
         if typ is None:
             return None
         if isinstance(typ, Symbol):

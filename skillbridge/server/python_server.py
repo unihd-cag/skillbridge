@@ -71,7 +71,7 @@ def create_unix_server_class(single: bool) -> Type[BaseServer]:
         allow_reuse_address = True
 
         def __init__(self, file: str, handler: Type[BaseRequestHandler]) -> None:
-            self.path = f'/tmp/skill-server-' + file + '.sock'
+            self.path = f'/tmp/skill-server-{file}.sock'
             try:
                 unlink(self.path)
             except FileNotFoundError:
