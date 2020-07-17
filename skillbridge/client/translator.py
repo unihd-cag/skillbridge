@@ -135,6 +135,12 @@ class Translator:
         return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
 
     @staticmethod
+    def encode_namespace_getattr(name: str, attr: str) -> SkillCode:
+        name = snake_to_camel(name)
+        attr = snake_to_camel(attr)
+        return SkillCode(f'{name}:::{attr}')
+
+    @staticmethod
     def encode_getattr(obj: SkillCode, key: str) -> SkillCode:
         return build_skill_path([obj, key])
 
@@ -160,6 +166,12 @@ class Translator:
     @staticmethod
     def decode_help(help_: str) -> str:
         return loads(help_)  # type: ignore
+
+    @staticmethod
+    def encode_namespace_setattr(name: str, attr: str, value: Any) -> SkillCode:
+        code = Translator.encode_namespace_getattr(name, attr)
+        value = _python_value_to_skill(value)
+        return SkillCode(f'{code} = {value}')
 
     @staticmethod
     def encode_setattr(obj: SkillCode, key: str, value: Any) -> SkillCode:

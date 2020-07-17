@@ -48,7 +48,7 @@ class RemoteFunction:
     def __repr__(self) -> str:
         command = self._translate.encode_help(self._function)
         result = self._channel.send(command)
-        return self._translate.decode_help(result)
+        return self._translate.decode_help(result) or f'<remote function {self._function!r}>'
 
 
 class LiteralRemoteFunction(RemoteFunction):

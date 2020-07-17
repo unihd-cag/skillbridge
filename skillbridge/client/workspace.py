@@ -6,6 +6,7 @@ from textwrap import dedent
 from .hints import Function, Symbol
 from .channel import Channel, create_channel_class, DirectChannel
 from .functions import FunctionCollection, LiteralRemoteFunction
+from .namespace import Namespace
 from .objects import RemoteObject
 from .translator import camel_to_snake, snake_to_camel, Translator, DefaultTranslator
 
@@ -190,6 +191,11 @@ class Workspace:
 
     def __getitem__(self, item: str) -> LiteralRemoteFunction:
         return LiteralRemoteFunction(self._channel, item, self._translator)
+
+    def namespace(self, name: str, *, create=False):
+        if create:
+            return Namespace.create_by_name(name, self._channel, self._translator)
+        return Namespace.find_by_name(name, self._channel, self._translator)
 
     @property
     def id(self) -> WorkspaceId:
