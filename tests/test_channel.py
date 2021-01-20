@@ -324,3 +324,24 @@ def test_warning_is_printed(server, ws):
     assert "This is a warning" in str(w[0].message)
 
     assert result == 1234
+
+
+def test_funcall_shortcut(server, ws):
+    server.answer_object('testfun', 123)
+    fun = ws.ge.get_edit_cell_view()
+
+    server.answer_success('42')
+    assert fun() == 42
+    assert server.last_question == 'funcall(__py_testfun_123 )'
+
+    server.answer_success('41')
+    assert fun(1, 2, 3) == 41
+    assert server.last_question == 'funcall(__py_testfun_123 1 2 3 )'
+
+    server.answer_success('40')
+    assert fun(a=1, b=2, c=3) == 40
+    assert server.last_question == 'funcall(__py_testfun_123 ?a 1 ?b 2 ?c 3)'
+
+    server.answer_success('39')
+    assert fun(10, 20, 30, a=1, b=2, c=3) == 39
+    assert server.last_question == 'funcall(__py_testfun_123 10 20 30 ?a 1 ?b 2 ?c 3)'
