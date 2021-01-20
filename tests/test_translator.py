@@ -58,6 +58,8 @@ def test_snake_to_camel_input_does_not_change():
     assert snake_to_camel('alreadyCamel') == 'alreadyCamel'
     assert snake_to_camel('thisIsCamelCase') == 'thisIsCamelCase'
     assert snake_to_camel('thisIsHTML') == 'thisIsHTML'
+    assert snake_to_camel('value1') == 'value1'
+    assert snake_to_camel('value123') == 'value123'
 
 
 def test_snake_to_camel_input_snake_changes():
@@ -69,6 +71,8 @@ def test_camel_to_snake_simple_does_not_change():
     assert camel_to_snake('x') == 'x'
     assert camel_to_snake('simple') == 'simple'
     assert camel_to_snake('longbutstillsimple') == 'longbutstillsimple'
+    assert camel_to_snake('layout1') == 'layout1'
+    assert camel_to_snake('layout123') == 'layout123'
 
 
 def test_camel_to_snake_input_camel():
