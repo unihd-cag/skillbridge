@@ -105,6 +105,11 @@ class RemoteObject:
             return self._variable != other._variable
         return NotImplemented
 
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        command = self._translate.encode_call('funcall', self, *args, **kwargs)
+        result = self._channel.send(command)
+        return self._translate.decode(result)
+
     @property
     def lazy(self) -> 'LazyList':
         return LazyList(self._channel, self._variable, self._translate)
