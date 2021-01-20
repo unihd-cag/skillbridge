@@ -23,17 +23,17 @@ symbols = text(ascii_uppercase + ascii_lowercase + ascii_letters, min_size=4, ma
 simple_types = floats | ints | none() | asciis
 
 
-@fixture
+@fixture(scope='module')
 def simple_translator() -> Translator:
     return DefaultTranslator(lambda code: code)
 
 
-@fixture
+@fixture(scope='module')
 def encode_simple(simple_translator: Translator) -> Callable[[Any], Any]:
     return simple_translator.encode
 
 
-@fixture
+@fixture(scope='module')
 def decode_simple(simple_translator: Translator) -> Callable[[str], Any]:
     return simple_translator.decode
 
