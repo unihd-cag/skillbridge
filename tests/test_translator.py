@@ -58,17 +58,23 @@ def test_snake_to_camel_input_does_not_change():
     assert snake_to_camel('alreadyCamel') == 'alreadyCamel'
     assert snake_to_camel('thisIsCamelCase') == 'thisIsCamelCase'
     assert snake_to_camel('thisIsHTML') == 'thisIsHTML'
+    assert snake_to_camel('value1') == 'value1'
+    assert snake_to_camel('value123') == 'value123'
 
 
 def test_snake_to_camel_input_snake_changes():
     assert snake_to_camel('snake_case') == 'snakeCase'
     assert snake_to_camel('this_is_snake_case') == 'thisIsSnakeCase'
+    assert snake_to_camel('layer1_mask') == 'layer1Mask'
+    assert snake_to_camel('layer_mask1') == 'layerMask1'
 
 
 def test_camel_to_snake_simple_does_not_change():
     assert camel_to_snake('x') == 'x'
     assert camel_to_snake('simple') == 'simple'
     assert camel_to_snake('longbutstillsimple') == 'longbutstillsimple'
+    assert camel_to_snake('layout1') == 'layout1'
+    assert camel_to_snake('layout123') == 'layout123'
 
 
 def test_camel_to_snake_input_camel():
@@ -76,6 +82,8 @@ def test_camel_to_snake_input_camel():
     assert camel_to_snake('thisIsCamelCase') == 'this_is_camel_case'
     assert camel_to_snake('thisIsHTML') == 'this_is_HTML'
     assert camel_to_snake('abcXYz') == 'abc_x_yz'
+    assert camel_to_snake('layer1Mask') == 'layer1_mask'
+    assert camel_to_snake('layerMask1') == 'layer_mask1'
 
 
 def test_named_parameters_are_optionally_converted(simple_translator: Translator):
