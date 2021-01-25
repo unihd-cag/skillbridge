@@ -51,6 +51,9 @@ class RemoteObject:
 
     @property
     def skill_type(self) -> Optional[str]:
+        if self._variable.startswith('__py_openfile_'):
+            return 'open_file'
+
         try:
             typ = self.obj_type
         except RuntimeError:
@@ -69,6 +72,10 @@ class RemoteObject:
 
     def __str__(self) -> str:
         typ = self.skill_type or self.skill_parent_type
+        if typ == 'open_file':
+            result = self._send(self._translate.encode_call('sprintf', None, '%s', self))
+            name = self._translate.decode(result)[6:-1]  # type: ignore
+            return f"<remote open_file {name!r}>"
         return f"<remote {typ}@{hex(self.skill_id)}>"
 
     __repr__ = __str__

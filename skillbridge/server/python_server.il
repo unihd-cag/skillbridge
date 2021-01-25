@@ -137,10 +137,14 @@ let((_filename _baseName _moduleFolder _logName _executable)
                 variableSymbol = gensym("__py_OTHER_")
                 set(variableSymbol thing)
                 sprintf(nil "Remote(%L)" symbolToString(variableSymbol))
+            else if(portp(thing) then
+                variableSymbol = gensym("__py_openfile_")
+                set(variableSymbol thing)
+                sprintf(nil "Remote(%L)" symbolToString(variableSymbol))
             else
                 sprintf(nil "error(%L)" repr)
                 printf("I COULD NOT PARSE %L\n" repr)
-            ))
+            )))
         )
     )
 

@@ -345,3 +345,13 @@ def test_funcall_shortcut(server, ws):
     server.answer_success('39')
     assert fun(10, 20, 30, a=1, b=2, c=3) == 39
     assert server.last_question == 'funcall(__py_testfun_123 10 20 30 ?a 1 ?b 2 ?c 3)'
+
+
+def test_open_file(server, ws):
+    server.answer_object('openfile', 22)
+    f = ws.ge.get_edit_cell_view()
+
+    assert f.skill_type == 'open_file'
+    server.answer_success("'port:\"test.txt\"'")
+    assert str(f) == "<remote open_file 'test.txt'>"
+    assert server.last_question == 'sprintf(nil "%s" __py_openfile_22 )'
