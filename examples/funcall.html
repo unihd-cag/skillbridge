@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Multiple Virtuoso Instances &#8212; Python-Skill Bridge  documentation</title>
+    <title>Directly call function objects &#8212; Python-Skill Bridge  documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,8 +14,8 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Reference" href="../reference/index.html" />
-    <link rel="prev" title="Check/Save Libs" href="lib_save.html" />
+    <link rel="next" title="Layout Inst Example" href="inst-statistics.html" />
+    <link rel="prev" title="Manually Registering Functions" href="custom_functions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,33 +32,29 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="multiple-virtuoso-instances">
-<span id="multiple"></span><h1>Multiple Virtuoso Instances<a class="headerlink" href="#multiple-virtuoso-instances" title="Permalink to this headline">¶</a></h1>
-<p>You can run multiple Virtuoso instances and have a running server inside
-each of them. However, in order to match the clients and server correctly
-you must start and connect a bit differently:</p>
-<p><strong>Virtuoso Instance 1</strong></p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; This starts the server with the default id</span>
-<span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-IPC-SERVER&quot;</span><span class="p">)</span>
-<span class="nv">pyStartServer</span>
+  <div class="section" id="directly-call-function-objects">
+<span id="funcall"></span><h1>Directly call function objects<a class="headerlink" href="#directly-call-function-objects" title="Permalink to this headline">¶</a></h1>
+<p>Some Virtuoso functions return <code class="docutils literal notranslate"><span class="pre">funobj</span></code> objects. There is a shortcut on the python side to call
+these objects like ordinary functions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Workspace</span>
+
+
+<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="n">fun</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># obtain a funobj</span>
+<span class="n">fun</span>
+<span class="c1"># &lt;remote funobj@...&gt;</span>
+
+<span class="n">fun</span><span class="p">()</span>
+<span class="c1"># SKILL equivalent: funcall(fun)</span>
+
+<span class="n">fun</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1"># SKILL equivalent: funcall(fun 1 2 3)</span>
+
+<span class="n">fun</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="c1"># SKILL equivalent: funcall(fun ?x 1 ?y 2 ?z 3)</span>
 </pre></div>
 </div>
-<p><strong>Python Client 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
-</pre></div>
-</div>
-<p><strong>Virtuoso Instance 2</strong></p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; This starts the server with a custom id</span>
-<span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-IPC-SERVER&quot;</span><span class="p">)</span>
-<span class="nv">pyStartServer</span> <span class="s">&quot;some-id&quot;</span>
-</pre></div>
-</div>
-<p><strong>Python Client 2</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;some-id&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>You could even open both Workspaces in a single python session, but it
-is not possible to run two python servers in a single Virtuoso session.</p>
 </div>
 
 
@@ -85,11 +81,11 @@ is not possible to run two python servers in a single Virtuoso session.</p>
 <li class="toctree-l2"><a class="reference internal" href="basic.html">Basic Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create_path.html">Create some paths</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_functions.html">Manually Registering Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="funcall.html">Directly call function objects</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Directly call function objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="inst-statistics.html">Layout Inst Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lazy_lists.html">Handling Large Lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lib_save.html">Check/Save Libs</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Multiple Virtuoso Instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiple-instances.html">Multiple Virtuoso Instances</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
@@ -100,8 +96,8 @@ is not possible to run two python servers in a single Virtuoso session.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Examples</a><ul>
-      <li>Previous: <a href="lib_save.html" title="previous chapter">Check/Save Libs</a></li>
-      <li>Next: <a href="../reference/index.html" title="next chapter">Reference</a></li>
+      <li>Previous: <a href="custom_functions.html" title="previous chapter">Manually Registering Functions</a></li>
+      <li>Next: <a href="inst-statistics.html" title="next chapter">Layout Inst Example</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -136,7 +132,7 @@ is not possible to run two python servers in a single Virtuoso session.</p>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/examples/multiple-instances.rst.txt"
+      <a href="../_sources/examples/funcall.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
