@@ -355,3 +355,5 @@ def test_open_file(server, ws):
     server.answer_success("'port:\"test.txt\"'")
     assert str(f) == "<remote open_file 'test.txt'>"
     assert server.last_question == 'sprintf(nil "%s" __py_openfile_22 )'
+
+    assert dir(f)

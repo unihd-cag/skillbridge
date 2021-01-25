@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, cast, Union, overload, Sequence
+from typing import Any, List, Optional, cast, Union, overload, Sequence, Iterable
 
 from .functions import RemoteFunction
 from .hints import SkillCode, Symbol, Var
@@ -49,9 +49,12 @@ class RemoteObject:
     def skill_parent_type(self) -> str:
         return self._variable[5:].rsplit('_', maxsplit=1)[0]
 
+    def _is_open_file(self) -> bool:
+        return self._variable.startswith('__py_openfile_')
+
     @property
     def skill_type(self) -> Optional[str]:
-        if self._variable.startswith('__py_openfile_'):
+        if self._is_open_file():
             return 'open_file'
 
         try:
@@ -80,7 +83,10 @@ class RemoteObject:
 
     __repr__ = __str__
 
-    def __dir__(self) -> List[str]:
+    def __dir__(self) -> Iterable[str]:
+        if self._is_open_file():
+            return super().__dir__()
+
         response = self._send(self._translate.encode_dir(self._variable))
         attributes = self._translate.decode_dir(response)
         return attributes
