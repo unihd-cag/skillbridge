@@ -1,0 +1,46 @@
+{% set name = "skillbridge" %}
+{% set version = "1.2.9" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: ba5f2d1190f4a4b8f7933df59e20e4d8fbee0e1dee7a0ce56f42c14d303ab103
+
+build:
+  number: 0
+  entry_points:
+    - skillbridge = skillbridge.__main__:main
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - python
+  run:
+    - python
+
+test:
+  imports:
+    - skillbridge
+    - skillbridge.client
+    - skillbridge.server
+    - skillbridge.test
+    - tests
+  commands:
+    - skillbridge --help
+
+about:
+  home: "https://unihd-cag.github.io/skillbridge/"
+  license: "GNU Lesser General Public v3 (LGPLv3)"
+  license_family: LGPL
+  license_file:
+  summary: "A seamless Python remote bridge to Cadence's Skill in Virtuoso"
+  doc_url: "https://unihd-cag.github.io/skillbridge/"
+  dev_url: "https://github.com/unihd-cag/skillbridge"
+
+extra:
+  recipe-maintainers:
+    - curtisma
