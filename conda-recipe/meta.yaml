@@ -6,19 +6,23 @@ package:
   version: "{{ version }}"
 
 source:
-  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: ba5f2d1190f4a4b8f7933df59e20e4d8fbee0e1dee7a0ce56f42c14d303ab103
-
-build:
-  number: 0
-  entry_points:
-    - skillbridge = skillbridge.__main__:main
-  script: "{{ PYTHON }} -m pip install . -vv"
+  - path: ../conda-recipe
+    folder: skillbridge
+  - path: ../docs
+    folder: docs
+  - path: ../skillbridge
+    folder: skillbridge
+  - path: ../tests
+    folder: tests
+  - path: ../dev-requirements.txt
+  - path: ../LICENSE
+  - path: ../MANIFEST.in
+  - path: ../pytest.ini
+  - path: ../README.md
+  - path: ../setup.py
+  - path: ../skillbridge.init.il
 
 requirements:
-  host:
-    - pip
-    - python
   run:
     - python
 
@@ -39,8 +43,4 @@ about:
   license_file:
   summary: "A seamless Python remote bridge to Cadence's Skill in Virtuoso"
   doc_url: "https://unihd-cag.github.io/skillbridge/"
-  dev_url: "https://github.com/unihd-cag/skillbridge"
-
-extra:
-  recipe-maintainers:
-    - curtisma
+  dev_url: "https://github.com/skyworksinc/skillbridge"
