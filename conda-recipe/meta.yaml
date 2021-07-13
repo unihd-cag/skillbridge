@@ -7,7 +7,7 @@ package:
 
 source:
   - path: ../conda-recipe
-    folder: skillbridge
+    folder: conda-recipe
   - path: ../docs
     folder: docs
   - path: ../skillbridge
