@@ -43,7 +43,8 @@ about:
   home: "https://unihd-cag.github.io/skillbridge/"
   license: "GNU Lesser General Public v3 (LGPLv3)"
   license_family: LGPL
-  license_file:
+  license_file: LICENSE
   summary: "A seamless Python remote bridge to Cadence's Skill in Virtuoso"
   doc_url: "https://unihd-cag.github.io/skillbridge/"
   dev_url: "https://github.com/skyworksinc/skillbridge"
+  doc_source_url: "https://github.com/skyworksinc/skillbridge/blob/master/docs/index.rst"
