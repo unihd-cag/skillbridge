@@ -1,0 +1,50 @@
+{% set name = "skillbridge" %}
+{% set version = "1.2.9" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  - path: ../conda-recipe
+    folder: conda-recipe
+  - path: ../docs
+    folder: docs
+  - path: ../skillbridge
+    folder: skillbridge
+  - path: ../tests
+    folder: tests
+  - path: ../dev-requirements.txt
+  - path: ../LICENSE
+  - path: ../MANIFEST.in
+  - path: ../pytest.ini
+  - path: ../README.md
+  - path: ../setup.py
+  - path: ../skillbridge.init.il
+
+requirements:
+  build:
+    - python=3.7
+    - setuptools=51.0.*
+  run:
+    - python
+
+test:
+  imports:
+    - skillbridge
+    - skillbridge.client
+    - skillbridge.server
+    - skillbridge.test
+    - tests
+  commands:
+    - skillbridge --help
+
+about:
+  home: "https://unihd-cag.github.io/skillbridge/"
+  license: "GNU Lesser General Public v3 (LGPLv3)"
+  license_family: LGPL
+  license_file: LICENSE
+  summary: "A seamless Python remote bridge to Cadence's Skill in Virtuoso"
+  doc_url: "https://unihd-cag.github.io/skillbridge/"
+  dev_url: "https://github.com/skyworksinc/skillbridge"
+  doc_source_url: "https://github.com/skyworksinc/skillbridge/blob/master/docs/index.rst"
