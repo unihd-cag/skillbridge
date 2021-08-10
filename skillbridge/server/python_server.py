@@ -11,7 +11,7 @@ import logging
 
 LOG_FILE = path.join(getenv('CDS_WORKAREA'),
                      '{prj_name}_{user}.Work'.format(prj_name=getenv('PROJ_ID'), user=getenv('USER')),
-                     'skillbridge_python_server.py.log')
+                     'skillbridge_python.log')
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
