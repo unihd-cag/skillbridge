@@ -189,7 +189,7 @@ let((_filename _baseName _moduleFolder _logName _executable)
                 )
                 executableWithArgs = sprintf(nil "\"%s\" %s" python executableWithArgs)
 
-                pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")           
+                pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "skillbridge_skill.log")
                 t
             )
         )

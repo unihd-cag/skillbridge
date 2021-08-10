@@ -1,4 +1,4 @@
-from os import unlink
+from os import unlink, getenv, path
 from socketserver import StreamRequestHandler, ThreadingMixIn, BaseServer
 from socketserver import BaseRequestHandler
 from logging import getLogger, basicConfig, WARNING
@@ -9,7 +9,9 @@ from argparse import ArgumentParser
 
 import logging
 
-LOG_FILE = __file__ + '.log'
+LOG_FILE = path.join(getenv('CDS_WORKAREA'),
+                     '{prj_name}_{user}.Work'.format(prj_name=getenv('PROJ_ID'), user=getenv('USER')),
+                     'skillbridge_python.log')
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
