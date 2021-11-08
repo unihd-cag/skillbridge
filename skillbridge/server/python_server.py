@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 
 import logging
 
-LOG_FILE = __file__ + '.log'
+LOG_FILE = 'python_server.log'
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
