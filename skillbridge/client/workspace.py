@@ -3,6 +3,7 @@ from typing import Dict, Optional, Callable, Any, NoReturn, Union, Iterable, cas
 from inspect import signature
 from textwrap import dedent
 
+from .globals import Globals
 from .hints import Function, Symbol
 from .channel import Channel, create_channel_class, DirectChannel
 from .functions import FunctionCollection, LiteralRemoteFunction
@@ -187,6 +188,9 @@ class Workspace:
         self.user = FunctionCollection(channel, 'user', self._translator)
 
         _register_well_known_functions(self)
+
+    def globals(self, prefix: str) -> Globals:
+        return Globals(self._channel, self._translator, prefix)
 
     def __getitem__(self, item: str) -> LiteralRemoteFunction:
         return LiteralRemoteFunction(self._channel, item, self._translator)

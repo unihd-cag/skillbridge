@@ -7,7 +7,7 @@ from skillbridge.client.objects import RemoteObject
 from tests.virtuoso import Virtuoso
 
 from skillbridge.client.channel import Channel, create_channel_class
-from skillbridge import Workspace, current_workspace
+from skillbridge import Workspace, current_workspace, loop_var
 
 WORKSPACE_ID = '__test__'
 channel_class = create_channel_class()
@@ -357,3 +357,75 @@ def test_open_file(server, ws):
     assert server.last_question == 'sprintf(nil "%s" __py_openfile_22 )'
 
     assert dir(f)
+
+
+def test_globals_direct_write(server, ws):
+    g = ws.globals('prefix')
+    server.answer_success('None')
+    g.x <<= "123"
+    assert server.last_question == 'prefixX = "123" nil'
+
+
+def test_globals_read(server, ws):
+    g = ws.globals('prefix')
+    server.answer_success('123')
+    assert g.x() == 123
+    assert server.last_question == 'prefixX'
+
+
+def test_globals_repr(server, ws):
+    g = ws.globals('prefix')
+
+    assert str(g.x) == 'Global(prefix_x)'
+    assert repr(g.x) == 'Global(prefix_x)'
+    assert g.x.__repr_skill__() == 'prefixX'
+
+
+def test_globals_map_car(server, ws):
+    g = ws.globals('prefix')
+
+    assert g.x.map(loop_var + 1).name == 'mapcar(lambda((i) (i + 1) ) prefixX )'
+
+
+def test_globals_for_each(server, ws):
+    g = ws.globals('prefix')
+
+    server.answer_success('None')
+    assert g.x.for_each(ws.db.delete.var(loop_var)) is None
+    assert server.last_question == 'foreach(i prefixX dbDelete(i ) ) nil'
+
+
+def test_globals_filter(server, ws):
+    g = ws.globals('prefix')
+
+    assert g.x.filter(loop_var != 2).name == 'setof(i prefixX (i != 2) )'
+
+
+def test_globals_tuple_write(server, ws):
+    g = ws.globals('prefix')
+
+    server.answer_success('None')
+    g['abc', 'def'] = 1
+
+    assert server.last_question == 'prefixAbcDef = 1 nil'
+
+
+def test_globals_tuple_read(server, ws):
+    g = ws.globals('prefix')
+
+    assert g['abc', 'def'].name == 'prefix_abc_def'
+
+
+def test_globals_delete(server, ws):
+    g = ws.globals('prefix')
+
+    server.answer_success('None')
+    del g.x
+
+    assert server.last_question == 'prefixX = nil nil'
+
+
+def test_globals_raises_when_attribute_is_invalid(server, ws):
+    g = ws.globals('prefix')
+    with raises(AttributeError):
+        print(g.__wat__)

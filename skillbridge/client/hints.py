@@ -1,4 +1,4 @@
-from typing import Union, List, Callable, NewType, NamedTuple, Dict, Set, Tuple
+from typing import Union, List, Callable, NewType, NamedTuple, Dict, Set, Tuple, Any
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -13,7 +13,6 @@ __all__ = [
     'Number',
     'Symbol',
     'Key',
-    'Var',
     'SkillComponent',
     'SkillCode',
     'Skill',
@@ -43,7 +42,15 @@ class SupportsReprSkill(Protocol):
         ...
 
 
-Skill = Union[SupportsReprSkill, Number, str, bool, None, 'SkillList', 'SkillDict', 'SkillTuple']
+if TYPE_CHECKING:
+    from .var import Var
+
+    Skill = Union[
+        Var, SupportsReprSkill, Number, str, bool, None, 'SkillList', 'SkillDict', 'SkillTuple'
+    ]
+else:
+    Skill = Any
+
 Replicator = Callable[[str], Skill]
 
 
@@ -83,16 +90,3 @@ class Key(NamedTuple):
 
     def __repr__(self) -> str:
         return f"Key({self.name})"
-
-
-class Var(NamedTuple):
-    name: str
-
-    def __repr_skill__(self) -> SkillCode:
-        return SkillCode(self.name)
-
-    def __str__(self) -> str:
-        return f"Var({self.name})"
-
-    def __repr__(self) -> str:
-        return f"Var({self.name!r})"

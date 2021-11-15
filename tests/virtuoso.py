@@ -53,6 +53,7 @@ class Virtuoso(Thread):
             self.server.wait()
 
     def _run(self):
+        self.questions.clear()
         self._create_subprocess()
         self._wait_for_notification()
 
