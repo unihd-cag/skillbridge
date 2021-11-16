@@ -2,8 +2,10 @@ from os import chdir
 
 from .client.workspace import Workspace, current_workspace
 from .client.translator import ParseError
-from .client.hints import Var, Symbol, Key, SkillTuple, SkillList, SkillCode, Function
+from .client.hints import Symbol, Key, SkillTuple, SkillList, SkillCode, Function
 from .client.functions import keys, FunctionCollection
+from .client.var import Var
+from .client.globals import Globals, GlobalVar
 
 __all__ = [
     'Workspace',
@@ -18,7 +20,12 @@ __all__ = [
     'SkillList',
     'SkillCode',
     'Function',
+    'loop_var',
+    'Globals',
+    'GlobalVar',
 ]
+
+loop_var = Var('i')
 
 
 def generate_static_completion() -> None:

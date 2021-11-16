@@ -4,6 +4,7 @@ from functools import lru_cache
 from .hints import SkillCode, Skill, Key
 from .channel import Channel
 from .translator import Translator, snake_to_camel
+from .var import Var
 
 
 def keys(**attrs: Skill) -> List[Skill]:
@@ -45,6 +46,9 @@ class RemoteFunction:
         name = snake_to_camel(self._function)
         return self._translate.encode_call(name, *args, **kwargs)
 
+    def var(self, *args: Skill, **kwargs: Skill) -> Var:
+        return Var(self.lazy(*args, **kwargs))
+
     def __repr__(self) -> str:
         command = self._translate.encode_help(self._function)
         result = self._channel.send(command)
@@ -54,3 +58,6 @@ class RemoteFunction:
 class LiteralRemoteFunction(RemoteFunction):
     def lazy(self, *args: Skill, **kwargs: Skill) -> SkillCode:
         return self._translate.encode_call(self._function, *args, **kwargs)
+
+    def var(self, *args: Skill, **kwargs: Skill) -> Var:
+        return Var(self.lazy(*args, **kwargs))
