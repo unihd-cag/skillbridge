@@ -7,6 +7,7 @@ Sometimes it is inefficient and unnecessary to pass large lists between python a
 In this case global variables come in handy:
 
 .. code-block:: python
+
     from skillbridge import Workspace
 
     ws = Workspace.open()
@@ -26,6 +27,7 @@ In this case global variables come in handy:
 You can assign values from a skillbridge function
 
 .. code-block:: python
+
     from skillbridge import Workspace
 
     ws = Workspace.open()
@@ -41,6 +43,7 @@ You can assign values from a skillbridge function
 The higher-order functions `foreach`, `mapcar` and `setof` are also mapped:
 
 .. code-block:: python
+
     from skillbridge import Workspace, loop_var
 
     ws = Workspace.open()
