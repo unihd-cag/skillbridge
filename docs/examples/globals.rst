@@ -11,32 +11,17 @@ In this case global variables come in handy:
 
     ws = Workspace.open()
 
-    with ws.globals('my_globals') as my_globals:
-        # assign a value from python
-        my_globals.x = 2
-        my_globals.y = 3
-
-        # read variable on python side
-        print(my_globals.x() + my_globals.y())
-
-        # use variable on SKILL side
-        print(ws['add'](my_globals.x, my_globals.y))
-
-       # variables are set to nil here
-
-
-
-If you don't want the variables to be reset, don't use a context manager
-
-.. code-block:: python
-    from skillbridge import Workspace
-
-    ws = Workspace.open()
-
     my_globals = ws.globals('my_globals')
-    my_globals.x = 2
+    # assign a value from python
+    my_globals.x << 2
+    my_globals.y << 3
 
-    # variable is never set to nil
+    # read variable on python side
+    print(my_globals.x() + my_globals.y())
+
+    # use variable on SKILL side
+    print(ws['plus'](my_globals.x, my_globals.y))
+
 
 You can assign values from a skillbridge function
 
@@ -46,25 +31,28 @@ You can assign values from a skillbridge function
     ws = Workspace.open()
 
     my_globals = ws.globals('my_globals')
-    # important: use `raw` and `lazy`
-    my_globals.shapes.raw = ws.ge.get_sel_set.lazy()
+    # important: use `var` here
+    my_globals.shapes << ws.ge.get_sel_set.var()
+
+    # length is calculated on SKILL side
+    print(ws['length'](my_globals.shapes))
 
 
 The higher-order functions `foreach`, `mapcar` and `setof` are also mapped:
 
 .. code-block:: python
-    from skillbridge import Workspace, Var, loop_var
+    from skillbridge import Workspace, loop_var
 
     ws = Workspace.open()
 
     my_globals = ws.globals('my_globals')
-    my_globals.shapes.raw = ws.ge.get_sel_set.lazy()
+    my_globals.shapes << ws.ge.get_sel_set.var()
 
     # get the boxes
-    my_globals.boxes.raw = my_globals.shapes.map(loop_var.b_box)
+    my_globals.boxes << my_globals.shapes.map(loop_var.b_box)
 
     # filter rectangles
-    my_globals.rects.raw = my_globals.shapes.filter(loop_var.obj_type == 'rect')
+    my_globals.rects << my_globals.shapes.filter(loop_var.obj_type == 'rect')
 
     # delete all shapes
-    my_globals.shapes.foreach(ws.db.delete_object.lazy(loop_var))
+    my_globals.shapes.for_each(ws.db.delete_object.var(loop_var))
