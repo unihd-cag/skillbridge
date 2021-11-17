@@ -33,9 +33,13 @@ class GlobalVar:
     def __repr_skill__(self) -> SkillCode:
         return SkillCode(snake_to_camel(self.name))
 
-    def map(self, code: Any) -> Var:
-        function = self._translator.encode_call('lambda', Var('(i)'), code)
-        return Var(self._translator.encode_call('mapcar', Var(function), self))
+    def map(self, code: Any, **extra: Any) -> Var:
+        assert 'i' not in extra, "Cannot use loop var 'i' twice"
+
+        parameters = ' '.join(i for i in ['i', *extra])
+        parameter_list = f'({parameters})'
+        function = self._translator.encode_call('lambda', Var(parameter_list), code)
+        return Var(self._translator.encode_call('mapcar', Var(function), self, *extra.values()))
 
     def for_each(self, code: Any) -> None:
         function = self._translator.encode_call('foreach', Var('i'), self, code) + ' nil'

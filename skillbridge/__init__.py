@@ -21,11 +21,15 @@ __all__ = [
     'SkillCode',
     'Function',
     'loop_var',
+    'loop_var_i',
+    'loop_var_j',
     'Globals',
     'GlobalVar',
 ]
 
 loop_var = Var('i')
+loop_var_i = loop_var
+loop_var_j = Var('j')
 
 
 def generate_static_completion() -> None:
