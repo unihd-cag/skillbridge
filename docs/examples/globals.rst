@@ -59,3 +59,17 @@ The higher-order functions `foreach`, `mapcar` and `setof` are also mapped:
 
     # delete all shapes
     my_globals.shapes.for_each(ws.db.delete_object.var(loop_var))
+
+`mapcar`  also supports multiple listst
+
+.. code-block:: python
+
+    from skillbridge import Workspace, loop_var_i, loop_var_j
+
+    ws = Workspace.open()
+
+    my_globals = ws.globals('my_globals')
+    my_globals.x << [1, 2, 3]
+    my_globals.y << [1, 2, 4]
+    my_globals.z << my_globals.x.map(loop_var_i + loop_var_j, j=my_globals.y)
+    print(my_globals.z())  # [2, 4, 7]
