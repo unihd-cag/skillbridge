@@ -199,7 +199,6 @@ if platform == 'win32':
 
         return WindowsChannel
 
-
 else:
 
     def create_channel_class() -> Type[TcpChannel]:
