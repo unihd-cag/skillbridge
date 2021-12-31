@@ -48,7 +48,7 @@ def create_windows_server_class(single: bool) -> Type[BaseServer]:
             try:
                 from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
 
-                self.socket.ioctl(SIO_LOOPBACK_FAST_PATH, True)
+                self.socket.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore
             except ImportError:
                 pass
             super().server_bind()
