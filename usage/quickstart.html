@@ -70,7 +70,7 @@ You can install it alongside the python static type check <code class="docutils 
 <span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Here are some <a class="reference internal" href="../examples/globals.html#basic"><span class="std std-ref">Global Variables</span></a>.</p>
+<p>Here are some <a class="reference internal" href="../examples/basic.html#basic"><span class="std std-ref">Basic Examples</span></a>.</p>
 </section>
 <section id="direct-mode-without-a-server">
 <h2>Direct mode without a Server<a class="headerlink" href="#direct-mode-without-a-server" title="Permalink to this headline">¶</a></h2>
@@ -80,6 +80,18 @@ intermediate server. This is useful, if the script is called directly from Virtu
 
 <span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">direct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cell view:&quot;</span><span class="p">,</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Then you can execute the python file from the CIW.</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span> <span class="s">&quot;pathToScript.py&quot;</span>
+</pre></div>
+</div>
+<p>You can also specify a different python executable</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span> <span class="s">&quot;pathToScript.py&quot;</span> <span class="nv">?python</span> <span class="s">&quot;python3.9&quot;</span>
+</pre></div>
+</div>
+<p>And you can pass CLI arguments to the script</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span> <span class="s">&quot;pathToScript.py&quot;</span> <span class="nv">?args</span> <span class="nb">list</span><span class="p">(</span><span class="s">&quot;first&quot;</span> <span class="s">&quot;second&quot;</span> <span class="s">&quot;third&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -163,7 +175,7 @@ script is called from Virtuoso using <code class="docutils literal notranslate">
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

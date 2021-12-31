@@ -1,4 +1,4 @@
-.. _basic:
+.. _globals:
 
 Global Variables
 ================
