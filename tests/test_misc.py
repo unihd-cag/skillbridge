@@ -139,3 +139,8 @@ def test_lazy_list():
     assert 'TEST~>shapes' in repr(l.shapes)
 
     assert RemoteObject(channel, SkillCode('TESTTEST_123'), translator).lazy.shapes._variable == 'TESTTEST_123~>shapes'
+
+
+def test_double_hex_prefix_does_not_crash():
+    assert RemoteObject(..., '__py_stuff_0x0xcafe', ...).skill_id == 0xcafe
+    assert RemoteObject(..., '__py_stuff_0xcafe', ...).skill_id == 0xcafe
