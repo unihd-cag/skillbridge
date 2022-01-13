@@ -1,4 +1,4 @@
-from typing import NoReturn, Any, List, Iterable, cast, Match
+from typing import NoReturn, Any, List, Iterable, cast, Match, Union
 from re import sub, findall
 from json import dumps, loads
 from warnings import warn_explicit
@@ -81,7 +81,7 @@ def _not_implemented(string: str) -> Replicator:
     return inner
 
 
-def build_skill_path(components: Iterable[str]) -> SkillCode:
+def build_skill_path(components: Iterable[Union[str, int]]) -> SkillCode:
     it = iter(components)
     path = snake_to_camel(str(next(it)))
 
@@ -94,7 +94,7 @@ def build_skill_path(components: Iterable[str]) -> SkillCode:
     return SkillCode(path)
 
 
-def build_python_path(components: Iterable[str]) -> SkillCode:
+def build_python_path(components: Iterable[Union[str, int]]) -> SkillCode:
     it = iter(components)
     path = str(next(it))
 

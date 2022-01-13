@@ -223,7 +223,7 @@ def test_setattr(server, ws):
     server.answer_success('123')
     result.x = 234
 
-    assert server.last_question.strip().replace(' ', '') == f'__py_object_123->x=234'
+    assert server.last_question.strip().replace(' ', '') == '__py_object_123->x=234'
 
 
 def test_object_equality(server, ws):
