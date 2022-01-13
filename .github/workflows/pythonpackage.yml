@@ -35,7 +35,7 @@ jobs:
 
     - name: Check with mypy
       run: |
-        pip install mypy
+        pip install mypy types-dataclasses
         mypy
 
     - name: Test with pytest
