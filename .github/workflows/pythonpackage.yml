@@ -21,7 +21,7 @@ jobs:
 
     - name: Install Package
       run: |
-        pip install .
+        pip install -e .
 
     - name: Check with black
       run: |
