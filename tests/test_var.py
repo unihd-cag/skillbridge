@@ -30,4 +30,3 @@ def test_infix():
     assert (Var('x') / 123).name == '(x / 123)'
     assert (Var('x') | Var('y')).name == 'or(x y )'
     assert (Var('x') & Var('y')).name == 'and(x y )'
-
