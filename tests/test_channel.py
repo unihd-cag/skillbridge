@@ -3,11 +3,10 @@ from os import unlink
 
 from pytest import fixture, raises
 
+from skillbridge import Workspace, current_workspace, loop_var
+from skillbridge.client.channel import Channel, create_channel_class
 from skillbridge.client.objects import RemoteObject
 from tests.virtuoso import Virtuoso
-
-from skillbridge.client.channel import Channel, create_channel_class
-from skillbridge import Workspace, current_workspace, loop_var
 
 WORKSPACE_ID = '__test__'
 channel_class = create_channel_class()

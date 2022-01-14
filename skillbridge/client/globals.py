@@ -1,9 +1,9 @@
 from string import ascii_lowercase
-from typing import Any, Union, Tuple
+from typing import Any, Tuple, Union
 
 from .channel import Channel
-from .translator import Translator, snake_to_camel
 from .hints import SkillCode
+from .translator import Translator, snake_to_camel
 from .var import Var
 
 

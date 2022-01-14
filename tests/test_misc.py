@@ -1,14 +1,14 @@
-from subprocess import check_output, run, PIPE
-from textwrap import dedent
 from os.path import exists
+from subprocess import PIPE, check_output, run
+from textwrap import dedent
 
-from pytest import raises, mark
+from pytest import mark, raises
 
+from skillbridge import Key, SkillCode, keys
 from skillbridge.client.channel import Channel
 from skillbridge.client.functions import LiteralRemoteFunction
 from skillbridge.client.objects import LazyList, RemoteObject
-from skillbridge.client.translator import Symbol, DefaultTranslator
-from skillbridge import keys, Key, SkillCode
+from skillbridge.client.translator import DefaultTranslator, Symbol
 from skillbridge.test.channel import DummyChannel
 from skillbridge.test.workspace import DummyWorkspace
 

@@ -1,20 +1,19 @@
 from string import ascii_letters, ascii_lowercase, ascii_uppercase
-from typing import Callable, Any
+from typing import Any, Callable
 
-from pytest import raises, mark, fixture
 from hypothesis import given
-from hypothesis.strategies import lists, integers, floats, none, text
+from hypothesis.strategies import floats, integers, lists, none, text
+from pytest import fixture, mark, raises
 
+from skillbridge import Symbol, Var
 from skillbridge.client.hints import SkillCode
 from skillbridge.client.translator import (
-    snake_to_camel,
-    camel_to_snake,
-    build_python_path,
-    Translator,
     DefaultTranslator,
+    Translator,
+    build_python_path,
+    camel_to_snake,
+    snake_to_camel,
 )
-from skillbridge import Symbol, Var
-
 
 floats = floats(allow_infinity=False, allow_nan=False)
 ints = integers(min_value=-(2 ** 63), max_value=2 ** 63 - 1)

@@ -1,9 +1,9 @@
-from typing import NoReturn, Any, List, Iterable, cast, Match, Union
-from re import sub, findall
 from json import dumps, loads
+from re import findall, sub
+from typing import Any, Iterable, List, Match, NoReturn, Union, cast
 from warnings import warn_explicit
 
-from .hints import Replicator, SkillCode, Skill, Symbol
+from .hints import Replicator, Skill, SkillCode, Symbol
 
 
 class ParseError(Exception):

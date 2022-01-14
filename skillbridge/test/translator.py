@@ -1,4 +1,4 @@
-from typing import NamedTuple, Tuple, Any, Dict, cast
+from typing import Any, Dict, NamedTuple, Tuple, cast
 
 from ..client.hints import Skill, SkillCode
 from ..client.translator import Translator

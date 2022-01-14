@@ -1,8 +1,8 @@
-from typing import List
 from functools import lru_cache
+from typing import List
 
-from .hints import SkillCode, Skill, Key
 from .channel import Channel
+from .hints import Key, Skill, SkillCode
 from .translator import Translator, snake_to_camel
 from .var import Var
 

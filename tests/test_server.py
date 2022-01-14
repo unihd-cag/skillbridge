@@ -1,13 +1,12 @@
+import asyncio
 from os import unlink
 from threading import Thread
 from time import sleep
-import asyncio
 
 from pytest import fixture
 
-from skillbridge.server import python_server
 from skillbridge.client.channel import create_channel_class
-
+from skillbridge.server import python_server
 
 WORKSPACE_ID = '__test2__'
 channel_class = create_channel_class()
