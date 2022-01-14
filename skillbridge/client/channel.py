@@ -1,7 +1,7 @@
-from socket import socket, SOCK_STREAM, AF_INET
 from select import select
-from typing import Iterable, Union, Any, Type, TextIO
+from socket import AF_INET, SOCK_STREAM, socket
 from sys import platform
+from typing import Any, Iterable, TextIO, Type, Union
 
 
 class Channel:

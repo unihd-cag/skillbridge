@@ -1,5 +1,5 @@
-from typing import Any, Callable
 from re import match
+from typing import Any, Callable
 
 from ..client.workspace import Workspace
 from .channel import DummyChannel

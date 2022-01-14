@@ -1,10 +1,10 @@
-from subprocess import Popen, PIPE, STDOUT
-from threading import Thread
-from queue import Queue, Empty
-from select import select
-from sys import executable
 from os import fdopen
 from pty import openpty
+from queue import Empty, Queue
+from select import select
+from subprocess import PIPE, STDOUT, Popen
+from sys import executable
+from threading import Thread
 
 from skillbridge.server import python_server
 

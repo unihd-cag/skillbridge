@@ -1,5 +1,4 @@
-from typing import Union, List, Callable, NewType, NamedTuple, Dict, Set, Tuple, Any
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, NamedTuple, NewType, Set, Tuple, Union
 
 if TYPE_CHECKING:
     from typing_extensions import Protocol

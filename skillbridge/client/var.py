@@ -1,8 +1,8 @@
+from dataclasses import dataclass
 from typing import Any, Union
 
-from dataclasses import dataclass
 from .hints import SkillCode
-from .translator import snake_to_camel, python_value_to_skill, DefaultTranslator
+from .translator import DefaultTranslator, python_value_to_skill, snake_to_camel
 
 
 @dataclass(frozen=True)

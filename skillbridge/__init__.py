@@ -1,11 +1,11 @@
 from os import chdir
 
-from .client.workspace import Workspace, current_workspace
-from .client.translator import ParseError
-from .client.hints import Symbol, Key, SkillTuple, SkillList, SkillCode, Function
-from .client.functions import keys, FunctionCollection
-from .client.var import Var
+from .client.functions import FunctionCollection, keys
 from .client.globals import Globals, GlobalVar
+from .client.hints import Function, Key, SkillCode, SkillList, SkillTuple, Symbol
+from .client.translator import ParseError
+from .client.var import Var
+from .client.workspace import Workspace, current_workspace
 
 __all__ = [
     'Workspace',
@@ -33,10 +33,10 @@ loop_var_j = Var('j')
 
 
 def generate_static_completion() -> None:
-    from subprocess import run
+    from keyword import iskeyword
     from pathlib import Path
     from re import fullmatch
-    from keyword import iskeyword
+    from subprocess import run
 
     ident = r'[a-zA-Z_][a-zA-Z0-9_]*'
 

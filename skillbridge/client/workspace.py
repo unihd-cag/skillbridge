@@ -1,14 +1,14 @@
 import sys
-from typing import Dict, Optional, Callable, Any, NoReturn, Union, Iterable, cast
 from inspect import signature
 from textwrap import dedent
+from typing import Any, Callable, Dict, Iterable, NoReturn, Optional, Union, cast
 
+from .channel import Channel, DirectChannel, create_channel_class
+from .functions import FunctionCollection, LiteralRemoteFunction
 from .globals import Globals
 from .hints import Function, Symbol
-from .channel import Channel, create_channel_class, DirectChannel
-from .functions import FunctionCollection, LiteralRemoteFunction
 from .objects import RemoteObject
-from .translator import camel_to_snake, snake_to_camel, Translator, DefaultTranslator
+from .translator import DefaultTranslator, Translator, camel_to_snake, snake_to_camel
 
 __all__ = ['Workspace', 'current_workspace']
 

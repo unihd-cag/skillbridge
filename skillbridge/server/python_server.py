@@ -1,13 +1,11 @@
-from os import unlink
-from socketserver import StreamRequestHandler, ThreadingMixIn, BaseServer
-from socketserver import BaseRequestHandler
-from logging import getLogger, basicConfig, WARNING
-from sys import stdout, stdin, argv, platform, stderr
-from select import select
-from typing import Iterable, Optional, Type
-from argparse import ArgumentParser
-
 import logging
+from argparse import ArgumentParser
+from logging import WARNING, basicConfig, getLogger
+from os import unlink
+from select import select
+from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
+from sys import argv, platform, stderr, stdin, stdout
+from typing import Iterable, Optional, Type
 
 LOG_FILE = 'python_server.log'
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'

@@ -1,10 +1,10 @@
-from typing import Any, List, Optional, cast, Union, overload, Sequence, Iterable
+from typing import Any, Iterable, List, Optional, Sequence, Union, cast, overload
 
+from .channel import Channel
 from .functions import RemoteFunction
 from .hints import SkillCode, Symbol
-from .var import Var
-from .channel import Channel
 from .translator import Translator, snake_to_camel
+from .var import Var
 
 
 def is_jupyter_magic(attribute: str) -> bool:

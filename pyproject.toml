@@ -8,3 +8,10 @@ target-version = ["py39"]
 include = ".*[.]py$"
 exclude = "env"
 line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip = ["env", "venv"]
+filter_files = true
+atomic = true
