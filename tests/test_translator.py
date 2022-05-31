@@ -16,7 +16,7 @@ from skillbridge.client.translator import (
 )
 
 floats = floats(allow_infinity=False, allow_nan=False)
-ints = integers(min_value=-(2 ** 63), max_value=2 ** 63 - 1)
+ints = integers(min_value=-(2**63), max_value=2**63 - 1)
 asciis = text(ascii_uppercase + ascii_lowercase + ascii_letters, max_size=99)
 symbols = text(ascii_uppercase + ascii_lowercase + ascii_letters, min_size=4, max_size=99)
 simple_types = floats | ints | none() | asciis
