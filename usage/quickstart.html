@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Quickstart &#8212; Python-Skill Bridge  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -34,12 +35,12 @@
           <div class="body" role="main">
             
   <section id="quickstart">
-<span id="id1"></span><h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading">¶</a></h1>
 <section id="starting-the-server">
-<h2>Starting the Server<a class="headerlink" href="#starting-the-server" title="Permalink to this headline">¶</a></h2>
+<h2>Starting the Server<a class="headerlink" href="#starting-the-server" title="Permalink to this heading">¶</a></h2>
 <p>Open the Skill console in Virtuoso and type</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-SKILL-IPC-SCRIPT&quot;</span><span class="p">)</span>
-<span class="nv">pyStartServer</span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-SKILL-IPC-SCRIPT&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="nv">pyStartServer</span><span class="w"></span>
 </pre></div>
 </div>
 <p>You can obtain the correct path from the python library like this:</p>
@@ -49,7 +50,7 @@
 <p>Read more about <a class="reference internal" href="server.html#server"><span class="std std-ref">The Python Server</span></a>.</p>
 </section>
 <section id="optional-one-time-setup">
-<h2>Optional One-time setup<a class="headerlink" href="#optional-one-time-setup" title="Permalink to this headline">¶</a></h2>
+<h2>Optional One-time setup<a class="headerlink" href="#optional-one-time-setup" title="Permalink to this heading">¶</a></h2>
 <p>You can generate a static completion stub file. That is useful
 for IDEs like PyCharm. Type this once into a terminal after you started the
 server.</p>
@@ -64,7 +65,7 @@ You can install it alongside the python static type check <code class="docutils 
 </div>
 </section>
 <section id="connecting-to-the-server">
-<h2>Connecting to the Server<a class="headerlink" href="#connecting-to-the-server" title="Permalink to this headline">¶</a></h2>
+<h2>Connecting to the Server<a class="headerlink" href="#connecting-to-the-server" title="Permalink to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Workspace</span>
 
 <span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
@@ -73,7 +74,7 @@ You can install it alongside the python static type check <code class="docutils 
 <p>Here are some <a class="reference internal" href="../examples/basic.html#basic"><span class="std std-ref">Basic Examples</span></a>.</p>
 </section>
 <section id="direct-mode-without-a-server">
-<h2>Direct mode without a Server<a class="headerlink" href="#direct-mode-without-a-server" title="Permalink to this headline">¶</a></h2>
+<h2>Direct mode without a Server<a class="headerlink" href="#direct-mode-without-a-server" title="Permalink to this heading">¶</a></h2>
 <p>It is possible to use the skillbridge without an
 intermediate server. This is useful, if the script is called directly from Virtuoso.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Workspace</span>
@@ -83,15 +84,15 @@ intermediate server. This is useful, if the script is called directly from Virtu
 </pre></div>
 </div>
 <p>Then you can execute the python file from the CIW.</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span> <span class="s">&quot;pathToScript.py&quot;</span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span><span class="w"> </span><span class="s">&quot;pathToScript.py&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <p>You can also specify a different python executable</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span> <span class="s">&quot;pathToScript.py&quot;</span> <span class="nv">?python</span> <span class="s">&quot;python3.9&quot;</span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span><span class="w"> </span><span class="s">&quot;pathToScript.py&quot;</span><span class="w"> </span><span class="nv">?python</span><span class="w"> </span><span class="s">&quot;python3.9&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <p>And you can pass CLI arguments to the script</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span> <span class="s">&quot;pathToScript.py&quot;</span> <span class="nv">?args</span> <span class="nb">list</span><span class="p">(</span><span class="s">&quot;first&quot;</span> <span class="s">&quot;second&quot;</span> <span class="s">&quot;third&quot;</span><span class="p">)</span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nv">pyRunScript</span><span class="w"> </span><span class="s">&quot;pathToScript.py&quot;</span><span class="w"> </span><span class="nv">?args</span><span class="w"> </span><span class="nb">list</span><span class="p">(</span><span class="s">&quot;first&quot;</span><span class="w"> </span><span class="s">&quot;second&quot;</span><span class="w"> </span><span class="s">&quot;third&quot;</span><span class="p">)</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -158,7 +159,7 @@ script is called from Virtuoso using <code class="docutils literal notranslate">
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -175,7 +176,7 @@ script is called from Virtuoso using <code class="docutils literal notranslate">
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Handling Large Lists &#8212; Python-Skill Bridge  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -34,7 +35,7 @@
           <div class="body" role="main">
             
   <section id="handling-large-lists">
-<span id="lazy-lists"></span><h1>Handling Large Lists<a class="headerlink" href="#handling-large-lists" title="Permalink to this headline">¶</a></h1>
+<span id="lazy-lists"></span><h1>Handling Large Lists<a class="headerlink" href="#handling-large-lists" title="Permalink to this heading">¶</a></h1>
 <p>Sometimes for-loops on the Python side are too slow, because every iteration sends a SKILL command and waits for the
 answer to it. In some cases we can “move” the for-loop to the SKILL side.</p>
 <p>This naive code example queries all shapes and deletes some of them. The attribute access and the delete function both
@@ -86,7 +87,7 @@ result in multiple filter calls in SKILL.</p>
 <p>This runs in quadratic time.</p>
 </div>
 <section id="advanced-usage-of-lazylist-foreach">
-<h2>Advanced usage of <code class="docutils literal notranslate"><span class="pre">LazyList.foreach</span></code><a class="headerlink" href="#advanced-usage-of-lazylist-foreach" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced usage of <code class="docutils literal notranslate"><span class="pre">LazyList.foreach</span></code><a class="headerlink" href="#advanced-usage-of-lazylist-foreach" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">LazyList.foreach</span></code> has three forms. You can pass a remote function with arguments, without arguments or a lazily
 evaluated remote function.</p>
 <p>The simple form is without arguments. In this case every item of the list is passed as the single argument to the
@@ -161,7 +162,7 @@ arguments. The first is the element of the list and the second is a constant we 
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -178,7 +179,7 @@ arguments. The first is the element of the list and the second is a constant we 
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

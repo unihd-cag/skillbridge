@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Multiple Virtuoso Instances &#8212; Python-Skill Bridge  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -34,14 +35,14 @@
           <div class="body" role="main">
             
   <section id="multiple-virtuoso-instances">
-<span id="multiple"></span><h1>Multiple Virtuoso Instances<a class="headerlink" href="#multiple-virtuoso-instances" title="Permalink to this headline">¶</a></h1>
+<span id="multiple"></span><h1>Multiple Virtuoso Instances<a class="headerlink" href="#multiple-virtuoso-instances" title="Permalink to this heading">¶</a></h1>
 <p>You can run multiple Virtuoso instances and have a running server inside
 each of them. However, in order to match the clients and server correctly
 you must start and connect a bit differently:</p>
 <p><strong>Virtuoso Instance 1</strong></p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; This starts the server with the default id</span>
-<span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-IPC-SERVER&quot;</span><span class="p">)</span>
-<span class="nv">pyStartServer</span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; This starts the server with the default id</span><span class="w"></span>
+<span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-IPC-SERVER&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="nv">pyStartServer</span><span class="w"></span>
 </pre></div>
 </div>
 <p><strong>Python Client 1</strong></p>
@@ -49,9 +50,9 @@ you must start and connect a bit differently:</p>
 </pre></div>
 </div>
 <p><strong>Virtuoso Instance 2</strong></p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; This starts the server with a custom id</span>
-<span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-IPC-SERVER&quot;</span><span class="p">)</span>
-<span class="nv">pyStartServer</span> <span class="s">&quot;some-id&quot;</span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; This starts the server with a custom id</span><span class="w"></span>
+<span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-IPC-SERVER&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="nv">pyStartServer</span><span class="w"> </span><span class="s">&quot;some-id&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <p><strong>Python Client 2</strong></p>
@@ -117,7 +118,7 @@ is not possible to run two python servers in a single Virtuoso session.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -134,7 +135,7 @@ is not possible to run two python servers in a single Virtuoso session.</p>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
