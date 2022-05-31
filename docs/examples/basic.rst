@@ -71,6 +71,16 @@ prefix are grouped together inside a python :class:`client.functions.FunctionCol
 
 *Skill equivalent:* ``schCreateWire(...)``
 
+**Passing Quoted Symbols**
+
+Some Skill functions accept quoted symbols e.g. ``'someSymbol``. For this simple case you can use
+the ``Symbol`` wrapper class in python.
+
+>>> ws.ns.some_function(Symbol('someSymbol'))
+...
+
+*Skill equivalent:* ``nsSomeFunction('someSymbol)``
+
 **Calling functions with keyword arguments**
 
 Some Skill functions have named arguments (key arguments). This can be seen in the documentation.
