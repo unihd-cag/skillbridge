@@ -94,3 +94,18 @@ class Globals:
 
     def __delattr__(self, item: str) -> None:
         del self[item]
+
+
+class DirectGlobals:
+    def __init__(self, channel: Channel, translator: Translator) -> None:
+        self._channel = channel
+        self._translator = translator
+
+    def __getattr__(self, name: str) -> Any:
+        code = self._translator.encode_read_variable(name)
+        response = self._channel.send(code)
+        return self._translator.decode(response)
+
+    def __getitem__(self, name: str) -> Any:
+        response = self._channel.send(name)
+        return self._translator.decode(response)
