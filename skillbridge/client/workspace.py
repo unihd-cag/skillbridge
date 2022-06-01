@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, Iterable, NoReturn, Optional, Union, cas
 
 from .channel import Channel, DirectChannel, create_channel_class
 from .functions import FunctionCollection, LiteralRemoteFunction
-from .globals import Globals
+from .globals import DirectGlobals, Globals
 from .hints import Function, Symbol
 from .objects import RemoteObject
 from .translator import DefaultTranslator, Translator, camel_to_snake, snake_to_camel
@@ -180,6 +180,7 @@ class Workspace:
         self._channel = channel
         self._translator = translator or DefaultTranslator(self._create_remote_object)
         self._max_transmission_length = 1_000_000
+        self.__ = DirectGlobals(channel, self._translator)
 
         for key in Workspace.__annotations__:
             value = FunctionCollection(channel, key, self._translator)
