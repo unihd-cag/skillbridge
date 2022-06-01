@@ -153,3 +153,11 @@ corresponding remote object:
     In order to prevent name collisions, the method name contains the prefix of the
     Skill function while the global functions do not, since they are already grouped
     under that prefix.
+
+**Accessing global variables**
+
+Sometimes you need access to certain global variables (e.g. ``stdout``). All global variables
+are grouped under the prefix ``__`` (two underscores).
+
+>>> ws.__.stdout
+<remote open_file '*stdout*'>

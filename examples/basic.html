@@ -164,6 +164,13 @@ corresponding remote object:</p>
 Skill function while the global functions do not, since they are already grouped
 under that prefix.</p>
 </div>
+<p><strong>Accessing global variables</strong></p>
+<p>Sometimes you need access to certain global variables (e.g. <code class="docutils literal notranslate"><span class="pre">stdout</span></code>). All global variables
+are grouped under the prefix <code class="docutils literal notranslate"><span class="pre">__</span></code> (two underscores).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">__</span><span class="o">.</span><span class="n">stdout</span>
+<span class="go">&lt;remote open_file &#39;*stdout*&#39;&gt;</span>
+</pre></div>
+</div>
 </section>
 
 
