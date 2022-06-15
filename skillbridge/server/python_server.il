@@ -1,11 +1,16 @@
-let((_filename _baseName _moduleFolder _logName _executable)
+let((_filename _baseName _moduleFolder _logFileName _logName _executable)
 
     _filename = get_filename(piport)
     _filename = pcreReplace(pcreCompile("^ +| +$") _filename "" 0)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _executable = strcat("\"" _baseName "py\"")
-    _logName = strcat(_baseName "py.log")
+    _logFileName = "skillbridge_skill_ipc_server.log"
+    if(getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY_PATH") then
+        _logName = strcat(getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY_PATH") _logFileName)
+    else
+        _logName = strcat(_baseName _logFileName)
+    )
 
     putd('pyDumpFunctionDefinitions nil)
     defun(pyDumpFunctionDefinitions (filename "t")

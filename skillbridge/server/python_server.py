@@ -1,20 +1,22 @@
-<<<<<<< HEAD
-from os import unlink, getenv, path
+from os import environ, unlink, getenv, path
 from socketserver import StreamRequestHandler, ThreadingMixIn, BaseServer
 from socketserver import BaseRequestHandler
 from logging import getLogger, basicConfig, WARNING
 from sys import stdout, stdin, argv, platform, stderr
-=======
 import logging
 from argparse import ArgumentParser
 from logging import WARNING, basicConfig, getLogger
-from os import unlink
+from os import unlink, environ
 from select import select
 from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
 from sys import argv, platform, stderr, stdin, stdout
 from typing import Iterable, Optional, Type
 
-LOG_FILE = 'python_server.log'
+LOG_FILENAME = 'python_server.log'
+if "SKILLBRIDGE_LOG_DIRECTORY_PATH" in environ:
+    LOG_FILE = environ["SKILLBRIDGE_LOG_DIRECTORY_PATH"] + LOG_FILENAME
+else:
+    LOG_FILE = LOG_FILENAME
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
