@@ -1,9 +1,9 @@
-from typing import NoReturn, Any, List, Iterable, cast, Match
-from re import sub, findall
 from json import dumps, loads
+from re import findall, sub
+from typing import Any, Iterable, List, Match, NoReturn, Union, cast
 from warnings import warn_explicit
 
-from .hints import Replicator, SkillCode, Skill, Symbol
+from .hints import Replicator, Skill, SkillCode, Symbol
 
 
 class ParseError(Exception):
@@ -47,14 +47,14 @@ def camel_to_snake(camel: str) -> str:
     )
 
 
-def _python_value_to_skill(value: Skill) -> SkillCode:
+def python_value_to_skill(value: Skill) -> SkillCode:
     try:
         return value.__repr_skill__()  # type: ignore
     except AttributeError:
         pass
 
     if isinstance(value, dict):
-        items = ' '.join(f"'{key} {_python_value_to_skill(value)}" for key, value in value.items())
+        items = ' '.join(f"'{key} {python_value_to_skill(value)}" for key, value in value.items())
         return SkillCode(f'list(nil {items})')
 
     if value is False or value is None:
@@ -67,7 +67,7 @@ def _python_value_to_skill(value: Skill) -> SkillCode:
         return SkillCode(dumps(value))
 
     if isinstance(value, (list, tuple)):
-        inner = ' '.join(_python_value_to_skill(item) for item in value)
+        inner = ' '.join(python_value_to_skill(item) for item in value)
         return SkillCode(f'(list {inner})')
 
     type_ = type(value).__name__
@@ -81,7 +81,7 @@ def _not_implemented(string: str) -> Replicator:
     return inner
 
 
-def build_skill_path(components: Iterable[str]) -> SkillCode:
+def build_skill_path(components: Iterable[Union[str, int]]) -> SkillCode:
     it = iter(components)
     path = snake_to_camel(str(next(it)))
 
@@ -94,7 +94,7 @@ def build_skill_path(components: Iterable[str]) -> SkillCode:
     return SkillCode(path)
 
 
-def build_python_path(components: Iterable[str]) -> SkillCode:
+def build_python_path(components: Iterable[Union[str, int]]) -> SkillCode:
     it = iter(components)
     path = str(next(it))
 
@@ -110,9 +110,9 @@ def build_python_path(components: Iterable[str]) -> SkillCode:
 class Translator:
     @staticmethod
     def encode_call(func_name: str, *args: Skill, **kwargs: Skill) -> SkillCode:
-        args_code = ' '.join(map(_python_value_to_skill, args))
+        args_code = ' '.join(map(python_value_to_skill, args))
         kw_keys = map(snake_to_camel, kwargs)
-        kw_values = map(_python_value_to_skill, kwargs.values())
+        kw_values = map(python_value_to_skill, kwargs.values())
         kwargs_code = ' '.join(f'?{key} {value}' for key, value in zip(kw_keys, kw_values))
         return SkillCode(f'{func_name}({args_code} {kwargs_code})')
 
@@ -143,6 +143,14 @@ class Translator:
         return SkillCode(f'buildString(listFunctions("^{prefix}[A-Z]"))')
 
     @staticmethod
+    def encode_read_variable(name: str) -> SkillCode:
+        return SkillCode(snake_to_camel(name))
+
+    def encode_assign(self, variable: str, value: Any) -> SkillCode:
+        encoded_value = self.encode(value)
+        return SkillCode(f'{snake_to_camel(variable)} = {encoded_value} nil')
+
+    @staticmethod
     def decode_globals(code: str) -> List[str]:
         return [camel_to_snake(f).split('_', maxsplit=1)[1] for f in loads(code).split()]
 
@@ -164,7 +172,7 @@ class Translator:
     @staticmethod
     def encode_setattr(obj: SkillCode, key: str, value: Any) -> SkillCode:
         code = build_skill_path([obj, key])
-        value = _python_value_to_skill(value)
+        value = python_value_to_skill(value)
         return SkillCode(f'{code} = {value}')
 
     def encode(self, value: Skill) -> SkillCode:
@@ -179,7 +187,7 @@ class DefaultTranslator(Translator):
         self.replicate = replicate
 
     def encode(self, value: Skill) -> SkillCode:
-        return _python_value_to_skill(value)
+        return python_value_to_skill(value)
 
     def decode(self, code: str) -> Skill:
         return _skill_value_to_python(code, self.replicate)

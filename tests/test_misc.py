@@ -1,14 +1,14 @@
-from subprocess import check_output, run, PIPE
-from textwrap import dedent
 from os.path import exists
+from subprocess import PIPE, check_output, run
+from textwrap import dedent
 
-from pytest import raises, mark
+from pytest import mark, raises
 
+from skillbridge import Key, SkillCode, keys
 from skillbridge.client.channel import Channel
 from skillbridge.client.functions import LiteralRemoteFunction
 from skillbridge.client.objects import LazyList, RemoteObject
-from skillbridge.client.translator import Symbol, DefaultTranslator
-from skillbridge import keys, Key, SkillCode
+from skillbridge.client.translator import DefaultTranslator, Symbol
 from skillbridge.test.channel import DummyChannel
 from skillbridge.test.workspace import DummyWorkspace
 
@@ -94,48 +94,56 @@ def test_many_keys():
 def test_lazy_list():
     channel = DummyChannel()
     translator = DefaultTranslator(...)
-    l = LazyList(channel, SkillCode('TEST'), translator)
+    lazy = LazyList(channel, SkillCode('TEST'), translator)
 
-    assert l._variable == 'TEST'
-    assert l.shapes._variable == 'TEST~>shapes'
-    assert l.shapes.thingies._variable == 'TEST~>shapes~>thingies'
+    assert lazy._variable == 'TEST'
+    assert lazy.shapes._variable == 'TEST~>shapes'
+    assert lazy.shapes.thingies._variable == 'TEST~>shapes~>thingies'
 
-    assert l.filter()._variable == 'TEST'
-    assert l.filter('x')._variable == 'setof(arg TEST arg->x)'
-    assert l.filter('x', 'y')._variable == 'setof(arg TEST and(arg->x arg->y))'
+    assert lazy.filter()._variable == 'TEST'
+    assert lazy.filter('x')._variable == 'setof(arg TEST arg->x)'
+    assert lazy.filter('x', 'y')._variable == 'setof(arg TEST and(arg->x arg->y))'
 
     channel.inputs.append('123')
-    assert len(l.fig_groups) == 123
+    assert len(lazy.fig_groups) == 123
     assert channel.outputs.popleft() == 'length(TEST~>figGroups )'
 
     channel.inputs.append('42')
-    assert l.shapes[10] == 42
+    assert lazy.shapes[10] == 42
     assert channel.outputs.popleft() == 'nth(10 TEST~>shapes )'
 
     channel.inputs.append('[1, 2, 3]')
-    assert l.shapes[:] == [1, 2, 3]
+    assert lazy.shapes[:] == [1, 2, 3]
     assert channel.outputs.popleft() == 'TEST~>shapes'
 
     with raises(RuntimeError):
-        _ = l.shapes[1:10]
+        _ = lazy.shapes[1:10]
 
     func = LiteralRemoteFunction(..., 'example', translator)
 
     channel.inputs.append('None')
-    assert l.shapes.foreach(func) is None
+    assert lazy.shapes.foreach(func) is None
     assert channel.outputs.popleft() == 'foreach(arg TEST~>shapes example(arg ) ),nil'
 
     channel.inputs.append('None')
-    assert l.shapes.foreach(func, 1, LazyList.arg, 2, 3) is None
+    assert lazy.shapes.foreach(func, 1, LazyList.arg, 2, 3) is None
     assert channel.outputs.popleft() == 'foreach(arg TEST~>shapes example(1 arg 2 3 ) ),nil'
 
     channel.inputs.append('None')
-    assert l.shapes.foreach(func.lazy(1, LazyList.arg, 2, 3)) is None
+    assert lazy.shapes.foreach(func.lazy(1, LazyList.arg, 2, 3)) is None
     assert channel.outputs.popleft() == 'foreach(arg TEST~>shapes example(1 arg 2 3 ) ),nil'
 
     with raises(RuntimeError):
-        l.foreach(func.lazy(), 1, 2, 3)
+        lazy.foreach(func.lazy(), 1, 2, 3)
 
-    assert 'TEST~>shapes' in repr(l.shapes)
+    assert 'TEST~>shapes' in repr(lazy.shapes)
 
-    assert RemoteObject(channel, SkillCode('TESTTEST_123'), translator).lazy.shapes._variable == 'TESTTEST_123~>shapes'
+    assert (
+        RemoteObject(channel, SkillCode('TESTTEST_123'), translator).lazy.shapes._variable
+        == 'TESTTEST_123~>shapes'
+    )
+
+
+def test_double_hex_prefix_does_not_crash():
+    assert RemoteObject(..., '__py_stuff_0x0xcafe', ...).skill_id == 0xCAFE
+    assert RemoteObject(..., '__py_stuff_0xcafe', ...).skill_id == 0xCAFE

@@ -1,17 +1,20 @@
+<<<<<<< HEAD
 from os import unlink, getenv, path
 from socketserver import StreamRequestHandler, ThreadingMixIn, BaseServer
 from socketserver import BaseRequestHandler
 from logging import getLogger, basicConfig, WARNING
 from sys import stdout, stdin, argv, platform, stderr
-from select import select
-from typing import Iterable, Optional, Type
-from argparse import ArgumentParser
-
+=======
 import logging
+from argparse import ArgumentParser
+from logging import WARNING, basicConfig, getLogger
+from os import unlink
+from select import select
+from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
+from sys import argv, platform, stderr, stdin, stdout
+from typing import Iterable, Optional, Type
 
-LOG_FILE = path.join(getenv('CDS_WORKAREA'),
-                     '{prj_name}_{user}.Work'.format(prj_name=getenv('PROJ_ID'), user=getenv('USER')),
-                     'skillbridge_python.log')
+LOG_FILE = 'python_server.log'
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
@@ -50,7 +53,7 @@ def create_windows_server_class(single: bool) -> Type[BaseServer]:
             try:
                 from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
 
-                self.socket.ioctl(SIO_LOOPBACK_FAST_PATH, True)
+                self.socket.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore
             except ImportError:
                 pass
             super().server_bind()

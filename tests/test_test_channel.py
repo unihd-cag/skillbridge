@@ -2,8 +2,8 @@ from typing import Any
 
 from pytest import fixture, raises, warns
 
-from skillbridge.test import DummyWorkspace, PassWorkspace
 from skillbridge import ParseError
+from skillbridge.test import DummyWorkspace, PassWorkspace
 
 
 @fixture
