@@ -1,13 +1,14 @@
 import sys
-from typing import Dict, Optional, Callable, Any, NoReturn, Union, Iterable, cast
 from inspect import signature
 from textwrap import dedent
+from typing import Any, Callable, Dict, Iterable, NoReturn, Optional, Union, cast
 
-from .hints import Function, Symbol
-from .channel import Channel, create_channel_class, DirectChannel
+from .channel import Channel, DirectChannel, create_channel_class
 from .functions import FunctionCollection, LiteralRemoteFunction
+from .globals import DirectGlobals, Globals
+from .hints import Function, Symbol
 from .objects import RemoteObject
-from .translator import camel_to_snake, snake_to_camel, Translator, DefaultTranslator
+from .translator import DefaultTranslator, Translator, camel_to_snake, snake_to_camel
 
 __all__ = ['Workspace', 'current_workspace']
 
@@ -179,6 +180,7 @@ class Workspace:
         self._channel = channel
         self._translator = translator or DefaultTranslator(self._create_remote_object)
         self._max_transmission_length = 1_000_000
+        self.__ = DirectGlobals(channel, self._translator)
 
         for key in Workspace.__annotations__:
             value = FunctionCollection(channel, key, self._translator)
@@ -187,6 +189,9 @@ class Workspace:
         self.user = FunctionCollection(channel, 'user', self._translator)
 
         _register_well_known_functions(self)
+
+    def globals(self, prefix: str) -> Globals:
+        return Globals(self._channel, self._translator, prefix)
 
     def __getitem__(self, item: str) -> LiteralRemoteFunction:
         return LiteralRemoteFunction(self._channel, item, self._translator)

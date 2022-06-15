@@ -67,6 +67,24 @@ intermediate server. This is useful, if the script is called directly from Virtu
     ws = Workspace.open(direct=True)
     print("cell view:", ws.ge.get_edit_cell_view())
 
+Then you can execute the python file from the CIW.
+
+.. code-block:: lisp
+
+    pyRunScript "pathToScript.py"
+
+You can also specify a different python executable
+
+.. code-block:: lisp
+
+    pyRunScript "pathToScript.py" ?python "python3.9"
+
+And you can pass CLI arguments to the script
+
+.. code-block:: lisp
+
+    pyRunScript "pathToScript.py" ?args list("first" "second" "third")
+
 .. note::
 
     The direct mode will only be enabled if stdin is *not* a TTY. This is the case when the

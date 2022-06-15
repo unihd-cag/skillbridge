@@ -1,8 +1,8 @@
-from typing import Any, Deque, Dict, Callable, Union
-from collections import deque, defaultdict
+from collections import defaultdict, deque
+from typing import Any, Callable, Deque, Dict, Union
 
-from .translator import FunctionCall
 from ..client.channel import Channel
+from .translator import FunctionCall
 
 
 class DummyChannel(Channel):

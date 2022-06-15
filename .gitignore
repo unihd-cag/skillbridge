@@ -26,3 +26,4 @@ test.ipynb
 **/.ipynb_checkpoints/*
 
 *.so
+python_server.log

@@ -1,8 +1,8 @@
-from os.path import abspath, dirname, join
 from argparse import ArgumentParser
-from typing import Dict, Tuple, Any, Callable, Optional
 from code import interact
+from os.path import abspath, dirname, join
 from random import randrange
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from . import generate_static_completion
 

@@ -1,10 +1,10 @@
-from subprocess import Popen, PIPE, STDOUT
-from threading import Thread
-from queue import Queue, Empty
-from select import select
-from sys import executable
 from os import fdopen
 from pty import openpty
+from queue import Empty, Queue
+from select import select
+from subprocess import PIPE, STDOUT, Popen
+from sys import executable
+from threading import Thread
 
 from skillbridge.server import python_server
 
@@ -53,6 +53,7 @@ class Virtuoso(Thread):
             self.server.wait()
 
     def _run(self):
+        self.questions.clear()
         self._create_subprocess()
         self._wait_for_notification()
 
