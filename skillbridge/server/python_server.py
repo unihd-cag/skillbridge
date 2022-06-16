@@ -12,9 +12,9 @@ from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, T
 from sys import argv, platform, stderr, stdin, stdout
 from typing import Iterable, Optional, Type
 
-LOG_FILENAME = 'python_server.log'
-if "SKILLBRIDGE_LOG_DIRECTORY_PATH" in environ:
-    LOG_FILE = environ["SKILLBRIDGE_LOG_DIRECTORY_PATH"] + LOG_FILENAME
+LOG_FILENAME = 'skillbridge_server.log'
+if "SKILLBRIDGE_LOG_DIRECTORY" in environ:
+    LOG_FILE = environ["SKILLBRIDGE_LOG_DIRECTORY"] + LOG_FILENAME
 else:
     LOG_FILE = LOG_FILENAME
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'

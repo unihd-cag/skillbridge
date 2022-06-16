@@ -5,9 +5,9 @@ let((_filename _baseName _moduleFolder _logFileName _logName _executable)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _executable = strcat("\"" _baseName "py\"")
-    _logFileName = "skillbridge_skill_ipc_server.log"
-    if(getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY_PATH") then
-        _logName = strcat(getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY_PATH") _logFileName)
+    _logFileName = "skillbridge_skill.log"
+    if(getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY") then
+        _logName = strcat(getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY") _logFileName)
     else
         _logName = strcat(_baseName _logFileName)
     )
