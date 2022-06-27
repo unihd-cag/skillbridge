@@ -6,8 +6,12 @@ from select import select
 from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
 from sys import argv, platform, stderr, stdin, stdout
 from typing import Iterable, Optional, Type
+from os import getenv
+from pathlib import Path
 
-LOG_FILE = 'python_server.log'
+
+LOG_DIRECTORY = Path(getenv('SKILLBRIDGE_LOG_DIRECTORY', '.'))
+LOG_FILE = LOG_DIRECTORY / 'skillbridge_server.log'
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 LOG_DATE_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_LEVEL = WARNING
@@ -108,26 +112,26 @@ class Handler(StreamRequestHandler):
         if not length:
             logger.warning("client {} lost connection".format(self.client_address))
             return False
-        logger.info("got length {}".format(length))
+        logger.debug("got length {}".format(length))
 
         length = int(length)
         command = b''.join(self.receive_all(length))
 
-        logger.info("received {} bytes".format(len(command)))
+        logger.debug("received {} bytes".format(len(command)))
 
         if command.startswith(b'close'):
-            logger.info("client {} disconnected".format(self.client_address))
+            logger.debug("client {} disconnected".format(self.client_address))
             return False
-        logger.info("got data {}".format(command[:1000].decode()))
+        logger.debug("got data {}".format(command[:1000].decode()))
 
         send_to_skill(command.decode())
-        logger.info("sent data to skill")
+        logger.debug("sent data to skill")
         result = read_from_skill(self.server.skill_timeout).encode()  # type: ignore
-        logger.info("got response from skill {!r}".format(result[:1000]))
+        logger.debug("got response from skill {!r}".format(result[:1000]))
 
         self.request.send('{:10}'.format(len(result)).encode())
         self.request.send(result)
-        logger.info("sent response to client")
+        logger.debug("sent response to client")
 
         return True
 
