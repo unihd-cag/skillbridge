@@ -1,14 +1,12 @@
 import logging
 from argparse import ArgumentParser
 from logging import WARNING, basicConfig, getLogger
-from os import unlink
+from os import getenv, unlink
+from pathlib import Path
 from select import select
 from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
 from sys import argv, platform, stderr, stdin, stdout
 from typing import Iterable, Optional, Type
-from os import getenv
-from pathlib import Path
-
 
 LOG_DIRECTORY = Path(getenv('SKILLBRIDGE_LOG_DIRECTORY', '.'))
 LOG_FILE = LOG_DIRECTORY / 'skillbridge_server.log'
