@@ -1,16 +1,11 @@
-let((_filename _baseName _moduleFolder _logName _executable)
+let((_filename _baseName _moduleFolder _logDirectory _executable)
 
     _filename = get_filename(piport)
     _filename = pcreReplace(pcreCompile("^ +| +$") _filename "" 0)
     _baseName = substring(_filename 1 strlen(_filename)-2)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _executable = strcat("\"" _baseName "py\"")
-    _logName = strcat(_baseName "py.log")
-
-    putd('pyDumpFunctionDefinitions nil)
-    defun(pyDumpFunctionDefinitions (filename "t")
-        printf("This is deprecated. Functions can be called dynamically now\n")
-    )
+    _logDirectory = getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY") || "."
 
     putd('pyKillServer nil)
     defun(pyKillServer ()
@@ -52,7 +47,7 @@ let((_filename _baseName _moduleFolder _logName _executable)
         t
     )
 
-    pyShowLog.logName = _logName
+    pyShowLog.logName = lsprintf("%s/skillbridge_skill.log" _logDirectory)
 
     putd('__pyCaptureWarnings nil)
     defmacro(__pyCaptureWarnings (@rest body)
@@ -93,7 +88,7 @@ let((_filename _baseName _moduleFolder _logName _executable)
 
     putd('__pyOnError nil)
     defun(__pyOnError (_ data)
-        fprintf(stderr "ERROR %s\n" data)
+        fprintf(stderr "PYTHON: %s\n" data)
     )
 
     putd('__pyOnFinish nil)
@@ -175,7 +170,7 @@ let((_filename _baseName _moduleFolder _logName _executable)
     )
 
     putd('pyStartServer nil)
-    defun(pyStartServer (@key (id "default") (logLevel "WARNING") (singleMode nil) (timeout nil) (python "python") "ttggt")
+    defun(pyStartServer (@key (id "default") (logLevel "INFO") (singleMode nil) (timeout nil) (python "python") "ttggt")
         if(pyStartServer.ipc then
             fprintf(stderr, "server is already running\n")
             nil
@@ -189,19 +184,23 @@ let((_filename _baseName _moduleFolder _logName _executable)
                 )
                 executableWithArgs = sprintf(nil "\"%s\" %s" python executableWithArgs)
 
-                pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish "python_server.log")           
+                pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish pyStartServer.logName)
                 t
             )
         )
     )
 
+    pyStartServer.logName = lsprintf("%s/skillbridge_skill.log" _logDirectory)
+
     putd('pyRunScript nil)
     defun(pyRunScript (script @key (python "python") (args nil) "ttl")
         let((command)
             command = sprintf(nil "%s %s %s" python script buildString(args))
-            ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript "python_script.log")
+            ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript pyRunScript.logName)
         )
     )
+
+    pyRunScript.logName = lsprintf("%s/skillbridge_script.log" _logDirectory)
 
     pyStartServer.ipc = nil
     pyStartServer.exe = _executable
@@ -211,6 +210,5 @@ let((_filename _baseName _moduleFolder _logName _executable)
     printf("\tpyKillServer\n")
     printf("\tpyReloadScript\n")
     printf("\tpyShowLog [numberOfLines]\n")
-    printf("\tpyDumpFunctionDefinitions filename\n")
-    printf("\tpyRun path ?args list() ?python \"python\"\n")
+    printf("\tpyRunScript path ?args list() ?python \"python\"\n")
 )
