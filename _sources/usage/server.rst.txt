@@ -13,13 +13,13 @@ into your terminal to get the correct paths).
 
 After that, these management commands are available in the Skill console.
 
-.. function:: pyStartServer(id="default" logLevel="WARNING" singleMode=nil timeout=nil python="python")
+.. function:: pyStartServer(id="default" logLevel="INFO" singleMode=nil timeout=nil python="python")
 
     This starts the python server. If you are only running a single instance of
     Virtuoso you can use the default id. For more instances, each server needs its own
     id.
 
-    The ``logLevel`` can be used to set the log level, the default is ``"WARNING"``.
+    The ``logLevel`` can be used to set the log level, the default is ``"INFO"``.
     Other values are ``"DEBUG"`` to print absolutely everything, ``"INFO"``,
     ``"WARNING"``, ``"ERROR"`` and ``"FATAL"``.
 
