@@ -101,11 +101,19 @@ class RemoteObject:
         result = self._send(self._translate.encode_getattr(self._variable, key))
         return self._translate.decode(result)
 
+    def __getitem__(self, item: str) -> Any:
+        result = self._send(self._translate.encode_getattr(self._variable, item, lambda x: x))
+        return self._translate.decode(result)
+
     def __setattr__(self, key: str, value: Any) -> None:
         if key in RemoteObject._attributes:
             return super().__setattr__(key, value)
 
         result = self._send(self._translate.encode_setattr(self._variable, key, value))
+        self._translate.decode(result)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        result = self._send(self._translate.encode_setattr(self._variable, key, value, lambda x: x))
         self._translate.decode(result)
 
     def getdoc(self) -> str:
