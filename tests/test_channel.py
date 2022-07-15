@@ -428,3 +428,27 @@ def test_globals_raises_when_attribute_is_invalid(server, ws):
     g = ws.globals('prefix')
     with raises(AttributeError):
         print(g.__wat__)
+
+
+def test_raw_object_access(server, ws):
+    server.answer_object('object', 22)
+
+    x = ws.db.get_stuff()
+
+    server.answer_success('123')
+    i = x.abc_def
+    assert i == 123
+    assert server.last_question == "__py_object_22->abcDef"
+
+    server.answer_success('234')
+    i = x['abc_def']
+    assert i == 234
+    assert server.last_question == "__py_object_22->abc_def"
+
+    server.answer_success('True')
+    x.abc_def = 345
+    assert server.last_question == "__py_object_22->abcDef = 345"
+
+    server.answer_success('True')
+    x['abc_def'] = 456
+    assert server.last_question == "__py_object_22->abc_def = 456"
