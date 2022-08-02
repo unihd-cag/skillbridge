@@ -31,7 +31,7 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
 
     putd('pyShowLog nil)
     defun(pyShowLog (@optional (length 20) "x")
-        let((fin line (lines declare(lines[length]) (ptr 0)))
+        let((fin line (lines declare(lines[length])) (ptr 0))
             fin = infile(pyShowLog.logName)
 
             while(gets(line fin)
