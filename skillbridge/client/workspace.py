@@ -197,16 +197,10 @@ class Workspace:
 
         return translator
 
-    _unbound = object()
-
-    def make_table(self, name: str, default: Any = _unbound) -> RemoteTable:
-        if default is self._unbound:
-            return self['makeTable'](name)  # type: ignore
+    def make_table(self, name: str, default: Any = Symbol('unbound')) -> RemoteTable:
         return self['makeTable'](name, default)  # type: ignore
 
-    def make_vector(self, length: int, default: Any = _unbound) -> RemoteVector:
-        if default is self._unbound:
-            return self['makeVector'](length)  # type: ignore
+    def make_vector(self, length: int, default: Any = Symbol('unbound')) -> RemoteVector:
         return self['makeVector'](length, default)  # type: ignore
 
     def globals(self, prefix: str) -> Globals:
