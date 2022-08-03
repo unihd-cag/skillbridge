@@ -1,4 +1,5 @@
 import sys
+from functools import partial
 from inspect import signature
 from textwrap import dedent
 from typing import Any, Callable, Dict, Iterable, NoReturn, Optional, Union, cast
@@ -7,7 +8,7 @@ from .channel import Channel, DirectChannel, create_channel_class
 from .functions import FunctionCollection, LiteralRemoteFunction
 from .globals import DirectGlobals, Globals
 from .hints import Function, Symbol
-from .objects import RemoteObject
+from .objects import RemoteObject, RemoteTable, RemoteVector
 from .translator import DefaultTranslator, Translator, camel_to_snake, snake_to_camel
 
 __all__ = ['Workspace', 'current_workspace']
@@ -35,10 +36,6 @@ def _register_well_known_functions(ws: 'Workspace') -> None:
         """
         Checks the integrity of the database.
         """
-
-
-def _not_implemented(_: Any) -> NoReturn:
-    raise NotImplementedError("Did not expect a remote object here")
 
 
 class Workspace:
@@ -178,7 +175,7 @@ class Workspace:
     ) -> None:
         self._id = id_
         self._channel = channel
-        self._translator = translator or DefaultTranslator(self._create_remote_object)
+        self._translator = translator or self._prepare_default_translator()
         self._max_transmission_length = 1_000_000
         self.__ = DirectGlobals(channel, self._translator)
 
@@ -189,6 +186,28 @@ class Workspace:
         self.user = FunctionCollection(channel, 'user', self._translator)
 
         _register_well_known_functions(self)
+
+    def _prepare_default_translator(self) -> DefaultTranslator:
+        translator = DefaultTranslator()
+        types = [('Remote', RemoteObject), ('Table', RemoteTable), ('Vector', RemoteVector)]
+
+        for name, typ in types:
+            construct = partial(typ, self._channel, translator)
+            translator.register_remote_variable_type(name, construct)
+
+        return translator
+
+    _unbound = object()
+
+    def make_table(self, name: str, default: Any = _unbound) -> RemoteTable:
+        if default is self._unbound:
+            return self['makeTable'](name)  # type: ignore
+        return self['makeTable'](name, default)  # type: ignore
+
+    def make_vector(self, length: int, default: Any = _unbound) -> RemoteVector:
+        if default is self._unbound:
+            return self['makeVector'](length)  # type: ignore
+        return self['makeVector'](length, default)  # type: ignore
 
     def globals(self, prefix: str) -> Globals:
         return Globals(self._channel, self._translator, prefix)
@@ -210,9 +229,6 @@ class Workspace:
         arg_list = ' '.join(snake_to_camel(arg) for arg in args)
         code = f'defun(user{skill_name} ({arg_list}) {code})'
         cast(Symbol, self._translator.decode(self._channel.send(code)))
-
-    def _create_remote_object(self, variable: str) -> RemoteObject:
-        return RemoteObject(self._channel, variable, self._translator)
 
     @staticmethod
     def fix_completion() -> None:

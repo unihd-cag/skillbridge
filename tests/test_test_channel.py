@@ -2,7 +2,7 @@ from typing import Any
 
 from pytest import fixture, raises, warns
 
-from skillbridge import ParseError
+from skillbridge import ParseError, Key
 from skillbridge.test import DummyWorkspace, PassWorkspace
 
 
@@ -45,6 +45,12 @@ def test_success(ws):
 
     assert ws.test.add_one(100) == 101
     assert ws.pop_match('testAddOne.*100')
+
+
+def test_key(ws):
+    assert str(Key("arg")) == "Key(arg)"
+    assert repr(Key("arg")) == "Key(arg)"
+    assert Key("arg").__repr_skill__() == "?arg"
 
 
 def test_remote_object(ws):

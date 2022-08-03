@@ -1,5 +1,6 @@
 from os import chdir
 
+from .client.objects import RemoteObject, RemoteTable, RemoteVector, LazyList
 from .client.functions import FunctionCollection, keys
 from .client.globals import Globals, GlobalVar
 from .client.hints import Function, Key, SkillCode, SkillList, SkillTuple, Symbol
@@ -25,6 +26,10 @@ __all__ = [
     'loop_var_j',
     'Globals',
     'GlobalVar',
+    'RemoteTable',
+    'RemoteVector',
+    'RemoteObject',
+    'LazyList',
 ]
 
 loop_var = Var('i')

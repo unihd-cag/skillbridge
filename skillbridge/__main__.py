@@ -21,7 +21,7 @@ def print_skill_script_location() -> None:
     print(f'load("{escaped}")')
 
 
-def deprecated_command() -> None:
+def deprecated_command() -> None:  # pragma: no cover
     print("This command is deprecated")
     print("It is no longer necessary to export function definitions")
     print("You don't have to do anything")
@@ -81,9 +81,9 @@ def main() -> None:
     sub_parser, func = commands[args.command]
     try:
         func()
-    except RuntimeError as e:
+    except RuntimeError as e:  # pragma: no cover
         sub_parser.error(str(e))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

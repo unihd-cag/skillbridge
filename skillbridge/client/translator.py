@@ -1,9 +1,9 @@
 from json import dumps, loads
 from re import findall, sub
-from typing import Any, Callable, Iterable, List, Match, NoReturn, Union, cast
+from typing import Any, Callable, Iterable, List, Match, NoReturn, Union, cast, Dict, Optional
 from warnings import warn_explicit
 
-from .hints import Replicator, Skill, SkillCode, Symbol
+from .hints import Skill, SkillCode, Symbol
 
 
 class ParseError(Exception):
@@ -21,11 +21,15 @@ def _show_warning(message: str, result: Any) -> Any:
     return result
 
 
-def _skill_value_to_python(string: str, replicate: Replicator) -> Skill:
-    return eval(  # type: ignore
-        string,
-        {'Remote': replicate, 'Symbol': Symbol, 'error': _raise_error, 'warning': _show_warning},
-    )
+_STATIC_EVAL_CONTEXT = {
+    'Symbol': Symbol,
+    'error': _raise_error,
+    'warning': _show_warning,
+}
+
+
+def _skill_value_to_python(string: str, eval_context: Optional[Dict[str, Any]] = None) -> Skill:
+    return eval(string, eval_context or _STATIC_EVAL_CONTEXT)  # type: ignore
 
 
 def _upper_without_first(match: Match[str]) -> str:
@@ -72,13 +76,6 @@ def python_value_to_skill(value: Skill) -> SkillCode:
 
     type_ = type(value).__name__
     raise RuntimeError(f"Cannot convert object {type_!r} to skill.") from None
-
-
-def _not_implemented(string: str) -> Replicator:
-    def inner(_name: str) -> NoReturn:
-        raise NotImplementedError(f"Failed to parse skill literal {string!r}")
-
-    return inner
 
 
 CaseSwitcher = Callable[[str], str]
@@ -136,7 +133,7 @@ class Translator:
 
     @staticmethod
     def decode_dir(code: str) -> List[str]:
-        attributes = _skill_value_to_python(code, _not_implemented("help list")) or ()
+        attributes = _skill_value_to_python(code) or ()
         return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
 
     @staticmethod
@@ -192,11 +189,14 @@ class Translator:
 
 
 class DefaultTranslator(Translator):
-    def __init__(self, replicate: Replicator) -> None:
-        self.replicate = replicate
+    def __init__(self) -> None:
+        self.context = _STATIC_EVAL_CONTEXT.copy()
+
+    def register_remote_variable_type(self, name: str, constructor: Callable[[str], Skill]) -> None:
+        self.context[name] = constructor
 
     def encode(self, value: Skill) -> SkillCode:
         return python_value_to_skill(value)
 
     def decode(self, code: str) -> Skill:
-        return _skill_value_to_python(code, self.replicate)
+        return _skill_value_to_python(code, self.context)

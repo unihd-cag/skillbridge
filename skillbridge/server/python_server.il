@@ -1,4 +1,4 @@
-let((_filename _baseName _moduleFolder _logDirectory _executable)
+let((_filename _baseName _moduleFolder _logDirectory _executable _unbound)
 
     _filename = get_filename(piport)
     _filename = pcreReplace(pcreCompile("^ +| +$") _filename "" 0)
@@ -6,6 +6,7 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
     _moduleFolder = substring(_filename 1 strlen(_filename)-23)
     _executable = strcat("\"" _baseName "py\"")
     _logDirectory = getShellEnvVar("SKILLBRIDGE_LOG_DIRECTORY") || "."
+    _unbound = makeTable("JustForUnbound")[""]
 
     putd('pyKillServer nil)
     defun(pyKillServer ()
@@ -74,13 +75,17 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
                 capturedWarning = __pyCaptureWarnings(errset(result=evalstring(line)))
                 if((errset.errset) then
                     printf("command %L resulted in error %L\n" line errset.errset)
-                    ipcWriteProcess(id sprintf(nil "failure %L\n" errset.errset))
+                    ipcWriteProcess(id lsprintf("failure %L\n" errset.errset))
                 else
-                    pythonCode = __pySkillToPython(result)
-                    if((capturedWarning != "" && capturedWarning != "*WARNING* ") then
-                        pythonCode = sprintf(nil "warning(%L, %s)" capturedWarning pythonCode)
+                    if(boundp('result) then
+                        pythonCode = __pySkillToPython(result)
+                        if((capturedWarning != "" && capturedWarning != "*WARNING* ") then
+                            pythonCode = lsprintf("warning(%L, %s)" capturedWarning pythonCode)
+                        )
+                        ipcWriteProcess(id lsprintf("success %s\n" pythonCode))
+                    else
+                        ipcWriteProcess(id "success error('unbound')\n")
                     )
-                    ipcWriteProcess(id sprintf(nil "success %s\n" pythonCode))
                 )
             )
         )
@@ -109,7 +114,7 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
         strcat("{"
             buildString(
                 mapcar(lambda((key)
-                    sprintf(nil "'%s':%s" key __pySkillToPython(get(propList key))))
+                    lsprintf("'%s':%s" key __pySkillToPython(get(propList key))))
                     propList->?)
             ",")
             "}"
@@ -119,25 +124,25 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
     putd('__pySaveToVariableAndReturn nil)
     defun(__pySaveToVariableAndReturn (thing)
         let((repr variableName split objectType address variableSymbol)
-            repr = sprintf(nil "%L" thing)
+            repr = lsprintf("%L" thing)
             if(rexExecute(repr) then
                 split = buildString(parseString(repr "_") "")
                 split = parseString(split "@:")
                 objectType = car(split)
                 address = cadr(split)
-                variableName = sprintf(nil "__py_%s_%s" objectType address)
+                variableName = lsprintf("__py_%s_%s" objectType address)
                 set(stringToSymbol(variableName) thing)
-                sprintf(nil "Remote(%L)" variableName)
+                lsprintf("Remote(%L)" variableName)
             else if(otherp(thing) then
                 variableSymbol = gensym("__py_OTHER_")
                 set(variableSymbol thing)
-                sprintf(nil "Remote(%L)" symbolToString(variableSymbol))
+                lsprintf("Remote(%L)" symbolToString(variableSymbol))
             else if(portp(thing) then
                 variableSymbol = gensym("__py_openfile_")
                 set(variableSymbol thing)
-                sprintf(nil "Remote(%L)" symbolToString(variableSymbol))
+                lsprintf("Remote(%L)" symbolToString(variableSymbol))
             else
-                sprintf(nil "error(%L)" repr)
+                lsprintf("error(%L)" repr)
                 printf("I COULD NOT PARSE %L\n" repr)
             )))
         )
@@ -152,21 +157,41 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
         )
     )
 
+    putd('__pyVectorToPython nil)
+    defun(__pyVectorToPython (collection)
+        let((symbol)
+            symbol = gensym("__py_vector_")
+            set(symbol collection)
+            lsprintf("Vector(%L)" symbolToString(symbol))
+        )
+    )
+
+    putd('__pyTableToPython nil)
+    defun(__pyTableToPython (collection)
+        let((symbol)
+            symbol = gensym("__py_table_")
+            set(symbol collection)
+            lsprintf("Table(%L)" symbolToString(symbol))
+        )
+    )
+
     putd('__pySkillToPython nil)
     defun(__pySkillToPython (thing)
         if(thing == t then "True" else
         if(!thing then "None" else
-        if(or(numberp(thing) stringp(thing)) then sprintf(nil "%L" thing) else
-        if(symbolp(thing) then sprintf(nil "Symbol('%s')" thing) else
+        if(or(numberp(thing) stringp(thing)) then lsprintf("%L" thing) else
+        if(symbolp(thing) then lsprintf("Symbol('%s')" thing) else
         if(listp(thing) then
             if(and(!car(thing) symbolp(cadr(thing)))
             then __pyPropertyListToPython(thing)
             else __pyListToPython(thing)
             )
         else
+        if(tablep(thing) then __pyTableToPython(thing) else
+        if(vectorp(thing) then __pyVectorToPython(thing) else
         rexCompile("^[_a-zA-Z]+[:@][x0-9a-fA-F]+$")
         __pySaveToVariableAndReturn(thing)
-        )))))
+        )))))))
     )
 
     putd('pyStartServer nil)
@@ -175,14 +200,14 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
             fprintf(stderr, "server is already running\n")
             nil
         else
-            let(((executableWithArgs sprintf(nil "%s %L %s" pyStartServer.exe id logLevel)))
+            let(((executableWithArgs lsprintf("%s %L %s" pyStartServer.exe id logLevel)))
                 if(singleMode then
                     executableWithArgs = strcat(executableWithArgs "--single")
                 )
                 if(timeout then
-                    executableWithArgs = sprintf(nil "%s --timeout %L" executableWithArgs timeout)
+                    executableWithArgs = lsprintf("%s --timeout %L" executableWithArgs timeout)
                 )
-                executableWithArgs = sprintf(nil "\"%s\" %s" python executableWithArgs)
+                executableWithArgs = lsprintf("\"%s\" %s" python executableWithArgs)
 
                 pyStartServer.ipc = ipcBeginProcess(executableWithArgs "" '__pyOnData '__pyOnError '__pyOnFinish pyStartServer.logName)
                 t
@@ -195,7 +220,7 @@ let((_filename _baseName _moduleFolder _logDirectory _executable)
     putd('pyRunScript nil)
     defun(pyRunScript (script @key (python "python") (args nil) "ttl")
         let((command)
-            command = sprintf(nil "%s %s %s" python script buildString(args))
+            command = lsprintf("%s %s %s" python script buildString(args))
             ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript pyRunScript.logName)
         )
     )

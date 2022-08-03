@@ -9,16 +9,16 @@ class Channel:
         self._max_transmission_length = max_transmission_length
 
     def send(self, data: str) -> str:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def close(self) -> None:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def flush(self) -> None:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def try_repair(self) -> Any:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def max_transmission_length(self) -> int:
@@ -80,7 +80,7 @@ class TcpChannel(Channel):
 
     @staticmethod
     def create_address(id_: Any) -> Any:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def start(self) -> socket:
         sock = self.create_socket()

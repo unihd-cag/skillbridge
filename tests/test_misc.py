@@ -15,7 +15,7 @@ from skillbridge.test.workspace import DummyWorkspace
 
 @mark.parametrize('id_,repr_', [('0x10', 16), ('00001F', 31), ('10', 10)])
 def test_skill_id(id_, repr_):
-    assert RemoteObject(..., f'__py_db_{id_}', ...).skill_id == repr_
+    assert RemoteObject(..., ..., SkillCode(f'__py_db_{id_}')).skill_id == repr_
 
 
 def test_workspace_get_item():
@@ -93,8 +93,8 @@ def test_many_keys():
 
 def test_lazy_list():
     channel = DummyChannel()
-    translator = DefaultTranslator(...)
-    lazy = LazyList(channel, SkillCode('TEST'), translator)
+    translator = DefaultTranslator()
+    lazy = LazyList(channel, translator, SkillCode('TEST'))
 
     assert lazy._variable == 'TEST'
     assert lazy.shapes._variable == 'TEST~>shapes'
@@ -139,11 +139,11 @@ def test_lazy_list():
     assert 'TEST~>shapes' in repr(lazy.shapes)
 
     assert (
-        RemoteObject(channel, SkillCode('TESTTEST_123'), translator).lazy.shapes._variable
+        RemoteObject(channel, translator, SkillCode('TESTTEST_123')).lazy.shapes._variable
         == 'TESTTEST_123~>shapes'
     )
 
 
 def test_double_hex_prefix_does_not_crash():
-    assert RemoteObject(..., '__py_stuff_0x0xcafe', ...).skill_id == 0xCAFE
-    assert RemoteObject(..., '__py_stuff_0xcafe', ...).skill_id == 0xCAFE
+    assert RemoteObject(..., ..., SkillCode('__py_stuff_0x0xcafe')).skill_id == 0xCAFE
+    assert RemoteObject(..., ..., SkillCode('__py_stuff_0xcafe')).skill_id == 0xCAFE

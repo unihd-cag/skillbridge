@@ -24,7 +24,9 @@ simple_types = floats | ints | none() | asciis
 
 @fixture(scope='module')
 def simple_translator() -> Translator:
-    return DefaultTranslator(lambda code: code)
+    t = DefaultTranslator()
+    t.register_remote_variable_type('Remote', lambda code: code)
+    return t
 
 
 @fixture(scope='module')
