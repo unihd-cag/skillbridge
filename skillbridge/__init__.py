@@ -1,9 +1,9 @@
 from os import chdir
 
-from .client.objects import RemoteObject, RemoteTable, RemoteVector, LazyList
 from .client.functions import FunctionCollection, keys
 from .client.globals import Globals, GlobalVar
 from .client.hints import Function, Key, SkillCode, SkillList, SkillTuple, Symbol
+from .client.objects import LazyList, RemoteObject, RemoteTable, RemoteVector
 from .client.translator import ParseError
 from .client.var import Var
 from .client.workspace import Workspace, current_workspace

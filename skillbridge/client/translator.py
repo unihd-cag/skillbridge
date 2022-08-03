@@ -1,6 +1,6 @@
 from json import dumps, loads
 from re import findall, sub
-from typing import Any, Callable, Iterable, List, Match, NoReturn, Union, cast, Dict, Optional
+from typing import Any, Callable, Dict, Iterable, List, Match, NoReturn, Optional, Union, cast
 from warnings import warn_explicit
 
 from .hints import Skill, SkillCode, Symbol
