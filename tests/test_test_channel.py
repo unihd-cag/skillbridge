@@ -2,7 +2,7 @@ from typing import Any
 
 from pytest import fixture, raises, warns
 
-from skillbridge import ParseError, Key
+from skillbridge import Key, ParseError
 from skillbridge.test import DummyWorkspace, PassWorkspace
 
 

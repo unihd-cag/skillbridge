@@ -1,10 +1,9 @@
 from warnings import warn
 
 from _pytest.python_api import raises
+from pytest import fixture, skip
 
-from skillbridge import Workspace, RemoteTable, LazyList, RemoteObject, SkillCode, Symbol
-
-from pytest import skip, fixture
+from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, Workspace
 
 
 @fixture(scope='module')
