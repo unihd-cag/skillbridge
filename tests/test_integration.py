@@ -10,7 +10,8 @@ from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, 
 def ws() -> Workspace:
     try:
         workspace = Workspace.open()
-    except Exception:
+        assert workspace['plus'](1, 2) == 3
+    except (Exception, ValueError, AssertionError):
         warn("Skipping integration tests, because Workspace could not connect", UserWarning)
         skip()
         raise  # this line is unreachable but mypy and pycharm don't know that
@@ -69,6 +70,14 @@ def test_can_use_hash_table_like_a_dict(ws: Workspace) -> None:
     assert dict(t) == {'x': 1}
     t.update(y=3)
     assert dict(t) == {'x': 1, 'y': 3}
+
+
+def test_can_use_symbol_keys_in_hash_table(ws: Workspace) -> None:
+    t = ws.make_table('T', None)
+
+    t[Symbol('key')] = 123
+    assert t['key'] is None
+    assert t[Symbol('key')] == 123
 
 
 def test_missing_key_raises_key_error(ws: Workspace) -> None:
