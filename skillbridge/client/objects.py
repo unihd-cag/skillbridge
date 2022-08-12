@@ -236,7 +236,6 @@ class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
         else:
             self[Symbol(snake_to_camel(key))] = value
 
-
     def __iter__(self) -> Iterator[Skill]:
         code = self._translator.encode_getattr(self.__repr_skill__(), '?')
         result = self._channel.send(code)
