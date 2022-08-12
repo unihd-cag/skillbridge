@@ -72,6 +72,17 @@ None
     >>> ws.make_table('nil', [])['missing']  # translates to makeTable("nil" nil)
     None
 
+
+As a convenience the attribute access to tables is an alias for item access with ``Symbol`` keys.
+
+.. code-block:: python
+
+    t = ws.make_table('Table')
+    t.snake_case = 10
+    print(t[Symbol('snakeCase')])  # prints 10
+    t[Symbol('snakeCase')] = 20
+    print(t.snake_case)  # prints 20
+
 Vectors
 -------
 

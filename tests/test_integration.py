@@ -201,3 +201,13 @@ def test_collections_with_default(ws: Workspace) -> None:
 
     v = ws.make_vector(10, 12)
     assert list(v) == [12] * 10
+
+
+def test_table_getattr_is_equivalent_to_symbol_lookup(ws: Workspace) -> None:
+    t = ws.make_table('T')
+
+    t[Symbol('abcDef')] = 10
+    assert t.abc_def == 10
+
+    t.xyz_abc = 20
+    assert t[Symbol('xyzAbc')] == 20

@@ -40,8 +40,6 @@ def is_jupyter_magic(attribute: str) -> bool:
 
 
 class RemoteObject(RemoteVariable):
-    _attributes = {'_channel', '_variable', '_translator'}
-
     @property
     def skill_id(self) -> int:
         address = self._variable[5:].rsplit('_', maxsplit=1)[1]
@@ -228,6 +226,16 @@ class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
             return super().__getitem__(item)
         except ParseError:
             raise KeyError(item) from None
+
+    def __getattr__(self, item: str) -> Skill:
+        return self[Symbol(snake_to_camel(item))]
+
+    def __setattr__(self, key: str, value: Skill) -> None:
+        if key in self._attributes:
+            super().__setattr__(key, value)
+        else:
+            self[Symbol(snake_to_camel(key))] = value
+
 
     def __iter__(self) -> Iterator[Skill]:
         code = self._translator.encode_getattr(self.__repr_skill__(), '?')
