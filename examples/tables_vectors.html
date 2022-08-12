@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Tables and Vectors &#8212; Python-Skill Bridge  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Disable camelCase translation" href="raw.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="tables-and-vectors">
+<span id="tables-vectors-rst"></span><h1>Tables and Vectors<a class="headerlink" href="#tables-and-vectors" title="Permalink to this heading">¶</a></h1>
+<p>SKILL provides two data structures called <code class="docutils literal notranslate"><span class="pre">table</span></code> and <code class="docutils literal notranslate"><span class="pre">vector</span></code>.
+These are mapped similar to remote objects which means that the full content
+of these data structures is never send to the python side unless requested.</p>
+<p>The following examples assume that the skillbridge is running and a workspace
+was opened like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbridge</span> <span class="kn">import</span> <span class="n">Workspace</span><span class="p">,</span> <span class="n">Symbol</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="tables">
+<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this heading">¶</a></h2>
+<p>You can create a new table</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">make_table</span><span class="p">(</span><span class="s1">&#39;MyTable&#39;</span><span class="p">)</span>
+<span class="c1"># translates to makeTable(&quot;MyTable&quot;)</span>
+</pre></div>
+</div>
+<p>Or access an existing table (e.g. through a global variable)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">__</span><span class="o">.</span><span class="n">existing_table</span>
+</pre></div>
+</div>
+<p>Now <code class="docutils literal notranslate"><span class="pre">t</span></code> behaves like a python dictionary.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)]</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;missing&#39;</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;missing&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;missing&#39;</span><span class="p">)</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">{&#39;x&#39;: 1, 2: 3, Symbol(&#39;x&#39;): 4}</span>
+</pre></div>
+</div>
+<p>It is possible to provide a default value like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">make_table</span><span class="p">(</span><span class="s1">&#39;MyDefaultTable&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="c1"># translates to makeTable(&quot;MyDefaultTable&quot; nil)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;missing&#39;</span><span class="p">]</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The default value is evaluated on the SKILL side. That means only
+values that can be safely send to SKILL are possible. Empty containers
+and <code class="docutils literal notranslate"><span class="pre">False</span></code> are converted to <code class="docutils literal notranslate"><span class="pre">None</span></code> as usual.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">make_table</span><span class="p">(</span><span class="s1">&#39;nil&#39;</span><span class="p">,</span> <span class="p">[])[</span><span class="s1">&#39;missing&#39;</span><span class="p">]</span>  <span class="c1"># translates to makeTable(&quot;nil&quot; nil)</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+</div>
+<p>As a convenience the attribute access to tables is an alias for item access with <code class="docutils literal notranslate"><span class="pre">Symbol</span></code> keys.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">make_table</span><span class="p">(</span><span class="s1">&#39;Table&#39;</span><span class="p">)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">snake_case</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;snakeCase&#39;</span><span class="p">)])</span>  <span class="c1"># prints 10</span>
+<span class="n">t</span><span class="p">[</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;snakeCase&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">snake_case</span><span class="p">)</span>  <span class="c1"># prints 20</span>
+</pre></div>
+</div>
+</section>
+<section id="vectors">
+<h2>Vectors<a class="headerlink" href="#vectors" title="Permalink to this heading">¶</a></h2>
+<p>Vectors behave like python sequences with a somewhat fixed length. Note, that
+vectors without a default value behave different from the usual python lists.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">make_vector</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="c1"># translates to makeVector(10)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">IndexError</span>: <span class="n">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+<p>You have to fill the “empty” slots of the vector before you can use them</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">[1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">[1, 2, 3]</span>
+</pre></div>
+</div>
+<p>Vectors with a default value behave more like python sequences</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">make_vector</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># translates to makeVector(5 0)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">[0, 0, 0, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">[10, 0, 0, 0, 0]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python-Skill Bridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basic.html">Basic Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_path.html">Create some paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html">Manually Registering Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funcall.html">Directly call function objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globals.html">Global Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inst-statistics.html">Layout Inst Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lazy_lists.html">Handling Large Lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lib_save.html">Check/Save Libs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiple-instances.html">Multiple Virtuoso Instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raw.html">Disable camelCase translation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tables and Vectors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Examples</a><ul>
+      <li>Previous: <a href="raw.html" title="previous chapter">Disable camelCase translation</a></li>
+      <li>Next: <a href="../reference/index.html" title="next chapter">Reference</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Niels Buwen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/examples/tables_vectors.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
