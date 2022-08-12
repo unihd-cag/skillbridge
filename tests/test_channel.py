@@ -353,7 +353,7 @@ def test_open_file(server, ws):
     assert f.skill_type == 'open_file'
     server.answer_success("'port:\"test.txt\"'")
     assert str(f) == "<remote open_file 'test.txt'>"
-    assert server.last_question == 'sprintf(nil "%s" __py_openfile_22 )'
+    assert server.last_question == 'lsprintf("%s" __py_openfile_22 )'
 
     assert dir(f)
 

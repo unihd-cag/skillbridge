@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, NamedTuple, NewType, Set, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, NewType, Set, Tuple, Union
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing_extensions import Protocol
 else:
 
@@ -15,11 +15,11 @@ __all__ = [
     'SkillComponent',
     'SkillCode',
     'Skill',
-    'Replicator',
     'Definition',
     'Function',
     'SkillTuple',
     'SkillList',
+    'SupportsReprSkill',
 ]
 
 Number = Union[int, float]
@@ -37,11 +37,11 @@ Definition = List[Function]
 
 
 class SupportsReprSkill(Protocol):
-    def __repr_skill__(self) -> SkillCode:
+    def __repr_skill__(self) -> SkillCode:  # pragma: no cover
         ...
 
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .var import Var
 
     Skill = Union[
@@ -49,8 +49,6 @@ if TYPE_CHECKING:
     ]
 else:
     Skill = Any
-
-Replicator = Callable[[str], Skill]
 
 
 class SkillList(List[Skill]):
