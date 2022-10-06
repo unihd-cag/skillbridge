@@ -31,7 +31,7 @@ class Channel:
     def __del__(self) -> None:
         try:
             self.close()
-        except BrokenPipeError:
+        except:  # noqa
             pass
 
     @staticmethod
