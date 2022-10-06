@@ -1,6 +1,7 @@
 import sys
 from functools import partial
 from inspect import signature
+from logging import getLogger
 from textwrap import dedent
 from typing import Any, Callable, Dict, Iterable, NoReturn, Optional, Union, cast
 
@@ -15,6 +16,9 @@ __all__ = ['Workspace', 'current_workspace']
 
 WorkspaceId = Union[None, str, int]
 _open_workspaces: Dict[WorkspaceId, 'Workspace'] = {}
+
+
+logger = getLogger(__file__)
 
 
 class _NoWorkspace:
@@ -253,8 +257,13 @@ class Workspace:
             _open_workspaces[workspace_id] = Workspace(channel, workspace_id)
         return _open_workspaces[workspace_id]
 
-    def close(self) -> None:
-        self._channel.close()
+    def close(self, log_exception: bool = True) -> None:
+        try:
+            self._channel.close()
+        except:  # noqa
+            if log_exception:
+                logger.exception("Failed to close workspace")
+
         _open_workspaces.pop(self.id, None)
 
         if current_workspace.id == self.id:
