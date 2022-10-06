@@ -1,9 +1,9 @@
 import sys
 from functools import partial
 from inspect import signature
+from logging import getLogger
 from textwrap import dedent
 from typing import Any, Callable, Dict, Iterable, NoReturn, Optional, Union, cast
-from logging import getLogger
 
 from .channel import Channel, DirectChannel, create_channel_class
 from .functions import FunctionCollection, LiteralRemoteFunction
