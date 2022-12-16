@@ -23,7 +23,7 @@ class Var:
 
     def __getitem__(self, item: Union[str, int]) -> 'Var':
         if isinstance(item, str):
-            return Var(f'{self.name}->{snake_to_camel(item)}')
+            return Var(f'{self.name}->{item}')
         return Var(f'nth({item} {self.name})')
 
     def _infix(self, other: Any, op: str) -> 'Var':
