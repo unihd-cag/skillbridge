@@ -82,6 +82,9 @@ class RemoteObject(RemoteVariable):
             return f"<remote open_file {name!r}>"
         return f"<remote {typ}@{hex(self.skill_id)}>"
 
+    def __repr__(self) -> str:
+        return f"<remote object@{hex(self.skill_id)}>"
+
     def __dir__(self) -> Iterable[str]:
         if self._is_open_file():
             return super().__dir__()

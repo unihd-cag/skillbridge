@@ -147,3 +147,19 @@ def test_lazy_list():
 def test_double_hex_prefix_does_not_crash():
     assert RemoteObject(..., ..., SkillCode('__py_stuff_0x0xcafe')).skill_id == 0xCAFE
     assert RemoteObject(..., ..., SkillCode('__py_stuff_0xcafe')).skill_id == 0xCAFE
+
+
+def test_object_representation_does_not_send_requests():
+    assert (
+        str([RemoteObject(..., ..., SkillCode('__py_stuff_0x0xcafe'))])
+        == '[<remote object@0xcafe>]'
+    )
+
+
+def test_failing_skill_type_is_handled():
+    channel = DummyChannel()
+    translator = DefaultTranslator()
+    r = RemoteObject(channel, translator, SkillCode('__py_stuff_0x0xcafe'))
+    channel.inputs.append('None')
+    assert r.skill_type is None
+    assert r.skill_type is None
