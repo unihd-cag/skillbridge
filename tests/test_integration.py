@@ -211,3 +211,7 @@ def test_table_getattr_is_equivalent_to_symbol_lookup(ws: Workspace) -> None:
 
     t.xyz_abc = 20
     assert t[Symbol('xyzAbc')] == 20
+
+
+def test_nil_t_nil_is_not_a_disembodied_property_list(ws: Workspace) -> None:
+    assert ws["cdr"]([0, None, True, None]) == [None, True, None]

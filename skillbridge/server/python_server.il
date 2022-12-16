@@ -182,7 +182,7 @@ let((_filename _baseName _moduleFolder _logDirectory _executable _unbound)
         if(or(numberp(thing) stringp(thing)) then lsprintf("%L" thing) else
         if(symbolp(thing) then lsprintf("Symbol('%s')" thing) else
         if(listp(thing) then
-            if(and(!car(thing) symbolp(cadr(thing)))
+            if(and(!car(thing) symbolp(cadr(thing)) cadr(thing) != t)
             then __pyPropertyListToPython(thing)
             else __pyListToPython(thing)
             )
