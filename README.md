@@ -1,7 +1,7 @@
 # Python-Skill Bridge
 
 [![PyPI version](https://badge.fury.io/py/skillbridge.svg)](https://badge.fury.io/py/skillbridge)
-![build](https://github.com/unihd-cag/simple-geometry/workflows/Python%20package/badge.svg)
+![build](https://github.com/unihd-cag/skillbridge/workflows/Python%20package/badge.svg)
 
 ### Prerequisites
 
