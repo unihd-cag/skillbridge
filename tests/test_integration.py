@@ -188,7 +188,6 @@ def test_vector_without_default(ws: Workspace) -> None:
 
 
 def test_direct_globals(ws: Workspace) -> None:
-
     ws['set'](Symbol('myGlobalValue'), 102030)
 
     assert ws.__.my_global_value == 102030

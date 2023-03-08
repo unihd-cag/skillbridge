@@ -248,7 +248,6 @@ class Workspace:
             return Workspace(DirectChannel(stdout), workspace_id)
 
         if workspace_id not in _open_workspaces:
-
             try:
                 channel_class = create_channel_class()
                 channel = channel_class(workspace_id)

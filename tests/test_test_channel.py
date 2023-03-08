@@ -54,7 +54,6 @@ def test_key(ws):
 
 
 def test_remote_object(ws):
-
     ws.prepare_remote('I1')
     inst = ws.db.find_any_inst(None, "foo")
 
