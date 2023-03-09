@@ -120,7 +120,6 @@ class Translator:
 
     @staticmethod
     def encode_dir(obj: SkillCode) -> SkillCode:
-
         parts = ' '.join(
             (
                 f'{obj}->?',

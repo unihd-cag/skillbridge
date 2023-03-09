@@ -36,7 +36,7 @@ jobs:
     name: Upload Package to PyPi
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
@@ -56,3 +56,10 @@ jobs:
         run: |
           python -m build
           twine upload dist/*
+
+      - name: Commit version bump
+        run: |
+          git config --global user.name "Github Action"
+          git config --global user.email "push@example.com"
+          git commit -am "Bump version"
+          git push

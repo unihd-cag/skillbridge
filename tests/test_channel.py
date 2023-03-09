@@ -41,7 +41,6 @@ def channel() -> Channel:
 
 @fixture
 def ws() -> Workspace:
-
     for _ in range(10):
         try:
             ws = Workspace.open(WORKSPACE_ID)
