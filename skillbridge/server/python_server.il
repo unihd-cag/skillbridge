@@ -218,10 +218,12 @@ let((_filename _baseName _moduleFolder _logDirectory _executable _unbound)
     pyStartServer.logName = lsprintf("%s/skillbridge_skill.log" _logDirectory)
 
     putd('pyRunScript nil)
-    defun(pyRunScript (script @key (python "python") (args nil) "ttl")
-        let((command)
+    defun(pyRunScript (script @key (python "python") (args nil) (block nil) "ttlg")
+        let((command process)
             command = lsprintf("%s %s %s" python script buildString(args))
-            ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript pyRunScript.logName)
+            process = ipcBeginProcess(command "" '__pyOnData '__pyOnError '__pyOnFinishScript pyRunScript.logName)
+
+            if(block then ipcWait(process) else process)
         )
     )
 
