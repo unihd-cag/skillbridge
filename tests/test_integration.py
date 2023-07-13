@@ -1,13 +1,13 @@
+from pathlib import Path
 from time import sleep
 from warnings import warn
-from pathlib import Path
-from datetime import datetime
 
-from pytest import fixture, skip, raises
+from pytest import fixture, raises, skip
 
-from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, Workspace, Var
+from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, Var, Workspace
 
 here = Path(__file__).parent
+
 
 @fixture(scope='module')
 def ws() -> Workspace:
