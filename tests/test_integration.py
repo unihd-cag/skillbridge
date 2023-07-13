@@ -1,10 +1,13 @@
+from time import sleep
 from warnings import warn
+from pathlib import Path
+from datetime import datetime
 
-from _pytest.python_api import raises
-from pytest import fixture, skip
+from pytest import fixture, skip, raises
 
-from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, Workspace
+from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, Workspace, Var
 
+here = Path(__file__).parent
 
 @fixture(scope='module')
 def ws() -> Workspace:
@@ -214,3 +217,21 @@ def test_table_getattr_is_equivalent_to_symbol_lookup(ws: Workspace) -> None:
 
 def test_nil_t_nil_is_not_a_disembodied_property_list(ws: Workspace) -> None:
     assert ws["cdr"]([0, None, True, None]) == [None, True, None]
+
+
+def test_run_script_does_not_block(ws: Workspace) -> None:
+    variable = 'skillbridge_script_args'
+    ws['set'](Symbol(variable), 0)
+    assert ws['pyRunScript'](str(here / 'script.py'), args=(variable, '42', '0.25'))
+
+    assert ws['plus'](Var(variable), 1) == 1
+    sleep(1.0)
+    assert ws['plus'](Var(variable), 1) == 43
+
+
+def test_run_script_blocks_when_requested(ws: Workspace) -> None:
+    variable = 'skillbridge_script_args'
+    ws['set'](Symbol(variable), 0)
+    assert ws['pyRunScript'](str(here / 'script.py'), args=(variable, '42', '0.25'), block=True)
+
+    assert ws['plus'](Var(variable), 1) == 43
