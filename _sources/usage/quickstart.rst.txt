@@ -98,3 +98,13 @@ And you can pass CLI arguments to the script
 
     If used with the above code, this will print "geGetEditCellView()" to *stdout* and
     "cell view: 1234" to *stderr*.
+
+.. warning::
+
+    Running a python script with ``pyRunScript`` does **not wait** until the script
+    is finished. If you rely on side effects the script causes, you can block until
+    the script is finished.
+
+.. code-block:: lisp
+
+    pyRunScript "pathToScript.py" ?block t

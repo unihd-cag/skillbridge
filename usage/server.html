@@ -1,18 +1,14 @@
-
 <!DOCTYPE html>
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>The Python Server &#8212; Python-Skill Bridge  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -39,7 +35,7 @@
 <span id="server"></span><h1>The Python Server<a class="headerlink" href="#the-python-server" title="Permalink to this heading">¶</a></h1>
 <p>Initially the server script must be run by loading the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>. (Type <code class="docutils literal notranslate"><span class="pre">skillbridge</span> <span class="pre">path</span></code>
 into your terminal to get the correct paths).</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-SKILL-IPC-SCRIPT&quot;</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-SKILL-IPC-SCRIPT&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>After that, these management commands are available in the Skill console.</p>
@@ -87,24 +83,24 @@ The only requirement is <code class="docutils literal notranslate"><span class="
 <p>The parameters are marked with <code class="docutils literal notranslate"><span class="pre">&#64;key</span></code> which means that it is only possible
 to change their default value by explicitly naming them when calling the function.</p>
 <p>Here are a few examples:</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; only change the log level to &quot;INFO&quot;</span><span class="w"></span>
-<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?logLevel</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span><span class="w"></span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; only change the log level to &quot;INFO&quot;</span>
+<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?logLevel</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span>
 
-<span class="c1">; only change the server id to &quot;foo&quot;</span><span class="w"></span>
-<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?id</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="w"></span>
+<span class="c1">; only change the server id to &quot;foo&quot;</span>
+<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?id</span><span class="w"> </span><span class="s">&quot;foo&quot;</span>
 
-<span class="c1">; change both server id and log level</span><span class="w"></span>
-<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?id</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="nv">?logLevel</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span><span class="w"></span>
+<span class="c1">; change both server id and log level</span>
+<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?id</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="nv">?logLevel</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span>
 
-<span class="c1">; same as above, the order does not matter</span><span class="w"></span>
-<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?logLevel</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span><span class="w"> </span><span class="nv">?id</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="w"></span>
+<span class="c1">; same as above, the order does not matter</span>
+<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?logLevel</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span><span class="w"> </span><span class="nv">?id</span><span class="w"> </span><span class="s">&quot;foo&quot;</span>
 
-<span class="c1">; this tells the server to wait at most 10.5 seconds</span><span class="w"></span>
-<span class="c1">; before sending a timeout error</span><span class="w"></span>
-<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?timeout</span><span class="w"> </span><span class="mf">10.5</span><span class="w"></span>
+<span class="c1">; this tells the server to wait at most 10.5 seconds</span>
+<span class="c1">; before sending a timeout error</span>
+<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?timeout</span><span class="w"> </span><span class="mf">10.5</span>
 
-<span class="c1">; use a custom interpreter path</span><span class="w"></span>
-<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?python</span><span class="w"> </span><span class="s">&quot;python3.6&quot;</span><span class="w"></span>
+<span class="c1">; use a custom interpreter path</span>
+<span class="nv">pyStartServer</span><span class="w"> </span><span class="nv">?python</span><span class="w"> </span><span class="s">&quot;python3.6&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -134,11 +130,11 @@ python server. The parameter <code class="docutils literal notranslate"><span cl
 how many lines will be printed. It always refers to the <strong>last</strong>
 <code class="docutils literal notranslate"><span class="pre">numberOfLines</span></code> lines.</p>
 <p>Example:</p>
-<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; show the last 10 lines of the log file</span><span class="w"></span>
-<span class="nv">pyShowLog</span><span class="w"></span>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="c1">; show the last 10 lines of the log file</span>
+<span class="nv">pyShowLog</span>
 
-<span class="c1">; show the last 20 lines of the log file</span><span class="w"></span>
-<span class="nv">pyShowLog</span><span class="w"> </span><span class="mi">20</span><span class="w"></span>
+<span class="c1">; show the last 20 lines of the log file</span>
+<span class="nv">pyShowLog</span><span class="w"> </span><span class="mi">20</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -213,8 +209,8 @@ how many lines will be printed. It always refers to the <strong>last</strong>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="../_sources/usage/server.rst.txt"
