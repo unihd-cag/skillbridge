@@ -1,4 +1,8 @@
 from os import chdir
+from sys import version_info, executable
+from keyword import iskeyword
+from pathlib import Path
+from re import fullmatch, sub
 
 from .client.functions import FunctionCollection, keys
 from .client.globals import Globals, GlobalVar
@@ -38,19 +42,47 @@ loop_var_j = Var('j')
 
 
 def generate_static_completion() -> None:
-    from keyword import iskeyword
-    from pathlib import Path
-    from re import fullmatch
-    from subprocess import run
+    from mypy.stubgen import Options, generate_stubs
+
+    base = Path(__file__).parent.absolute() / 'client'
+    annotation = base / 'workspace.pyi'
+
+    try:
+        annotation.unlink()
+    except FileNotFoundError:
+        pass
+
+    chdir(base)
+
+    o = Options(
+        (version_info.major, version_info.minor),
+        no_import=True,
+        doc_dir='',
+        search_path=[],
+        interpreter=executable,
+        parse_only=False,
+        ignore_errors=False,
+        include_private=False,
+        output_dir='.',
+        modules=['workspace'],
+        packages=[],
+        files=[],
+        verbose=True,
+        quiet=False,
+        export_less=False,
+    )
+
+    generate_stubs(o)
 
     ident = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
-    client = Path(__file__).parent.absolute() / 'client'
-    chdir(client)
-    run(['stubgen', 'workspace.py', '-o', '.'])
-
     ws = Workspace.open()
-    with open('workspace.pyi', 'a') as fout:
+
+    text = annotation.read_text()
+    text = sub(r' {4}[a-z][a-zA-Z]+: FunctionCollection\n', '', text)
+    annotation.write_text(text)
+
+    with open(annotation, 'a') as fout:
         for key, value in ws.__dict__.items():
             if not isinstance(value, FunctionCollection):
                 continue
