@@ -1,8 +1,8 @@
-from os import chdir
-from sys import version_info, executable
 from keyword import iskeyword
+from os import chdir
 from pathlib import Path
 from re import fullmatch, sub
+from sys import executable, version_info
 
 from .client.functions import FunctionCollection, keys
 from .client.globals import Globals, GlobalVar
