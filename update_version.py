@@ -1,6 +1,6 @@
 from pathlib import Path
+from subprocess import check_call, check_output
 from sys import argv
-from subprocess import check_output, check_call
 
 
 def find_hash(ref: str) -> str:
