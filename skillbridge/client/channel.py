@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import suppress
 from select import select
 from socket import AF_INET, SOCK_STREAM, socket
 from sys import platform
@@ -31,10 +32,8 @@ class Channel:
         self._max_transmission_length = value
 
     def __del__(self) -> None:
-        try:
+        with suppress(Exception):
             self.close()
-        except:  # noqa
-            pass
 
     @staticmethod
     def decode_response(response: str) -> str:
