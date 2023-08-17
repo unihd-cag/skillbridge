@@ -120,12 +120,12 @@ class RemoteObject(RemoteVariable):
     def getdoc(self) -> str:
         return "Properties:\n- " + '\n- '.join(dir(self))
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, RemoteObject):
             return self._variable == other._variable
         return NotImplemented
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         if isinstance(other, RemoteObject):
             return self._variable != other._variable
         return NotImplemented
