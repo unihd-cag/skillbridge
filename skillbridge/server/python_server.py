@@ -150,15 +150,15 @@ class Handler(StreamRequestHandler):
             client_is_connected = self.try_handle_one_request()
 
 
-def main(id: str, log_level: str, notify: bool, single: bool, timeout: float | None) -> None:
+def main(id_: str, log_level: str, notify: bool, single: bool, timeout: float | None) -> None:
     logger.setLevel(getattr(logging, log_level))
 
     server_class = create_server_class(single)
 
-    with server_class(id, Handler) as server:
+    with server_class(id_, Handler) as server:
         server.skill_timeout: float | None = timeout  # type: ignore
         logger.info(
-            f"starting server id={id} log={log_level} notify={notify} "
+            f"starting server id={id_} log={log_level} notify={notify} "
             f"single={single} timeout={timeout}",
         )
         if notify:
