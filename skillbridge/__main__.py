@@ -13,15 +13,14 @@ here = Path(__file__).parent.resolve()
 
 def print_skill_script_location() -> None:
     skill_source = here / 'server' / 'python_server.il'
-    escaped = repr(skill_source)[1:-1]
 
     print("Path to Skill server script:")
-    print(escaped)
+    print(skill_source)
 
     print()
 
     print("Type this into the Skill console:")
-    print(f'load("{escaped}")')
+    print(f'load("{skill_source}")')
 
 
 def deprecated_command() -> None:  # pragma: no cover
