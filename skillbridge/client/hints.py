@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NamedTuple, NewType
+from typing import TYPE_CHECKING, Any, NamedTuple, NewType, TypeAlias
 
 if TYPE_CHECKING:  # pragma: no cover
     from typing_extensions import Protocol
@@ -46,7 +46,7 @@ class SupportsReprSkill(Protocol):
 if TYPE_CHECKING:  # pragma: no cover
     from .var import Var
 
-    Skill = (
+    Skill: TypeAlias = (
         Var
         | SupportsReprSkill
         | Number
@@ -59,7 +59,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
 
 else:
-    Skill = Any
+    Skill: TypeAlias = Any
 
 
 class SkillList(list[Skill]):
