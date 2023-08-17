@@ -6,7 +6,7 @@ from functools import partial
 from inspect import signature
 from logging import getLogger
 from textwrap import dedent
-from typing import Any, Callable, Iterable, NoReturn, cast
+from typing import Any, Callable, Iterable, NoReturn, Union, cast
 
 from .channel import Channel, DirectChannel, create_channel_class
 from .functions import FunctionCollection, LiteralRemoteFunction
@@ -17,7 +17,7 @@ from .translator import DefaultTranslator, Translator, camel_to_snake, snake_to_
 
 __all__ = ['Workspace', 'current_workspace']
 
-WorkspaceId = str | int | None
+WorkspaceId = Union[str, int, None]
 _open_workspaces: dict[WorkspaceId, Workspace] = {}
 
 

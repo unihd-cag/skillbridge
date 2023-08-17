@@ -17,6 +17,7 @@ precision = 2
 exclude_also = ["raise NotImplementedError"]
 
 [tool.mypy]
+python_version = "3.8"
 files = "skillbridge"
 pretty = true
 show_error_context = true

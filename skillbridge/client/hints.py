@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NamedTuple, NewType, TypeAlias
+from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, NewType, Tuple, Union
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing_extensions import Protocol
+    from typing_extensions import Protocol, TypeAlias
 else:
 
     class Protocol:
@@ -17,15 +17,14 @@ __all__ = [
     'SkillComponent',
     'SkillCode',
     'Skill',
-    'Definition',
     'Function',
     'SkillTuple',
     'SkillList',
     'SupportsReprSkill',
 ]
 
-Number = int | float
-SkillComponent = int | str
+Number = Union[int, float]
+SkillComponent = Union[int, str]
 SkillCode = NewType('SkillCode', str)
 
 
@@ -33,9 +32,6 @@ class Function(NamedTuple):
     name: str
     description: str
     aliases: set[str]
-
-
-Definition = list[Function]
 
 
 class SupportsReprSkill(Protocol):
@@ -46,31 +42,31 @@ class SupportsReprSkill(Protocol):
 if TYPE_CHECKING:  # pragma: no cover
     from .var import Var
 
-    Skill: TypeAlias = (
-        Var
-        | SupportsReprSkill
-        | Number
-        | str
-        | bool
-        | None
-        | 'SkillList'
-        | 'SkillDict'
-        | 'SkillTuple'
-    )
+    Skill: TypeAlias = Union[
+        Var,
+        SupportsReprSkill,
+        Number,
+        str,
+        bool,
+        None,
+        'SkillList',
+        'SkillDict',
+        'SkillTuple',
+    ]
 
 else:
-    Skill: TypeAlias = Any
+    Skill = Any
 
 
-class SkillList(list[Skill]):
+class SkillList(List[Skill]):
     pass
 
 
-class SkillTuple(tuple[Skill, ...]):
+class SkillTuple(Tuple[Skill, ...]):
     __slots__ = ()
 
 
-class SkillDict(dict[str, Skill]):
+class SkillDict(Dict[str, Skill]):
     pass
 
 

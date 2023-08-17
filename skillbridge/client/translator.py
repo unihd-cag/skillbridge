@@ -18,7 +18,10 @@ def _raise_error(message: str) -> NoReturn:
 
 def _show_warning(message: str, result: Any) -> Any:
     for i, line in enumerate(message.splitlines(keepends=False)):
-        warn_explicit(line.removeprefix("*WARNING*"), UserWarning, "Skill response", i)
+        message = line
+        if line.startswith("*WARNING*"):
+            message = message[9:]
+        warn_explicit(message, UserWarning, "Skill response", i)
 
     return result
 
