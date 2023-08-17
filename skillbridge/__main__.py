@@ -1,15 +1,16 @@
 from argparse import ArgumentParser
 from code import interact
-from os.path import abspath, dirname, join
+from pathlib import Path
 from random import randrange
 from typing import Any, Callable, Dict, Optional, Tuple
 
 from . import generate_static_completion
 
+here = Path(__file__).parent.resolve()
+
 
 def print_skill_script_location() -> None:
-    folder = dirname(abspath(__file__))
-    skill_source = join(folder, 'server', 'python_server.il')
+    skill_source = here / 'server' / 'python_server.il'
     escaped = repr(skill_source)[1:-1]
 
     print("Path to Skill server script:")

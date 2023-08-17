@@ -2,7 +2,7 @@ import contextlib
 import logging
 from argparse import ArgumentParser
 from logging import WARNING, basicConfig, getLogger
-from os import getenv, unlink
+from os import getenv
 from pathlib import Path
 from select import select
 from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
@@ -74,7 +74,7 @@ def create_unix_server_class(single: bool) -> Type[BaseServer]:
         def __init__(self, file: str, handler: Type[BaseRequestHandler]) -> None:
             self.path = f'/tmp/skill-server-{file}.sock'
             with contextlib.suppress(FileNotFoundError):
-                unlink(self.path)
+                Path(self.path).unlink()
 
             super().__init__(self.path, handler)
 

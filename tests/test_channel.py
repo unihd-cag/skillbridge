@@ -1,6 +1,6 @@
 import contextlib
 import warnings
-from os import unlink
+from pathlib import Path
 
 from pytest import fixture, raises
 
@@ -17,7 +17,7 @@ def _cleanup():
     path = channel_class.create_address(WORKSPACE_ID)
     if isinstance(path, str):
         with contextlib.suppress(FileNotFoundError):
-            unlink(path)
+            Path(path).unlink()
 
 
 

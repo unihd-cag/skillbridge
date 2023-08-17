@@ -1,4 +1,4 @@
-from os.path import exists
+from pathlib import Path
 from subprocess import check_output, run
 from textwrap import dedent
 
@@ -27,7 +27,7 @@ def test_workspace_get_item():
 
 def test_reports_skill_server_correctly():
     out = check_output('python -m skillbridge path'.split())
-    assert exists(out.splitlines()[1].strip())
+    assert Path(out.splitlines()[1].strip()).exists()
 
 
 def test_cannot_use_abc():
