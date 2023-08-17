@@ -9,13 +9,6 @@ include = ".*[.]py$"
 exclude = "env"
 line-length = 100
 
-[tool.isort]
-profile = "black"
-line_length = 100
-skip = ["env", "venv"]
-filter_files = true
-atomic = true
-
 [tool.pytest.ini_options]
 addopts = "--cov=skillbridge --cov-report=html --cov-report=term:skip-covered --cov-branch --no-cov-on-fail"
 
