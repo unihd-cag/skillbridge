@@ -46,7 +46,17 @@ class SupportsReprSkill(Protocol):
 if TYPE_CHECKING:  # pragma: no cover
     from .var import Var
 
-    Skill = Var | SupportsReprSkill | Number | str | bool | None | 'SkillList' | 'SkillDict' | 'SkillTuple'
+    Skill = (
+        Var
+        | SupportsReprSkill
+        | Number
+        | str
+        | bool
+        | None
+        | 'SkillList'
+        | 'SkillDict'
+        | 'SkillTuple'
+    )
 
 else:
     Skill = Any
@@ -57,7 +67,7 @@ class SkillList(list[Skill]):
 
 
 class SkillTuple(tuple[Skill, ...]):
-    pass
+    __slots__ = ()
 
 
 class SkillDict(dict[str, Skill]):

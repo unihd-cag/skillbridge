@@ -2,7 +2,6 @@ from .channel import Channel
 from .hints import Skill, SkillCode
 from .translator import Translator
 
-
 remote_variable_attributes = frozenset(('_channel', '_variable', '_translator'))
 
 

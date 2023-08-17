@@ -6,7 +6,6 @@ from typing import Any, Callable
 from ..client.channel import Channel
 from .translator import FunctionCall
 
-
 _MAX_ERROR_REPORT = 100
 
 
