@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from functools import lru_cache
-
 from .channel import Channel
 from .hints import Key, Skill, SkillCode
 from .translator import Translator, snake_to_camel
@@ -17,15 +15,17 @@ class FunctionCollection:
         self._channel = channel
         self._translate = translator
         self._prefix = prefix
+        self._dir: list[str] | None = None
 
     def __repr__(self) -> str:
         return f"<function collection {self._prefix}*>\n{dir(self)}"
 
-    @lru_cache(maxsize=128)
     def __dir__(self) -> list[str]:
-        code = self._translate.encode_globals(self._prefix)
-        result = self._channel.send(code)
-        return self._translate.decode_globals(result)
+        if self._dir is None:
+            code = self._translate.encode_globals(self._prefix)
+            result = self._channel.send(code)
+            self._dir = self._translate.decode_globals(result)
+        return self._dir
 
     def __getattr__(self, item: str) -> RemoteFunction:
         return RemoteFunction(self._channel, f'{self._prefix}_{item}', self._translate)

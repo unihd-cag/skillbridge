@@ -45,6 +45,10 @@ def _register_well_known_functions(ws: Workspace) -> None:
         """
         _ = d_cellview
 
+
+_unbound = Symbol('unbound')
+
+
 class Workspace:
     _var_counter = 0
 
@@ -204,10 +208,10 @@ class Workspace:
 
         return translator
 
-    def make_table(self, name: str, default: Any = Symbol('unbound')) -> RemoteTable:
+    def make_table(self, name: str, default: Any = _unbound) -> RemoteTable:
         return self['makeTable'](name, default)  # type: ignore
 
-    def make_vector(self, length: int, default: Any = Symbol('unbound')) -> RemoteVector:
+    def make_vector(self, length: int, default: Any = _unbound) -> RemoteVector:
         return self['makeVector'](length, default)  # type: ignore
 
     def globals(self, prefix: str) -> Globals:
