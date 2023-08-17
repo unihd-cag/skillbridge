@@ -32,14 +32,14 @@ class _NoWorkspace:
         raise RuntimeError("No Workspace made current")
 
 
-_no_workspace: Workspace = _NoWorkspace()  # type: ignore
+_no_workspace = cast('Workspace', _NoWorkspace())
 current_workspace: Workspace
 current_workspace = _no_workspace
 
 
 def _register_well_known_functions(ws: Workspace) -> None:
     @ws.register
-    def db_check(d_cellview: Any) -> None:  # type: ignore
+    def db_check(d_cellview: Any) -> None:
         """
         Checks the integrity of the database.
         """
@@ -209,10 +209,14 @@ class Workspace:
         return translator
 
     def make_table(self, name: str, default: Any = _unbound) -> RemoteTable:
-        return self['makeTable'](name, default)  # type: ignore
+        t = self['makeTable'](name, default)
+        assert isinstance(t, RemoteTable)
+        return t
 
     def make_vector(self, length: int, default: Any = _unbound) -> RemoteVector:
-        return self['makeVector'](length, default)  # type: ignore
+        v = self['makeVector'](length, default)
+        assert isinstance(v, RemoteVector)
+        return v
 
     def globals(self, prefix: str) -> Globals:
         return Globals(self._channel, self._translator, prefix)
@@ -238,7 +242,7 @@ class Workspace:
     @staticmethod
     def fix_completion() -> None:
         try:
-            ip = get_ipython()  # type: ignore
+            ip = get_ipython()  # type: ignore[name-defined]
         except NameError:
             pass
         else:
@@ -273,7 +277,7 @@ class Workspace:
         _open_workspaces.pop(self.id, None)
 
         if current_workspace.id == self.id:
-            current_workspace.__class__ = _NoWorkspace  # type: ignore
+            current_workspace.__class__ = cast(type[Workspace], _NoWorkspace)
             current_workspace.__dict__ = {}
 
     @property

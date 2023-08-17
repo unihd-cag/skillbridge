@@ -77,8 +77,9 @@ class RemoteObject(RemoteVariable):
     def __str__(self) -> str:
         typ = self.skill_type or self.skill_parent_type
         if typ == 'open_file':
-            name = self._call('lsprintf', '%s', self)[6:-1]  # type: ignore
-            return f"<remote open_file {name!r}>"
+            name = self._call('lsprintf', '%s', self)
+            assert isinstance(name, str)
+            return f"<remote open_file {name[6:-1]!r}>"
         return f"<remote {typ}@{hex(self.skill_id)}>"
 
     def __repr__(self) -> str:
@@ -173,7 +174,7 @@ class LazyList(RemoteVariable):
         ...  # pragma: nocover
 
     @overload
-    def __getitem__(self, item: slice) -> List[RemoteObject]:  # noqa
+    def __getitem__(self, item: slice) -> list[RemoteObject]:
         ...  # pragma: nocover
 
     def __getitem__(
@@ -188,7 +189,7 @@ class LazyList(RemoteVariable):
             code = self._variable
 
         result = self._channel.send(code)
-        return self._translator.decode(result)  # type: ignore
+        return self._translator.decode(result)  # type: ignore[return-value]
 
     def __len__(self) -> int:
         return cast(int, self._call('length', self))
@@ -241,7 +242,7 @@ class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
     def __iter__(self) -> Iterator[Skill]:
         code = self._translator.encode_getattr(self.__repr_skill__(), '?')
         result = self._channel.send(code)
-        return iter(self._translator.decode(result) or ())  # type: ignore
+        return iter(self._translator.decode(result) or ())  # type: ignore[arg-type]
 
 
 class RemoteVector(RemoteCollection):

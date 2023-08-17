@@ -14,7 +14,7 @@ class FunctionCall(NamedTuple):
 
 class PassTranslator(Translator):
     def encode(self, value: Skill) -> SkillCode:
-        return value  # type: ignore
+        return value  # type: ignore[return-value]
 
     def decode(self, code: str) -> Skill:
         return code

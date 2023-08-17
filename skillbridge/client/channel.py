@@ -187,9 +187,12 @@ if platform == 'win32':
         class WindowsChannel(TcpChannel):
             def configure(self, sock: socket) -> None:
                 try:
-                    from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
+                    from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore[attr-defined]
 
-                    sock.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore  # noqa: FBT003
+                    sock.ioctl(  # type: ignore[attr-defined]
+                        SIO_LOOPBACK_FAST_PATH,
+                        True,  # noqa: FBT003
+                    )
                 except ImportError:
                     pass
 

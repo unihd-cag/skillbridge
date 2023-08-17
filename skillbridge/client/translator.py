@@ -55,7 +55,7 @@ def camel_to_snake(camel: str) -> str:
 
 def python_value_to_skill(value: Skill) -> SkillCode:
     try:
-        return value.__repr_skill__()  # type: ignore
+        return value.__repr_skill__()  # type: ignore[union-attr]
     except AttributeError:
         pass
 
@@ -169,7 +169,9 @@ class Translator:
 
     @staticmethod
     def decode_help(help_: str) -> str:
-        return loads(help_)  # type: ignore
+        info = loads(help_)
+        assert isinstance(info, str)
+        return info
 
     @staticmethod
     def encode_setattr(

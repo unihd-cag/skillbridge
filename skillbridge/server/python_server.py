@@ -49,9 +49,12 @@ def create_windows_server_class(single: bool) -> type[BaseServer]:
 
         def server_bind(self) -> None:
             try:
-                from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
+                from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore[attr-defined]
 
-                self.socket.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore  # noqa: FBT003
+                self.socket.ioctl(  # type: ignore[attr-defined]
+                    SIO_LOOPBACK_FAST_PATH,
+                    True,  # noqa: FBT003
+                )
             except ImportError:
                 pass
             super().server_bind()
@@ -127,7 +130,7 @@ class Handler(StreamRequestHandler):
 
         send_to_skill(command.decode())
         logger.debug("sent data to skill")
-        result = read_from_skill(self.server.skill_timeout).encode()  # type: ignore
+        result = read_from_skill(self.server.skill_timeout).encode()  # type: ignore[attr-defined]
         logger.debug(f"got response from skill {result[:1000]!r}")
 
         self.request.send(f'{len(result):10}'.encode())
@@ -156,7 +159,7 @@ def main(id_: str, log_level: str, notify: bool, single: bool, timeout: float | 
     server_class = create_server_class(single)
 
     with server_class(id_, Handler) as server:
-        server.skill_timeout: float | None = timeout  # type: ignore
+        server.skill_timeout = timeout  # type: ignore[attr-defined]
         logger.info(
             f"starting server id={id_} log={log_level} notify={notify} "
             f"single={single} timeout={timeout}",

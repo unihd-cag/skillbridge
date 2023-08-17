@@ -31,10 +31,10 @@ class Var:
     def _infix(self, other: Any, op: str) -> Var:
         return Var(f'({self.name} {op} {python_value_to_skill(other)})')
 
-    def __eq__(self, other: Any) -> Var:  # type: ignore
+    def __eq__(self, other: Any) -> Var:  # type: ignore[override]
         return self._infix(other, '==')
 
-    def __ne__(self, other: Any) -> Var:  # type: ignore
+    def __ne__(self, other: Any) -> Var:  # type: ignore[override]
         return self._infix(other, '!=')
 
     def __lt__(self, other: Any) -> Var:
