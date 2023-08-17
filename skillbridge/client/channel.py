@@ -161,7 +161,7 @@ class TcpChannel(Channel):
         try:
             length = int(self.socket.recv(10))
             message = b''.join(self._receive_all(length))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return e
         return message.decode()
 
