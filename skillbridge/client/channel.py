@@ -5,7 +5,7 @@ from typing import Any, Iterable, TextIO, Type, Union
 
 
 class Channel:
-    def __init__(self, max_transmission_length: int):
+    def __init__(self, max_transmission_length: int) -> None:
         self._max_transmission_length = max_transmission_length
 
     def send(self, data: str) -> str:
@@ -42,14 +42,14 @@ class Channel:
             if response == '<timeout>':
                 raise RuntimeError(
                     "Timeout: you should restart the skill server and "
-                    "increase the timeout `pyStartServer ?timeout X`."
+                    "increase the timeout `pyStartServer ?timeout X`.",
                 )
             raise RuntimeError(response)
         return response
 
 
 class DirectChannel(Channel):
-    def __init__(self, stdout: TextIO):
+    def __init__(self, stdout: TextIO) -> None:
         super().__init__(10_000)
         self.stdout = stdout
 
@@ -71,7 +71,7 @@ class TcpChannel(Channel):
     address_family = AF_INET
     socket_kind = SOCK_STREAM
 
-    def __init__(self, address: Any):
+    def __init__(self, address: Any) -> None:
         super().__init__(1_000_000)
 
         self.connected = False
@@ -118,7 +118,7 @@ class TcpChannel(Channel):
             should = self._max_transmission_length
             raise ValueError(f'Data exceeds max transmission length {got} > {should}')
 
-        length = '{:10}'.format(len(byte)).encode()
+        length = f'{len(byte):10}'.encode()
 
         try:
             self.socket.sendall(length)
@@ -142,7 +142,7 @@ class TcpChannel(Channel):
             raise RuntimeError(
                 "Receive aborted, you should restart the skill server or"
                 " call `ws.try_repair()` if you are sure that the response"
-                " will arrive."
+                " will arrive.",
             ) from None
 
         if not received_length_raw:

@@ -56,7 +56,7 @@ def main() -> None:
     shell = sub.add_parser('shell', help="opens a python interpreter with a connected workspace")
     shell.add_argument('-i', '--id', help="id used to open the workspace", default=None)
     shell.add_argument(
-        '-p', '--ping', help="ping the server and quit if it does not respond", action='store_true'
+        '-p', '--ping', help="ping the server and quit if it does not respond", action='store_true',
     )
     path = sub.add_parser('path', help="show the path to the skill script")
     generate = sub.add_parser('generate', help="generate static completion file")

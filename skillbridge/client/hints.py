@@ -45,7 +45,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from .var import Var
 
     Skill = Union[
-        Var, SupportsReprSkill, Number, str, bool, None, 'SkillList', 'SkillDict', 'SkillTuple'
+        Var, SupportsReprSkill, Number, str, bool, None, 'SkillList', 'SkillDict', 'SkillTuple',
     ]
 else:
     Skill = Any

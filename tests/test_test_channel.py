@@ -15,7 +15,6 @@ def ws() -> DummyWorkspace:
         """
         add one
         """
-        pass
 
     @w.register
     def db_find_any_inst(cell_view, name) -> Any:
@@ -85,10 +84,10 @@ def test_pass_works(passws):
         def __init__(self, x: int) -> None:
             self.x = x
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             return "user defined"
 
-        def __str__(self):
+        def __str__(self) -> str:
             return "user defined"
 
     u = UserDefined(123)

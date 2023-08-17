@@ -176,7 +176,7 @@ class Workspace:
     xst: FunctionCollection
 
     def __init__(
-        self, channel: Channel, id_: WorkspaceId, translator: Optional[Translator] = None
+        self, channel: Channel, id_: WorkspaceId, translator: Optional[Translator] = None,
     ) -> None:
         self._id = id_
         self._channel = channel
@@ -293,10 +293,7 @@ class Workspace:
             if p.default is p.empty:
                 param = p.name
 
-                if p.annotation is Optional:
-                    param = f"    [ {param} ]"
-                else:
-                    param = f"    {param}"
+                param = f'    [ {param} ]' if p.annotation is Optional else f'    {param}'
             else:
                 param = f"    [ ?{p.default} {p.name} ]"
 
@@ -331,9 +328,8 @@ class Workspace:
             collection = FunctionCollection(self._channel, prefix, self._translator)
             setattr(self, prefix, collection)
 
-        function_tuple = self._build_function(function)
+        return self._build_function(function)
 
-        return function_tuple
 
     def try_repair(self) -> Any:
         return self._channel.try_repair()

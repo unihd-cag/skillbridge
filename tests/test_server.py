@@ -13,7 +13,7 @@ channel_class = create_channel_class()
 
 
 class Redirect:
-    def __init__(self):
+    def __init__(self) -> None:
         self.written = []
         self.reading = []
 
@@ -34,7 +34,7 @@ class Redirect:
 
 
 class Server(Thread):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(daemon=True)
 
     def run(self):

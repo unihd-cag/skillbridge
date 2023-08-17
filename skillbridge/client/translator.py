@@ -82,7 +82,7 @@ CaseSwitcher = Callable[[str], str]
 
 
 def build_skill_path(
-    components: Iterable[Union[str, int]], case_switcher: CaseSwitcher = snake_to_camel
+    components: Iterable[Union[str, int]], case_switcher: CaseSwitcher = snake_to_camel,
 ) -> SkillCode:
     it = iter(components)
     path = case_switcher(str(next(it)))
@@ -101,10 +101,7 @@ def build_python_path(components: Iterable[Union[str, int]]) -> SkillCode:
     path = str(next(it))
 
     for component in it:
-        if isinstance(component, int):
-            path = f'{path}[{component}]'
-        else:
-            path = f'{path}.{component}'
+        path = f"{path}[{component}]" if isinstance(component, int) else f"{path}.{component}"
 
     return SkillCode(path)
 
@@ -125,7 +122,7 @@ class Translator:
                 f'{obj}->?',
                 f"if( type({obj}) == 'rodObj then {obj}->systemHandleNames)",
                 f'if( type({obj}) == \'rodObj then {obj}->userHandleNames)',
-            )
+            ),
         )
         code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
         return SkillCode(code)
@@ -137,7 +134,7 @@ class Translator:
 
     @staticmethod
     def encode_getattr(
-        obj: SkillCode, key: str, case_switcher: CaseSwitcher = snake_to_camel
+        obj: SkillCode, key: str, case_switcher: CaseSwitcher = snake_to_camel,
     ) -> SkillCode:
         return build_skill_path([obj, key], case_switcher)
 
@@ -164,7 +161,7 @@ class Translator:
             poport = _text help({snake_to_camel(symbol)})
             poport = stdout getOutstring(_text)
         """.replace(
-            "\n", " "
+            "\n", " ",
         )
         return SkillCode(code)
 
@@ -174,7 +171,7 @@ class Translator:
 
     @staticmethod
     def encode_setattr(
-        obj: SkillCode, key: str, value: Any, case_switcher: CaseSwitcher = snake_to_camel
+        obj: SkillCode, key: str, value: Any, case_switcher: CaseSwitcher = snake_to_camel,
     ) -> SkillCode:
         code = build_skill_path([obj, key], case_switcher)
         value = python_value_to_skill(value)

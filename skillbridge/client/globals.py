@@ -58,7 +58,7 @@ def is_variable_name(string: str) -> bool:
 
 
 class Globals:
-    def __init__(self, channel: Channel, translator: Translator, prefix: str):
+    def __init__(self, channel: Channel, translator: Translator, prefix: str) -> None:
         self._channel = channel
         self._translator = translator
         self._prefix = prefix + '_'
@@ -85,6 +85,7 @@ class Globals:
         code = self._translator.encode_assign(self._prefix + item, value)
         response = self._channel.send(code)
         assert self._translator.decode(response) is None
+        return None
 
     def __delitem__(self, item: str) -> None:
         self[item] = None

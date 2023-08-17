@@ -28,7 +28,7 @@ class DummyChannel(Channel):
         except IndexError:
             short_data = data if len(data) < 100 else data[:100] + "..."
             raise RuntimeError(
-                f"No input provided for TestChannel: request was {short_data}"
+                f"No input provided for TestChannel: request was {short_data}",
             ) from None
         else:
             self.outputs.append(data)

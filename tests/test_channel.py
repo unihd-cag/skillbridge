@@ -1,3 +1,4 @@
+import contextlib
 import warnings
 from os import unlink
 
@@ -15,13 +16,12 @@ channel_class = create_channel_class()
 def _cleanup():
     path = channel_class.create_address(WORKSPACE_ID)
     if isinstance(path, str):
-        try:
+        with contextlib.suppress(FileNotFoundError):
             unlink(path)
-        except FileNotFoundError:
-            pass
 
 
-@fixture(scope="function")
+
+@fixture()
 def server() -> Virtuoso:
     v = Virtuoso(WORKSPACE_ID)
     v.start()
@@ -237,7 +237,7 @@ def test_object_equality(server, ws):
     assert first != third
     assert second != third
     assert first != 1
-    assert not (first == 1)
+    assert first != 1
 
 
 def test_fix_completion_does_not_raise(server, ws):

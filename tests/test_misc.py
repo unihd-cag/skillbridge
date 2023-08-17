@@ -1,5 +1,5 @@
 from os.path import exists
-from subprocess import PIPE, check_output, run
+from subprocess import check_output, run
 from textwrap import dedent
 
 from pytest import mark, raises
@@ -13,7 +13,7 @@ from skillbridge.test.channel import DummyChannel
 from skillbridge.test.workspace import DummyWorkspace
 
 
-@mark.parametrize('id_,repr_', [('0x10', 16), ('00001F', 31), ('10', 10)])
+@mark.parametrize(('id_', 'repr_'), [('0x10', 16), ('00001F', 31), ('10', 10)])
 def test_skill_id(id_, repr_):
     assert RemoteObject(..., ..., SkillCode(f'__py_db_{id_}')).skill_id == repr_
 
@@ -52,13 +52,13 @@ def test_direct_mode(no_cover):  # with coverage enabled this test breaks
         print(f"cell_view={cv}")
 
         assert ws.ge.get_cell_view_window(cv) == 42
-        """
+        """,
     )
     virtuoso = b'success 1337\nsuccess 42'
-    p = run(['python', '-c', code], stderr=PIPE, stdout=PIPE, input=virtuoso)
+    p = run(['python', '-c', code], capture_output=True, input=virtuoso)
 
     out = p.stdout.replace(b' ', b'')
-    assert b'cell_view=1337\n' == p.stderr
+    assert p.stderr == b'cell_view=1337\n'
     assert out == b'geGetEditCellView()\ngeGetCellViewWindow(1337)\n'
 
 

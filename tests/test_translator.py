@@ -136,17 +136,18 @@ def test_property_list_to_python(decode_simple):
     assert isinstance(pl, dict)
     assert pl['x'] == 1
     assert pl['y'] == 2
-    assert pl == dict(x=1, y=2)
+    assert pl == {'x': 1, 'y': 2}
 
     pl = decode_simple('{"x":Remote("__py_object_123")}')
     assert isinstance(pl, dict)
-    assert 'object' in pl['x'] and '123' in pl['x']
+    assert 'object' in pl['x']
+    assert '123' in pl['x']
 
     pl = decode_simple('{"x": {"y": 2}}')
     assert isinstance(pl, dict)
     assert isinstance(pl['x'], dict)
     assert pl['x']['y'] == 2
-    assert pl == dict(x=dict(y=2))
+    assert pl == {'x': {'y': 2}}
 
 
 def test_property_list_to_skill(encode_simple):
@@ -159,22 +160,27 @@ def test_property_list_to_skill(encode_simple):
 
 def test_object_to_python(decode_simple):
     python = decode_simple('Remote("dbobject:123")')
-    assert '123' in python and 'dbobject' in python
+    assert '123' in python
+    assert 'dbobject' in python
 
     python = decode_simple('[1,2,3,Remote("dbobject:123")]')
     assert python[:3] == [1, 2, 3]
-    assert '123' in python[3] and 'dbobject' in python[3]
+    assert '123' in python[3]
+    assert 'dbobject' in python[3]
 
     skill = '[[1,2,3,Remote("dbobject:123")],[Remote("dbobject:234"),4,5,6]]'
     python = decode_simple(skill)
     assert python[0][:3] == [1, 2, 3]
-    assert '123' in python[0][3] and 'dbobject' in python[0][3]
-    assert '234' in python[1][0] and 'dbobject' in python[1][0]
+    assert '123' in python[0][3]
+    assert 'dbobject' in python[0][3]
+    assert '234' in python[1][0]
+    assert 'dbobject' in python[1][0]
 
 
 def test_object_with_upper_case_id(decode_simple):
     python = decode_simple('Remote("rodObject:123")')
-    assert 'rodObject' in python and '123' in python
+    assert 'rodObject' in python
+    assert '123' in python
 
 
 @given(lists(simple_types | lists(simple_types)))
@@ -196,13 +202,13 @@ def test_unknown_to_skill(value, encode_simple):
 
 @given(asciis, asciis)
 def test_get_attribute(simple_translator: Translator, obj, name):
-    assert simple_translator.encode_getattr(obj, name).replace(' ', '') == '->'.join([obj, name])
+    assert simple_translator.encode_getattr(obj, name).replace(' ', '') == f'{obj}->{name}'
 
 
 @given(asciis, asciis, ints)
 def test_set_attribute(simple_translator: Translator, obj, name, value):
     got = simple_translator.encode_setattr(obj, name, value).replace(' ', '')
-    left = '->'.join([obj, name])
+    left = f'{obj}->{name}'
     expected = f'{left}={value}'
     assert got == expected
 

@@ -1,3 +1,4 @@
+import contextlib
 import logging
 from argparse import ArgumentParser
 from logging import WARNING, basicConfig, getLogger
@@ -5,7 +6,7 @@ from os import getenv, unlink
 from pathlib import Path
 from select import select
 from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
-from sys import argv, platform, stderr, stdin, stdout
+from sys import argv, exit, platform, stderr, stdin, stdout
 from typing import Iterable, Optional, Type
 
 LOG_DIRECTORY = Path(getenv('SKILLBRIDGE_LOG_DIRECTORY', '.'))
@@ -72,10 +73,9 @@ def create_unix_server_class(single: bool) -> Type[BaseServer]:
 
         def __init__(self, file: str, handler: Type[BaseRequestHandler]) -> None:
             self.path = f'/tmp/skill-server-{file}.sock'
-            try:
+            with contextlib.suppress(FileNotFoundError):
                 unlink(self.path)
-            except FileNotFoundError:
-                pass
+
             super().__init__(self.path, handler)
 
     class ThreadingUnixServer(ThreadingMixIn, SingleUnixServer):
@@ -108,26 +108,26 @@ class Handler(StreamRequestHandler):
     def handle_one_request(self) -> bool:
         length = self.request.recv(10)
         if not length:
-            logger.warning("client {} lost connection".format(self.client_address))
+            logger.warning(f"client {self.client_address} lost connection")
             return False
-        logger.debug("got length {}".format(length))
+        logger.debug(f"got length {length}")
 
         length = int(length)
         command = b''.join(self.receive_all(length))
 
-        logger.debug("received {} bytes".format(len(command)))
+        logger.debug(f"received {len(command)} bytes")
 
         if command.startswith(b'close'):
-            logger.debug("client {} disconnected".format(self.client_address))
+            logger.debug(f"client {self.client_address} disconnected")
             return False
-        logger.debug("got data {}".format(command[:1000].decode()))
+        logger.debug(f"got data {command[:1000].decode()}")
 
         send_to_skill(command.decode())
         logger.debug("sent data to skill")
         result = read_from_skill(self.server.skill_timeout).encode()  # type: ignore
-        logger.debug("got response from skill {!r}".format(result[:1000]))
+        logger.debug(f"got response from skill {result[:1000]!r}")
 
-        self.request.send('{:10}'.format(len(result)).encode())
+        self.request.send(f'{len(result):10}'.encode())
         self.request.send(result)
         logger.debug("sent response to client")
 
@@ -141,7 +141,7 @@ class Handler(StreamRequestHandler):
             return False
 
     def handle(self) -> None:
-        logger.info("client {} connected".format(self.client_address))
+        logger.info(f"client {self.client_address} connected")
         client_is_connected = True
         while client_is_connected:
             client_is_connected = self.try_handle_one_request()
@@ -156,7 +156,7 @@ def main(id: str, log_level: str, notify: bool, single: bool, timeout: Optional[
         server.skill_timeout: Optional[float] = timeout  # type: ignore
         logger.info(
             f"starting server id={id} log={log_level} notify={notify} "
-            f"single={single} timeout={timeout}"
+            f"single={single} timeout={timeout}",
         )
         if notify:
             send_to_skill('running')
@@ -181,7 +181,6 @@ if __name__ == '__main__':
         print("Timeout is not possible on Windows", file=stderr)
         exit(1)
 
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         main(ns.id, ns.log_level, ns.notify, ns.single, ns.timeout)
-    except KeyboardInterrupt:
-        pass
+

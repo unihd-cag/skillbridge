@@ -90,8 +90,7 @@ class RemoteObject(RemoteVariable):
             return super().__dir__()
 
         response = self._send(self._translator.encode_dir(self._variable))
-        attributes = self._translator.decode_dir(response)
-        return attributes
+        return self._translator.decode_dir(response)
 
     def __getattr__(self, key: str) -> Any:
         if is_jupyter_magic(key):
@@ -110,10 +109,11 @@ class RemoteObject(RemoteVariable):
 
         result = self._send(self._translator.encode_setattr(self._variable, key, value))
         self._translator.decode(result)
+        return None
 
     def __setitem__(self, key: str, value: Any) -> None:
         result = self._send(
-            self._translator.encode_setattr(self._variable, key, value, lambda x: x)
+            self._translator.encode_setattr(self._variable, key, value, lambda x: x),
         )
         self._translator.decode(result)
 
@@ -173,12 +173,12 @@ class LazyList(RemoteVariable):
     def __getitem__(self, item: int) -> RemoteObject:
         ...  # pragma: nocover
 
-    @overload  # noqa
+    @overload
     def __getitem__(self, item: slice) -> List[RemoteObject]:  # noqa
         ...  # pragma: nocover
 
-    def __getitem__(  # noqa
-        self, item: Union[int, slice]
+    def __getitem__(
+        self, item: Union[int, slice],
     ) -> Union[RemoteObject, List[RemoteObject]]:
         if isinstance(item, int):
             code = self._translator.encode_call('nth', item, Var(self._variable))

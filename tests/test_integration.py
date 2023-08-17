@@ -119,7 +119,7 @@ def test_remote_object(ws: Workspace) -> None:
 
     assert lib == lib
     assert lib != libs[1]
-    assert not (lib == 1)
+    assert lib != 1
     assert lib != 1
 
 
