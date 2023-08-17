@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from argparse import ArgumentParser
 from code import interact
 from pathlib import Path
 from random import randrange
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable
 
 from . import generate_static_completion
 
@@ -28,7 +30,7 @@ def deprecated_command() -> None:  # pragma: no cover
     print("You don't have to do anything")
 
 
-def shell_command(ws_id: Optional[str], ping: bool) -> None:
+def shell_command(ws_id: str | None, ping: bool) -> None:
     import skillbridge
 
     variables = {name: getattr(skillbridge, name) for name in dir(skillbridge)}
@@ -69,7 +71,7 @@ def main() -> None:
     imp.add_argument('-f', '-force', '--force', help="deprecated", action='store_true')
     args = parser.parse_args()
 
-    commands: Dict[Optional[str], Tuple[Any, Callable[[], None]]] = {
+    commands: dict[str | None, tuple[Any, Callable[[], None]]] = {
         None: (parser, parser.print_help),
         'status': (status, deprecated_command),
         'path': (path, print_skill_script_location),

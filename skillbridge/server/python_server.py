@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import contextlib
 import logging
 from argparse import ArgumentParser
@@ -7,7 +9,7 @@ from pathlib import Path
 from select import select
 from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
 from sys import argv, exit, platform, stderr, stdin, stdout
-from typing import Iterable, Optional, Type
+from typing import Iterable
 
 LOG_DIRECTORY = Path(getenv('SKILLBRIDGE_LOG_DIRECTORY', '.'))
 LOG_FILE = LOG_DIRECTORY / 'skillbridge_server.log'
@@ -25,7 +27,7 @@ def send_to_skill(data: str) -> None:
     stdout.flush()
 
 
-def read_from_skill(timeout: Optional[float]) -> str:
+def read_from_skill(timeout: float | None) -> str:
     readable = data_ready(timeout)
 
     if readable:
@@ -35,14 +37,14 @@ def read_from_skill(timeout: Optional[float]) -> str:
     return 'failure <timeout>'
 
 
-def create_windows_server_class(single: bool) -> Type[BaseServer]:
+def create_windows_server_class(single: bool) -> type[BaseServer]:
     from socketserver import TCPServer
 
     class SingleWindowsServer(TCPServer):
         request_queue_size = 0
         allow_reuse_address = True
 
-        def __init__(self, port: int, handler: Type[BaseRequestHandler]) -> None:
+        def __init__(self, port: int, handler: type[BaseRequestHandler]) -> None:
             super().__init__(('localhost', port), handler)
 
         def server_bind(self) -> None:
@@ -60,19 +62,19 @@ def create_windows_server_class(single: bool) -> Type[BaseServer]:
     return SingleWindowsServer if single else ThreadingWindowsServer
 
 
-def data_windows_ready(timeout: Optional[float]) -> bool:
+def data_windows_ready(timeout: float | None) -> bool:
     _ = timeout
     return True
 
 
-def create_unix_server_class(single: bool) -> Type[BaseServer]:
+def create_unix_server_class(single: bool) -> type[BaseServer]:
     from socketserver import UnixStreamServer
 
     class SingleUnixServer(UnixStreamServer):
         request_queue_size = 0
         allow_reuse_address = True
 
-        def __init__(self, file: str, handler: Type[BaseRequestHandler]) -> None:
+        def __init__(self, file: str, handler: type[BaseRequestHandler]) -> None:
             self.path = f'/tmp/skill-server-{file}.sock'
             with contextlib.suppress(FileNotFoundError):
                 Path(self.path).unlink()
@@ -85,7 +87,7 @@ def create_unix_server_class(single: bool) -> Type[BaseServer]:
     return SingleUnixServer if single else ThreadingUnixServer
 
 
-def data_unix_ready(timeout: Optional[float]) -> bool:
+def data_unix_ready(timeout: float | None) -> bool:
     readable, _, _ = select([stdin], [], [], timeout)
 
     return bool(readable)
@@ -148,13 +150,13 @@ class Handler(StreamRequestHandler):
             client_is_connected = self.try_handle_one_request()
 
 
-def main(id: str, log_level: str, notify: bool, single: bool, timeout: Optional[float]) -> None:
+def main(id: str, log_level: str, notify: bool, single: bool, timeout: float | None) -> None:
     logger.setLevel(getattr(logging, log_level))
 
     server_class = create_server_class(single)
 
     with server_class(id, Handler) as server:
-        server.skill_timeout: Optional[float] = timeout  # type: ignore
+        server.skill_timeout: float | None = timeout  # type: ignore
         logger.info(
             f"starting server id={id} log={log_level} notify={notify} "
             f"single={single} timeout={timeout}",

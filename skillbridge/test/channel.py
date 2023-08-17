@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections import defaultdict, deque
-from typing import Any, Callable, Deque, Dict, Union
+from typing import Any, Callable
 
 from ..client.channel import Channel
 from .translator import FunctionCall
@@ -9,12 +11,12 @@ class DummyChannel(Channel):
     def __init__(self) -> None:
         super().__init__(0)
 
-        self.outputs: Deque[str] = deque()
-        self.inputs: Deque[str] = deque()
-        self.functions: Dict[str, Callable[..., Any]] = {}
-        self.function_outputs: Dict[str, Deque[Any]] = defaultdict(deque)
+        self.outputs: deque[str] = deque()
+        self.inputs: deque[str] = deque()
+        self.functions: dict[str, Callable[..., Any]] = {}
+        self.function_outputs: dict[str, deque[Any]] = defaultdict(deque)
 
-    def _try_function(self, data: Union[str, FunctionCall]) -> Any:
+    def _try_function(self, data: str | FunctionCall) -> Any:
         if not isinstance(data, FunctionCall):
             raise ValueError
 

@@ -1,12 +1,11 @@
+from __future__ import annotations
+
 from typing import (
     Any,
     Iterable,
     Iterator,
-    List,
     MutableMapping,
-    Optional,
     Sequence,
-    Union,
     cast,
     overload,
 )
@@ -58,7 +57,7 @@ class RemoteObject(RemoteVariable):
         return self._variable.startswith('__py_openfile_')
 
     @property
-    def skill_type(self) -> Optional[str]:
+    def skill_type(self) -> str | None:
         if self._is_open_file():
             return 'open_file'
 
@@ -134,14 +133,14 @@ class RemoteObject(RemoteVariable):
         return self._call('funcall', self, *args, **kwargs)
 
     @property
-    def lazy(self) -> 'LazyList':
+    def lazy(self) -> LazyList:
         return LazyList(self._channel, self._translator, self._variable)
 
 
 class LazyList(RemoteVariable):
     arg = Var('arg')
 
-    def __getattr__(self, attribute: str) -> 'LazyList':
+    def __getattr__(self, attribute: str) -> LazyList:
         variable = SkillCode(f"{self._variable}~>{snake_to_camel(attribute)}")
         return LazyList(self._channel, self._translator, variable)
 
@@ -155,7 +154,7 @@ class LazyList(RemoteVariable):
         parameters = ' '.join(f'arg->{f}' for f in filters)
         return SkillCode(f'and({parameters})')
 
-    def filter(self, *args: str, **kwargs: Any) -> 'LazyList':
+    def filter(self, *args: str, **kwargs: Any) -> LazyList:
         if not args and not kwargs:
             return self
 
@@ -178,8 +177,8 @@ class LazyList(RemoteVariable):
         ...  # pragma: nocover
 
     def __getitem__(
-        self, item: Union[int, slice],
-    ) -> Union[RemoteObject, List[RemoteObject]]:
+        self, item: int | slice,
+    ) -> RemoteObject | list[RemoteObject]:
         if isinstance(item, int):
             code = self._translator.encode_call('nth', item, Var(self._variable))
         else:
@@ -194,7 +193,7 @@ class LazyList(RemoteVariable):
     def __len__(self) -> int:
         return cast(int, self._call('length', self))
 
-    def foreach(self, func: Union['RemoteFunction', SkillCode], *args: Any) -> None:
+    def foreach(self, func: SkillCode | RemoteFunction, *args: Any) -> None:
         if isinstance(func, RemoteFunction):
             args = args or (LazyList.arg,)
             func = func.lazy(*args)

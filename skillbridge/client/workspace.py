@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import sys
 import warnings
 from functools import partial
 from inspect import signature
 from logging import getLogger
 from textwrap import dedent
-from typing import Any, Callable, Dict, Iterable, NoReturn, Optional, Union, cast
+from typing import Any, Callable, Iterable, NoReturn, cast
 
 from .channel import Channel, DirectChannel, create_channel_class
 from .functions import FunctionCollection, LiteralRemoteFunction
@@ -15,8 +17,8 @@ from .translator import DefaultTranslator, Translator, camel_to_snake, snake_to_
 
 __all__ = ['Workspace', 'current_workspace']
 
-WorkspaceId = Union[None, str, int]
-_open_workspaces: Dict[WorkspaceId, 'Workspace'] = {}
+WorkspaceId = str | int | None
+_open_workspaces: dict[WorkspaceId, Workspace] = {}
 
 
 logger = getLogger(__file__)
@@ -30,14 +32,14 @@ class _NoWorkspace:
         raise RuntimeError("No Workspace made current")
 
 
-_no_workspace: 'Workspace' = _NoWorkspace()  # type: ignore
-current_workspace: 'Workspace'
+_no_workspace: Workspace = _NoWorkspace()  # type: ignore
+current_workspace: Workspace
 current_workspace = _no_workspace
 
 
-def _register_well_known_functions(ws: 'Workspace') -> None:
+def _register_well_known_functions(ws: Workspace) -> None:
     @ws.register
-    def db_check(d_cellview: Optional) -> None:  # type: ignore
+    def db_check(d_cellview: Any) -> None:  # type: ignore
         """
         Checks the integrity of the database.
         """
@@ -176,7 +178,7 @@ class Workspace:
     xst: FunctionCollection
 
     def __init__(
-        self, channel: Channel, id_: WorkspaceId, translator: Optional[Translator] = None,
+        self, channel: Channel, id_: WorkspaceId, translator: Translator | None = None,
     ) -> None:
         self._id = id_
         self._channel = channel
@@ -240,7 +242,7 @@ class Workspace:
             ip.Completer.greedy = True
 
     @classmethod
-    def open(cls, workspace_id: WorkspaceId = None, direct: bool = False) -> 'Workspace':
+    def open(cls, workspace_id: WorkspaceId = None, direct: bool = False) -> Workspace:
         if direct and not sys.stdin.isatty():
             stdout = sys.stdout
             sys.stdout = sys.stderr
@@ -293,7 +295,7 @@ class Workspace:
             if p.default is p.empty:
                 param = p.name
 
-                param = f'    [ {param} ]' if p.annotation is Optional else f'    {param}'
+                param = f'    {param}'
             else:
                 param = f"    [ ?{p.default} {p.name} ]"
 
@@ -334,7 +336,7 @@ class Workspace:
     def try_repair(self) -> Any:
         return self._channel.try_repair()
 
-    def make_current(self) -> 'Workspace':
+    def make_current(self) -> Workspace:
         current_workspace.__class__ = Workspace
         current_workspace.__dict__ = self.__dict__
         return self

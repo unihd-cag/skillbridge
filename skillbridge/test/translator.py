@@ -1,4 +1,6 @@
-from typing import Any, Dict, NamedTuple, Tuple, cast
+from __future__ import annotations
+
+from typing import Any, NamedTuple, cast
 
 from ..client.hints import Skill, SkillCode
 from ..client.translator import Translator
@@ -6,8 +8,8 @@ from ..client.translator import Translator
 
 class FunctionCall(NamedTuple):
     name: str
-    args: Tuple[Any, ...]
-    kwargs: Dict[str, Any]
+    args: tuple[Any, ...]
+    kwargs: dict[str, Any]
 
 
 class PassTranslator(Translator):

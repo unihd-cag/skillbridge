@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from json import dumps, loads
 from re import findall, sub
-from typing import Any, Callable, Dict, Iterable, List, Match, NoReturn, Optional, Union, cast
+from typing import Any, Callable, Iterable, Match, NoReturn, cast
 from warnings import warn_explicit
 
 from .hints import Skill, SkillCode, Symbol
@@ -28,7 +30,7 @@ _STATIC_EVAL_CONTEXT = {
 }
 
 
-def _skill_value_to_python(string: str, eval_context: Optional[Dict[str, Any]] = None) -> Skill:
+def _skill_value_to_python(string: str, eval_context: dict[str, Any] | None = None) -> Skill:
     return eval(string, eval_context or _STATIC_EVAL_CONTEXT)  # type: ignore  # noqa: S307
 
 
@@ -82,7 +84,7 @@ CaseSwitcher = Callable[[str], str]
 
 
 def build_skill_path(
-    components: Iterable[Union[str, int]], case_switcher: CaseSwitcher = snake_to_camel,
+    components: Iterable[str | int], case_switcher: CaseSwitcher = snake_to_camel,
 ) -> SkillCode:
     it = iter(components)
     path = case_switcher(str(next(it)))
@@ -96,7 +98,7 @@ def build_skill_path(
     return SkillCode(path)
 
 
-def build_python_path(components: Iterable[Union[str, int]]) -> SkillCode:
+def build_python_path(components: Iterable[str | int]) -> SkillCode:
     it = iter(components)
     path = str(next(it))
 
@@ -128,9 +130,9 @@ class Translator:
         return SkillCode(code)
 
     @staticmethod
-    def decode_dir(code: str) -> List[str]:
+    def decode_dir(code: str) -> list[str]:
         attributes = _skill_value_to_python(code) or ()
-        return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
+        return [camel_to_snake(attr) for attr in cast(list[str], attributes)]
 
     @staticmethod
     def encode_getattr(
@@ -151,7 +153,7 @@ class Translator:
         return SkillCode(f'{snake_to_camel(variable)} = {encoded_value} nil')
 
     @staticmethod
-    def decode_globals(code: str) -> List[str]:
+    def decode_globals(code: str) -> list[str]:
         return [camel_to_snake(f).split('_', maxsplit=1)[1] for f in loads(code).split()]
 
     @staticmethod

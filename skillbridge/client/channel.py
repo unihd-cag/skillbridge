@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from select import select
 from socket import AF_INET, SOCK_STREAM, socket
 from sys import platform
-from typing import Any, Iterable, TextIO, Type, Union
+from typing import Any, Iterable, TextIO
 
 
 class Channel:
@@ -156,7 +158,7 @@ class TcpChannel(Channel):
         self._send_only(data)
         return self._receive_only()
 
-    def try_repair(self) -> Union[Exception, str]:
+    def try_repair(self) -> Exception | str:
         try:
             length = int(self.socket.recv(10))
             message = b''.join(self._receive_all(length))
@@ -182,7 +184,7 @@ class TcpChannel(Channel):
 
 if platform == 'win32':
 
-    def create_channel_class() -> Type[TcpChannel]:
+    def create_channel_class() -> type[TcpChannel]:
         class WindowsChannel(TcpChannel):
             def configure(self, sock: socket) -> None:
                 try:
@@ -201,7 +203,7 @@ if platform == 'win32':
 
 else:
 
-    def create_channel_class() -> Type[TcpChannel]:
+    def create_channel_class() -> type[TcpChannel]:
         from socket import AF_UNIX
 
         class UnixChannel(TcpChannel):
