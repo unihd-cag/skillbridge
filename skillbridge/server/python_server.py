@@ -61,6 +61,7 @@ def create_windows_server_class(single: bool) -> Type[BaseServer]:
 
 
 def data_windows_ready(timeout: Optional[float]) -> bool:
+    _ = timeout
     return True
 
 

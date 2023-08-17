@@ -41,7 +41,7 @@ def _register_well_known_functions(ws: 'Workspace') -> None:
         """
         Checks the integrity of the database.
         """
-
+        _ = d_cellview
 
 class Workspace:
     _var_counter = 0
