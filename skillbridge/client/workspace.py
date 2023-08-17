@@ -66,7 +66,7 @@ class Workspace:
     arm: FunctionCollection
     art: FunctionCollection
     asi: FunctionCollection
-    auLvs: FunctionCollection
+    auLvs: FunctionCollection  # noqa: N815
     awv: FunctionCollection
     axl: FunctionCollection
     bnd: FunctionCollection
