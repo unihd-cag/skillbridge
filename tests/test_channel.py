@@ -20,7 +20,6 @@ def _cleanup():
             Path(path).unlink()
 
 
-
 @fixture()
 def server() -> Virtuoso:
     v = Virtuoso(WORKSPACE_ID)

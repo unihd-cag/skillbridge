@@ -31,7 +31,10 @@ _STATIC_EVAL_CONTEXT = {
 
 
 def _skill_value_to_python(string: str, eval_context: dict[str, Any] | None = None) -> Skill:
-    return eval(string, eval_context or _STATIC_EVAL_CONTEXT)  # type: ignore  # noqa: S307
+    return eval(  # type: ignore[no-any-return]  # noqa: S307,PGH001
+        string,
+        eval_context or _STATIC_EVAL_CONTEXT,
+    )
 
 
 def _upper_without_first(match: Match[str]) -> str:
@@ -84,7 +87,8 @@ CaseSwitcher = Callable[[str], str]
 
 
 def build_skill_path(
-    components: Iterable[str | int], case_switcher: CaseSwitcher = snake_to_camel,
+    components: Iterable[str | int],
+    case_switcher: CaseSwitcher = snake_to_camel,
 ) -> SkillCode:
     it = iter(components)
     path = case_switcher(str(next(it)))
@@ -136,7 +140,9 @@ class Translator:
 
     @staticmethod
     def encode_getattr(
-        obj: SkillCode, key: str, case_switcher: CaseSwitcher = snake_to_camel,
+        obj: SkillCode,
+        key: str,
+        case_switcher: CaseSwitcher = snake_to_camel,
     ) -> SkillCode:
         return build_skill_path([obj, key], case_switcher)
 
@@ -163,7 +169,8 @@ class Translator:
             poport = _text help({snake_to_camel(symbol)})
             poport = stdout getOutstring(_text)
         """.replace(
-            "\n", " ",
+            "\n",
+            " ",
         )
         return SkillCode(code)
 
@@ -175,7 +182,10 @@ class Translator:
 
     @staticmethod
     def encode_setattr(
-        obj: SkillCode, key: str, value: Any, case_switcher: CaseSwitcher = snake_to_camel,
+        obj: SkillCode,
+        key: str,
+        value: Any,
+        case_switcher: CaseSwitcher = snake_to_camel,
     ) -> SkillCode:
         code = build_skill_path([obj, key], case_switcher)
         value = python_value_to_skill(value)

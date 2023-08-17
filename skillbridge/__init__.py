@@ -51,7 +51,6 @@ def generate_static_completion() -> None:
     with contextlib.suppress(FileNotFoundError):
         annotation.unlink()
 
-
     chdir(base)
 
     o = Options(

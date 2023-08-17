@@ -178,7 +178,8 @@ class LazyList(RemoteVariable):
         ...  # pragma: nocover
 
     def __getitem__(
-        self, item: int | slice,
+        self,
+        item: int | slice,
     ) -> RemoteObject | list[RemoteObject]:
         if isinstance(item, int):
             code = self._translator.encode_call('nth', item, Var(self._variable))

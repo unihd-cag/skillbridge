@@ -189,4 +189,3 @@ if __name__ == '__main__':
 
     with contextlib.suppress(KeyboardInterrupt):
         main(ns.id, ns.log_level, ns.notify, ns.single, ns.timeout)
-

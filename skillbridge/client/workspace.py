@@ -182,7 +182,10 @@ class Workspace:
     xst: FunctionCollection
 
     def __init__(
-        self, channel: Channel, id_: WorkspaceId, translator: Translator | None = None,
+        self,
+        channel: Channel,
+        id_: WorkspaceId,
+        translator: Translator | None = None,
     ) -> None:
         self._id = id_
         self._channel = channel
@@ -270,7 +273,7 @@ class Workspace:
     def close(self, log_exception: bool = True) -> None:
         try:
             self._channel.close()
-        except:  # noqa
+        except:  # noqa: E722
             if log_exception:
                 logger.exception("Failed to close workspace")
 
@@ -339,7 +342,6 @@ class Workspace:
             setattr(self, prefix, collection)
 
         return self._build_function(function)
-
 
     def try_repair(self) -> Any:
         return self._channel.try_repair()
