@@ -68,7 +68,7 @@ class Virtuoso(Thread):
             try:
                 answer = self.queue.get_nowait()
             except Empty:
-                raise RuntimeError(f"no answer available for {question!r}")
+                raise RuntimeError(f"no answer available for {question!r}") from None
             self.write(answer)
 
     def read(self):

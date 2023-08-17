@@ -136,8 +136,8 @@ class Handler(StreamRequestHandler):
     def try_handle_one_request(self) -> bool:
         try:
             return self.handle_one_request()
-        except Exception as e:
-            logger.exception(e)
+        except Exception:
+            logger.exception("Failed to handle request")
             return False
 
     def handle(self) -> None:
