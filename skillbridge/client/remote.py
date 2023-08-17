@@ -4,7 +4,7 @@ from .translator import Translator
 
 
 class RemoteVariable:
-    _attributes = {'_channel', '_variable', '_translator'}
+    _attributes = frozenset(('_channel', '_variable', '_translator'))
 
     def __init__(self, channel: Channel, translator: Translator, variable: SkillCode) -> None:
         self._channel = channel
