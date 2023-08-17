@@ -280,7 +280,7 @@ class Workspace:
         _open_workspaces.pop(self.id, None)
 
         if current_workspace.id == self.id:
-            current_workspace.__class__ = cast(type[Workspace], _NoWorkspace)
+            current_workspace.__class__ = cast('type[Workspace]', _NoWorkspace)
             current_workspace.__dict__ = {}
 
     @property

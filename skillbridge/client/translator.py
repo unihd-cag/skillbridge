@@ -139,7 +139,7 @@ class Translator:
     @staticmethod
     def decode_dir(code: str) -> list[str]:
         attributes = _skill_value_to_python(code) or ()
-        return [camel_to_snake(attr) for attr in cast(list[str], attributes)]
+        return [camel_to_snake(attr) for attr in cast('list[str]', attributes)]
 
     @staticmethod
     def encode_getattr(
