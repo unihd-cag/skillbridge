@@ -29,7 +29,7 @@ _STATIC_EVAL_CONTEXT = {
 
 
 def _skill_value_to_python(string: str, eval_context: Optional[Dict[str, Any]] = None) -> Skill:
-    return eval(string, eval_context or _STATIC_EVAL_CONTEXT)  # type: ignore
+    return eval(string, eval_context or _STATIC_EVAL_CONTEXT)  # type: ignore  # noqa: S307
 
 
 def _upper_without_first(match: Match[str]) -> str:
