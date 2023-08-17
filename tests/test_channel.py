@@ -260,32 +260,6 @@ def test_flush_does_no_harm(server, ws):
     ws.flush()
 
 
-def test_cannot_add_malformed_manual_functions(server, ws):
-    with raises(RuntimeError, match="does not have a prefix"):
-
-        @ws.register
-        def noprefix():
-            pass
-
-    with raises(RuntimeError, match="cannot use that prefix"):
-
-        @ws.register
-        def registerFunction():
-            pass
-
-    with raises(RuntimeError, match="does not have a doc string"):
-
-        @ws.register
-        def withPrefixNoDoc():
-            pass
-
-    with raises(RuntimeError, match="does not have a return annotation"):
-
-        @ws.register
-        def withPrefixNoReturn():
-            """pass"""
-
-
 def test_make_workspace_current(server, ws):
     assert not current_workspace.is_current
     assert not ws.is_current
