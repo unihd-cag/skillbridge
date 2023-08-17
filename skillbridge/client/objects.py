@@ -12,7 +12,7 @@ from typing import (
 
 from .functions import RemoteFunction
 from .hints import Skill, SkillCode, Symbol
-from .remote import RemoteVariable
+from .remote import RemoteVariable, remote_variable_attributes
 from .translator import ParseError, snake_to_camel
 from .var import Var
 
@@ -103,7 +103,7 @@ class RemoteObject(RemoteVariable):
         return self._translator.decode(result)
 
     def __setattr__(self, key: str, value: Any) -> None:
-        if key in RemoteObject._attributes:
+        if key in remote_variable_attributes:
             return super().__setattr__(key, value)
 
         result = self._send(self._translator.encode_setattr(self._variable, key, value))
@@ -233,7 +233,7 @@ class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
         return self[Symbol(snake_to_camel(item))]
 
     def __setattr__(self, key: str, value: Skill) -> None:
-        if key in self._attributes:
+        if key in remote_variable_attributes:
             super().__setattr__(key, value)
         else:
             self[Symbol(snake_to_camel(key))] = value

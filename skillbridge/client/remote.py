@@ -3,9 +3,10 @@ from .hints import Skill, SkillCode
 from .translator import Translator
 
 
-class RemoteVariable:
-    _attributes = frozenset(('_channel', '_variable', '_translator'))
+remote_variable_attributes = frozenset(('_channel', '_variable', '_translator'))
 
+
+class RemoteVariable:
     def __init__(self, channel: Channel, translator: Translator, variable: SkillCode) -> None:
         self._channel = channel
         self._variable = variable
