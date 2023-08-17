@@ -88,6 +88,9 @@ ignore = [
     "PLR2004",
     "S603", "S607",
     "SLF001",
+    "PERF203",
+    "B017",
+    "PT011",
 ]
 "update_version.py" = [
     "S603",

@@ -117,7 +117,7 @@ def test_remote_object(ws: Workspace) -> None:
 
     lib.getdoc()
 
-    assert lib == lib
+    assert lib == lib  # noqa: PLR0124
     assert lib != libs[1]
     assert lib != 1
     assert lib != 1
