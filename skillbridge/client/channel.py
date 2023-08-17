@@ -188,7 +188,7 @@ if platform == 'win32':
                 try:
                     from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
 
-                    sock.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore
+                    sock.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore  # noqa: FBT003
                 except ImportError:
                     pass
 

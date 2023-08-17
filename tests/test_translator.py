@@ -115,8 +115,8 @@ def test_simple_to_skill(encode_simple, i):
 
 def test_constants_to_skill(encode_simple):
     assert encode_simple(None) == 'nil'
-    assert encode_simple(True) == 't'
-    assert encode_simple(False) == 'nil'
+    assert encode_simple(True) == 't'  # noqa: FBT003
+    assert encode_simple(False) == 'nil'  # noqa: FBT003
 
 
 def test_lists_to_skill(encode_simple):
