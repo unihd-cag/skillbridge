@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>The Python Server &#8212; Python-Skill Bridge  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=039e1c02" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Examples" href="../examples/index.html" />
@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <section id="the-python-server">
-<span id="server"></span><h1>The Python Server<a class="headerlink" href="#the-python-server" title="Permalink to this heading">¶</a></h1>
+<span id="server"></span><h1>The Python Server<a class="headerlink" href="#the-python-server" title="Link to this heading">¶</a></h1>
 <p>Initially the server script must be run by loading the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>. (Type <code class="docutils literal notranslate"><span class="pre">skillbridge</span> <span class="pre">path</span></code>
 into your terminal to get the correct paths).</p>
 <div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="nb">load</span><span class="p">(</span><span class="s">&quot;PATH-TO-SKILL-IPC-SCRIPT&quot;</span><span class="p">)</span>
@@ -41,7 +41,7 @@ into your terminal to get the correct paths).</p>
 <p>After that, these management commands are available in the Skill console.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyStartServer">
-<span class="sig-name descname"><span class="pre">pyStartServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id=&quot;default&quot;</span> <span class="pre">logLevel=&quot;INFO&quot;</span> <span class="pre">singleMode=nil</span> <span class="pre">timeout=nil</span> <span class="pre">python=&quot;python&quot;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyStartServer" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pyStartServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id=&quot;default&quot;</span> <span class="pre">logLevel=&quot;INFO&quot;</span> <span class="pre">singleMode=nil</span> <span class="pre">timeout=nil</span> <span class="pre">python=&quot;python&quot;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyStartServer" title="Link to this definition">¶</a></dt>
 <dd><p>This starts the python server. If you are only running a single instance of
 Virtuoso you can use the default id. For more instances, each server needs its own
 id.</p>
@@ -108,7 +108,7 @@ to change their default value by explicitly naming them when calling the functio
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyKillServer">
-<span class="sig-name descname"><span class="pre">pyKillServer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyKillServer" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pyKillServer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyKillServer" title="Link to this definition">¶</a></dt>
 <dd><p>This terminates the python subprocess and thus, kills the server.
 After that, no connections from the client side can be made anymore
 and active connections will result in a <code class="xref py py-class docutils literal notranslate"><span class="pre">BrokenPipe</span></code> exception
@@ -117,14 +117,14 @@ the next time they are used.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyReloadScript">
-<span class="sig-name descname"><span class="pre">pyReloadScript</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyReloadScript" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pyReloadScript</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyReloadScript" title="Link to this definition">¶</a></dt>
 <dd><p>This calls <a class="reference internal" href="#pyKillServer" title="pyKillServer"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyKillServer()</span></code></a> and reloads the <code class="docutils literal notranslate"><span class="pre">python_server.il</span></code>
 Skill script. Normally this function would not be used.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyShowLog">
-<span class="sig-name descname"><span class="pre">pyShowLog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numberOfLines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyShowLog" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pyShowLog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numberOfLines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyShowLog" title="Link to this definition">¶</a></dt>
 <dd><p>Used for debugging. This shows the logging output from the
 python server. The parameter <code class="docutils literal notranslate"><span class="pre">numberOfLines</span></code> controls
 how many lines will be printed. It always refers to the <strong>last</strong>
@@ -209,7 +209,7 @@ how many lines will be printed. It always refers to the <strong>last</strong>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |

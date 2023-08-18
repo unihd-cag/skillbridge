@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Manually Registering Functions &#8212; Python-Skill Bridge  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=039e1c02" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Directly call function objects" href="funcall.html" />
@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <section id="manually-registering-functions">
-<h1>Manually Registering Functions<a class="headerlink" href="#manually-registering-functions" title="Permalink to this heading">¶</a></h1>
+<h1>Manually Registering Functions<a class="headerlink" href="#manually-registering-functions" title="Link to this heading">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">skillbridge</span></code> will only export functions that are documented in
 the running Virtuoso instance. If you need functions that are not documented there
 but still exist, you can register them manually.
@@ -41,7 +41,7 @@ categorize and define the function. Since some skill function definitions do not
 the default camel case naming conventions or have not prefix, we also provide a way
 to specify the function name.</p>
 <section id="prefix-register-method">
-<h2>Prefix register method<a class="headerlink" href="#prefix-register-method" title="Permalink to this heading">¶</a></h2>
+<h2>Prefix register method<a class="headerlink" href="#prefix-register-method" title="Link to this heading">¶</a></h2>
 <p>Let’s take a look at the following example.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@ws</span><span class="o">.</span><span class="n">register</span>
 <span class="k">def</span> <span class="nf">dbCheck</span><span class="p">(</span><span class="n">d_cellview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -93,7 +93,7 @@ in Skill. If you actually call <code class="docutils literal notranslate"><span 
 </div>
 </section>
 <section id="direct-method">
-<h2>Direct method<a class="headerlink" href="#direct-method" title="Permalink to this heading">¶</a></h2>
+<h2>Direct method<a class="headerlink" href="#direct-method" title="Link to this heading">¶</a></h2>
 <p>In this example the skill method load is directly called.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skillbrige</span> <span class="kn">import</span> <span class="n">Workspace</span>
 <span class="n">ws</span> <span class="o">=</span> <span class="n">Workspace</span><span class="p">()</span>
@@ -190,7 +190,7 @@ prefix method, including keyword arguments.</p>
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |

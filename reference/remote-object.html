@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Remote Objects &#8212; Python-Skill Bridge  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=039e1c02" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Communication Protocol" href="protocol.html" />
@@ -31,10 +31,10 @@
           <div class="body" role="main">
             
   <section id="remote-objects">
-<h1>Remote Objects<a class="headerlink" href="#remote-objects" title="Permalink to this heading">¶</a></h1>
+<h1>Remote Objects<a class="headerlink" href="#remote-objects" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="skillbridge.client.objects.RemoteObject">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skillbridge.client.objects.</span></span><span class="sig-name descname"><span class="pre">RemoteObject</span></span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skillbridge.client.objects.</span></span><span class="sig-name descname"><span class="pre">RemoteObject</span></span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject" title="Link to this definition">¶</a></dt>
 <dd><p><a class="reference internal" href="#skillbridge.client.objects.RemoteObject" title="skillbridge.client.objects.RemoteObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteObject</span></code></a> instances represent any object in Skill that is neither of the
 following types:</p>
 <ul class="simple">
@@ -47,7 +47,7 @@ following types:</p>
 </ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="skillbridge.client.objects.RemoteObject.__getattr__">
-<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__getattr__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__getattr__" title="Link to this definition">¶</a></dt>
 <dd><p>Skill properties can be accessed like normal python attributes, provided the property
 exists on the Skill object</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>
@@ -63,7 +63,7 @@ exists on the Skill object</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skillbridge.client.objects.RemoteObject.__setattr__">
-<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__setattr__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__setattr__" title="Link to this definition">¶</a></dt>
 <dd><p>It is also possible to change the Skill properties using normal python attribute
 access. If the property does not exist on the skill side, it will be created.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">123</span>
@@ -107,7 +107,7 @@ access. If the property does not exist on the skill side, it will be created.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skillbridge.client.objects.RemoteObject.__dir__">
-<span class="sig-name descname"><span class="pre">__dir__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__dir__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__dir__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__dir__" title="Link to this definition">¶</a></dt>
 <dd><p>All available Skill properties can be listed using this method. It looks up the
 properties inside skill using the expression <code class="docutils literal notranslate"><span class="pre">__var</span> <span class="pre">-&gt;</span> <span class="pre">?</span></code> and returns the
 property names as a list</p>
@@ -128,7 +128,7 @@ property names as a list</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skillbridge.client.objects.RemoteObject.__eq__">
-<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__eq__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__eq__" title="Link to this definition">¶</a></dt>
 <dd><p>Compares two <a class="reference internal" href="#skillbridge.client.objects.RemoteObject" title="skillbridge.client.objects.RemoteObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteObject</span></code></a> and returns whether they are considered equal.
 They are considered equal if the Skill identifiers are equal.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cell</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">ge</span><span class="o">.</span><span class="n">get_edit_cell_view</span><span class="p">()</span>  <span class="c1"># dbobject:0xHHHHHHH</span>
@@ -141,7 +141,7 @@ They are considered equal if the Skill identifiers are equal.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skillbridge.client.objects.RemoteObject.__ne__">
-<span class="sig-name descname"><span class="pre">__ne__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__ne__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__ne__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#skillbridge.client.objects.RemoteObject.__ne__" title="Link to this definition">¶</a></dt>
 <dd><p>Compares two <a class="reference internal" href="#skillbridge.client.objects.RemoteObject" title="skillbridge.client.objects.RemoteObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteObject</span></code></a> and returns whether they are consideren unequal.
 This is the opposite of the <a class="reference internal" href="#skillbridge.client.objects.RemoteObject.__eq__" title="skillbridge.client.objects.RemoteObject.__eq__"><code class="xref py py-func docutils literal notranslate"><span class="pre">__eq__()</span></code></a> method.</p>
 </dd></dl>
@@ -214,7 +214,7 @@ This is the opposite of the <a class="reference internal" href="#skillbridge.cli
       &copy;2019, Niels Buwen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
