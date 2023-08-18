@@ -1,24 +1,26 @@
+from __future__ import annotations
+
 from argparse import ArgumentParser
 from code import interact
-from os.path import abspath, dirname, join
+from pathlib import Path
 from random import randrange
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable
 
 from . import generate_static_completion
 
+here = Path(__file__).parent.resolve()
+
 
 def print_skill_script_location() -> None:
-    folder = dirname(abspath(__file__))
-    skill_source = join(folder, 'server', 'python_server.il')
-    escaped = repr(skill_source)[1:-1]
+    skill_source = here / 'server' / 'python_server.il'
 
     print("Path to Skill server script:")
-    print(escaped)
+    print(skill_source)
 
     print()
 
     print("Type this into the Skill console:")
-    print(f'load("{escaped}")')
+    print(f'load("{skill_source}")')
 
 
 def deprecated_command() -> None:  # pragma: no cover
@@ -27,7 +29,7 @@ def deprecated_command() -> None:  # pragma: no cover
     print("You don't have to do anything")
 
 
-def shell_command(ws_id: Optional[str], ping: bool) -> None:
+def shell_command(ws_id: str | None, ping: bool) -> None:
     import skillbridge
 
     variables = {name: getattr(skillbridge, name) for name in dir(skillbridge)}
@@ -56,7 +58,10 @@ def main() -> None:
     shell = sub.add_parser('shell', help="opens a python interpreter with a connected workspace")
     shell.add_argument('-i', '--id', help="id used to open the workspace", default=None)
     shell.add_argument(
-        '-p', '--ping', help="ping the server and quit if it does not respond", action='store_true'
+        '-p',
+        '--ping',
+        help="ping the server and quit if it does not respond",
+        action='store_true',
     )
     path = sub.add_parser('path', help="show the path to the skill script")
     generate = sub.add_parser('generate', help="generate static completion file")
@@ -68,7 +73,7 @@ def main() -> None:
     imp.add_argument('-f', '-force', '--force', help="deprecated", action='store_true')
     args = parser.parse_args()
 
-    commands: Dict[Optional[str], Tuple[Any, Callable[[], None]]] = {
+    commands: dict[str | None, tuple[Any, Callable[[], None]]] = {
         None: (parser, parser.print_help),
         'status': (status, deprecated_command),
         'path': (path, print_skill_script_location),

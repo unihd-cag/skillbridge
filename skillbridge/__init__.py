@@ -1,3 +1,4 @@
+import contextlib
 from keyword import iskeyword
 from os import chdir
 from pathlib import Path
@@ -47,10 +48,8 @@ def generate_static_completion() -> None:
     base = Path(__file__).parent.absolute() / 'client'
     annotation = base / 'workspace.pyi'
 
-    try:
+    with contextlib.suppress(FileNotFoundError):
         annotation.unlink()
-    except FileNotFoundError:
-        pass
 
     chdir(base)
 

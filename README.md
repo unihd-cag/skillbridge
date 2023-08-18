@@ -5,9 +5,11 @@
 
 ### Prerequisites
 
-- Python 3.6 or higher
+- Python 3.8 or higher[^1]
 - pip
 - IC 6.1.7 or ICADV/M or higher
+
+[^1]: For Python 3.6 and Python 3.7 please install version `1.5.1` (`pip install skillbridge==1.5.1`) 
 
 ### Features
 

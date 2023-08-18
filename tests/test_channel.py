@@ -1,5 +1,6 @@
+import contextlib
 import warnings
-from os import unlink
+from pathlib import Path
 
 from pytest import fixture, raises
 
@@ -15,13 +16,11 @@ channel_class = create_channel_class()
 def _cleanup():
     path = channel_class.create_address(WORKSPACE_ID)
     if isinstance(path, str):
-        try:
-            unlink(path)
-        except FileNotFoundError:
-            pass
+        with contextlib.suppress(FileNotFoundError):
+            Path(path).unlink()
 
 
-@fixture(scope="function")
+@fixture()
 def server() -> Virtuoso:
     v = Virtuoso(WORKSPACE_ID)
     v.start()
@@ -236,8 +235,8 @@ def test_object_equality(server, ws):
     assert first == second
     assert first != third
     assert second != third
+    assert not (first == 1)  # noqa: SIM201  # this tests __eq__ and the next line tests __ne__
     assert first != 1
-    assert not (first == 1)
 
 
 def test_fix_completion_does_not_raise(server, ws):
@@ -258,32 +257,6 @@ def test_max_transmission_length_is_honored(server, ws):
 
 def test_flush_does_no_harm(server, ws):
     ws.flush()
-
-
-def test_cannot_add_malformed_manual_functions(server, ws):
-    with raises(RuntimeError, match="does not have a prefix"):
-
-        @ws.register
-        def noprefix():
-            pass
-
-    with raises(RuntimeError, match="cannot use that prefix"):
-
-        @ws.register
-        def registerFunction():
-            pass
-
-    with raises(RuntimeError, match="does not have a doc string"):
-
-        @ws.register
-        def withPrefixNoDoc():
-            pass
-
-    with raises(RuntimeError, match="does not have a return annotation"):
-
-        @ws.register
-        def withPrefixNoReturn():
-            """pass"""
 
 
 def test_make_workspace_current(server, ws):

@@ -60,7 +60,7 @@ class PassWorkspace(Workspace):
         self._test_channel.functions[name] = func
 
     def prepare_function_value(self, name: str, value: Any) -> None:
-        def func(*args: Any, **kwargs: Any) -> Any:
+        def func(*_args: Any, **_kwargs: Any) -> Any:
             return value
 
         self._test_channel.functions[name] = func

@@ -1,11 +1,14 @@
+from __future__ import annotations
+
+from contextlib import suppress
 from select import select
 from socket import AF_INET, SOCK_STREAM, socket
 from sys import platform
-from typing import Any, Iterable, TextIO, Type, Union
+from typing import Any, Iterable, TextIO
 
 
 class Channel:
-    def __init__(self, max_transmission_length: int):
+    def __init__(self, max_transmission_length: int) -> None:
         self._max_transmission_length = max_transmission_length
 
     def send(self, data: str) -> str:
@@ -29,10 +32,8 @@ class Channel:
         self._max_transmission_length = value
 
     def __del__(self) -> None:
-        try:
+        with suppress(Exception):
             self.close()
-        except:  # noqa
-            pass
 
     @staticmethod
     def decode_response(response: str) -> str:
@@ -42,14 +43,14 @@ class Channel:
             if response == '<timeout>':
                 raise RuntimeError(
                     "Timeout: you should restart the skill server and "
-                    "increase the timeout `pyStartServer ?timeout X`."
+                    "increase the timeout `pyStartServer ?timeout X`.",
                 )
             raise RuntimeError(response)
         return response
 
 
 class DirectChannel(Channel):
-    def __init__(self, stdout: TextIO):
+    def __init__(self, stdout: TextIO) -> None:
         super().__init__(10_000)
         self.stdout = stdout
 
@@ -71,7 +72,7 @@ class TcpChannel(Channel):
     address_family = AF_INET
     socket_kind = SOCK_STREAM
 
-    def __init__(self, address: Any):
+    def __init__(self, address: Any) -> None:
         super().__init__(1_000_000)
 
         self.connected = False
@@ -118,7 +119,7 @@ class TcpChannel(Channel):
             should = self._max_transmission_length
             raise ValueError(f'Data exceeds max transmission length {got} > {should}')
 
-        length = '{:10}'.format(len(byte)).encode()
+        length = f'{len(byte):10}'.encode()
 
         try:
             self.socket.sendall(length)
@@ -142,7 +143,7 @@ class TcpChannel(Channel):
             raise RuntimeError(
                 "Receive aborted, you should restart the skill server or"
                 " call `ws.try_repair()` if you are sure that the response"
-                " will arrive."
+                " will arrive.",
             ) from None
 
         if not received_length_raw:
@@ -156,11 +157,11 @@ class TcpChannel(Channel):
         self._send_only(data)
         return self._receive_only()
 
-    def try_repair(self) -> Union[Exception, str]:
+    def try_repair(self) -> Exception | str:
         try:
             length = int(self.socket.recv(10))
             message = b''.join(self._receive_all(length))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return e
         return message.decode()
 
@@ -182,13 +183,16 @@ class TcpChannel(Channel):
 
 if platform == 'win32':
 
-    def create_channel_class() -> Type[TcpChannel]:
+    def create_channel_class() -> type[TcpChannel]:
         class WindowsChannel(TcpChannel):
             def configure(self, sock: socket) -> None:
                 try:
-                    from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore
+                    from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore[attr-defined]
 
-                    sock.ioctl(SIO_LOOPBACK_FAST_PATH, True)  # type: ignore
+                    sock.ioctl(  # type: ignore[attr-defined]
+                        SIO_LOOPBACK_FAST_PATH,
+                        True,  # noqa: FBT003
+                    )
                 except ImportError:
                     pass
 
@@ -201,7 +205,7 @@ if platform == 'win32':
 
 else:
 
-    def create_channel_class() -> Type[TcpChannel]:
+    def create_channel_class() -> type[TcpChannel]:
         from socket import AF_UNIX
 
         class UnixChannel(TcpChannel):

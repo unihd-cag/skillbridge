@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from string import ascii_lowercase
-from typing import Any, Tuple, Union
+from typing import Any
 
 from .channel import Channel
 from .hints import SkillCode
@@ -58,7 +60,7 @@ def is_variable_name(string: str) -> bool:
 
 
 class Globals:
-    def __init__(self, channel: Channel, translator: Translator, prefix: str):
+    def __init__(self, channel: Channel, translator: Translator, prefix: str) -> None:
         self._channel = channel
         self._translator = translator
         self._prefix = prefix + '_'
@@ -66,7 +68,7 @@ class Globals:
     def __repr__(self) -> str:
         return f"Globals(prefix={self._prefix})"
 
-    def __getitem__(self, item: Union[str, Tuple[str, ...]]) -> GlobalVar:
+    def __getitem__(self, item: str | tuple[str, ...]) -> GlobalVar:
         if isinstance(item, tuple):
             item = '_'.join(item)
 
@@ -75,7 +77,7 @@ class Globals:
 
         raise AttributeError(item)
 
-    def __setitem__(self, item: Union[str, Tuple[str, ...]], value: Any) -> Any:
+    def __setitem__(self, item: str | tuple[str, ...], value: Any) -> Any:
         if isinstance(item, tuple):
             item = '_'.join(item)
 
@@ -85,6 +87,7 @@ class Globals:
         code = self._translator.encode_assign(self._prefix + item, value)
         response = self._channel.send(code)
         assert self._translator.decode(response) is None
+        return None
 
     def __delitem__(self, item: str) -> None:
         self[item] = None

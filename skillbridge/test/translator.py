@@ -1,4 +1,6 @@
-from typing import Any, Dict, NamedTuple, Tuple, cast
+from __future__ import annotations
+
+from typing import Any, NamedTuple, cast
 
 from ..client.hints import Skill, SkillCode
 from ..client.translator import Translator
@@ -6,13 +8,13 @@ from ..client.translator import Translator
 
 class FunctionCall(NamedTuple):
     name: str
-    args: Tuple[Any, ...]
-    kwargs: Dict[str, Any]
+    args: tuple[Any, ...]
+    kwargs: dict[str, Any]
 
 
 class PassTranslator(Translator):
     def encode(self, value: Skill) -> SkillCode:
-        return value  # type: ignore
+        return value  # type: ignore[return-value]
 
     def decode(self, code: str) -> Skill:
         return code

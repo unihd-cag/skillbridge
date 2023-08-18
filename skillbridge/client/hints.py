@@ -1,7 +1,9 @@
-from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, NewType, Set, Tuple, Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Dict, List, NamedTuple, NewType, Tuple, Union
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing_extensions import Protocol
+    from typing_extensions import Protocol, TypeAlias
 else:
 
     class Protocol:
@@ -15,7 +17,6 @@ __all__ = [
     'SkillComponent',
     'SkillCode',
     'Skill',
-    'Definition',
     'Function',
     'SkillTuple',
     'SkillList',
@@ -30,10 +31,7 @@ SkillCode = NewType('SkillCode', str)
 class Function(NamedTuple):
     name: str
     description: str
-    aliases: Set[str]
-
-
-Definition = List[Function]
+    aliases: set[str]
 
 
 class SupportsReprSkill(Protocol):
@@ -44,9 +42,18 @@ class SupportsReprSkill(Protocol):
 if TYPE_CHECKING:  # pragma: no cover
     from .var import Var
 
-    Skill = Union[
-        Var, SupportsReprSkill, Number, str, bool, None, 'SkillList', 'SkillDict', 'SkillTuple'
+    Skill: TypeAlias = Union[
+        Var,
+        SupportsReprSkill,
+        Number,
+        str,
+        bool,
+        None,
+        'SkillList',
+        'SkillDict',
+        'SkillTuple',
     ]
+
 else:
     Skill = Any
 
@@ -56,7 +63,7 @@ class SkillList(List[Skill]):
 
 
 class SkillTuple(Tuple[Skill, ...]):
-    pass
+    __slots__ = ()
 
 
 class SkillDict(Dict[str, Skill]):

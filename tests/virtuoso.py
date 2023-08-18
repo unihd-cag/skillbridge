@@ -10,7 +10,7 @@ from skillbridge.server import python_server
 
 
 class Virtuoso(Thread):
-    def __init__(self, socket):
+    def __init__(self, socket) -> None:
         super().__init__(daemon=True)
         self.daemon = True
 
@@ -68,7 +68,7 @@ class Virtuoso(Thread):
             try:
                 answer = self.queue.get_nowait()
             except Empty:
-                raise RuntimeError(f"no answer available for {question!r}")
+                raise RuntimeError(f"no answer available for {question!r}") from None
             self.write(answer)
 
     def read(self):
@@ -76,10 +76,11 @@ class Virtuoso(Thread):
         # to start the server
         for timeout in (0.1, 0.5, 1, 2, 4, 8):
             if not self.should_run:
-                return
+                return None
             readable, _, _ = select([self.server.stdout], [], [], timeout)
             if readable:
                 return self.server.stdout.readline().strip()
+        return None
 
     def write(self, message):
         self.pin.write(message + '\n')
@@ -108,3 +109,4 @@ class Virtuoso(Thread):
     def last_question(self):
         if self.questions:
             return self.questions.pop()
+        return None

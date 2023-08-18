@@ -1,5 +1,5 @@
 import asyncio
-from os import unlink
+from pathlib import Path
 from threading import Thread
 from time import sleep
 
@@ -13,7 +13,7 @@ channel_class = create_channel_class()
 
 
 class Redirect:
-    def __init__(self):
+    def __init__(self) -> None:
         self.written = []
         self.reading = []
 
@@ -34,7 +34,7 @@ class Redirect:
 
 
 class Server(Thread):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(daemon=True)
 
     def run(self):
@@ -55,7 +55,7 @@ def redirect():
     finally:
         python_server.send_to_skill = send
         python_server.read_from_skill = read
-        unlink(channel_class.create_address(WORKSPACE_ID))
+        Path(channel_class.create_address(WORKSPACE_ID)).unlink()
 
 
 def test_server_notifies(redirect):

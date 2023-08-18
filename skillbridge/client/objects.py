@@ -1,19 +1,18 @@
+from __future__ import annotations
+
 from typing import (
     Any,
     Iterable,
     Iterator,
-    List,
     MutableMapping,
-    Optional,
     Sequence,
-    Union,
     cast,
     overload,
 )
 
 from .functions import RemoteFunction
 from .hints import Skill, SkillCode, Symbol
-from .remote import RemoteVariable
+from .remote import RemoteVariable, remote_variable_attributes
 from .translator import ParseError, snake_to_camel
 from .var import Var
 
@@ -58,7 +57,7 @@ class RemoteObject(RemoteVariable):
         return self._variable.startswith('__py_openfile_')
 
     @property
-    def skill_type(self) -> Optional[str]:
+    def skill_type(self) -> str | None:
         if self._is_open_file():
             return 'open_file'
 
@@ -78,8 +77,9 @@ class RemoteObject(RemoteVariable):
     def __str__(self) -> str:
         typ = self.skill_type or self.skill_parent_type
         if typ == 'open_file':
-            name = self._call('lsprintf', '%s', self)[6:-1]  # type: ignore
-            return f"<remote open_file {name!r}>"
+            name = self._call('lsprintf', '%s', self)
+            assert isinstance(name, str)
+            return f"<remote open_file {name[6:-1]!r}>"
         return f"<remote {typ}@{hex(self.skill_id)}>"
 
     def __repr__(self) -> str:
@@ -90,8 +90,7 @@ class RemoteObject(RemoteVariable):
             return super().__dir__()
 
         response = self._send(self._translator.encode_dir(self._variable))
-        attributes = self._translator.decode_dir(response)
-        return attributes
+        return self._translator.decode_dir(response)
 
     def __getattr__(self, key: str) -> Any:
         if is_jupyter_magic(key):
@@ -105,27 +104,28 @@ class RemoteObject(RemoteVariable):
         return self._translator.decode(result)
 
     def __setattr__(self, key: str, value: Any) -> None:
-        if key in RemoteObject._attributes:
+        if key in remote_variable_attributes:
             return super().__setattr__(key, value)
 
         result = self._send(self._translator.encode_setattr(self._variable, key, value))
         self._translator.decode(result)
+        return None
 
     def __setitem__(self, key: str, value: Any) -> None:
         result = self._send(
-            self._translator.encode_setattr(self._variable, key, value, lambda x: x)
+            self._translator.encode_setattr(self._variable, key, value, lambda x: x),
         )
         self._translator.decode(result)
 
     def getdoc(self) -> str:
         return "Properties:\n- " + '\n- '.join(dir(self))
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, RemoteObject):
             return self._variable == other._variable
         return NotImplemented
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         if isinstance(other, RemoteObject):
             return self._variable != other._variable
         return NotImplemented
@@ -134,14 +134,14 @@ class RemoteObject(RemoteVariable):
         return self._call('funcall', self, *args, **kwargs)
 
     @property
-    def lazy(self) -> 'LazyList':
+    def lazy(self) -> LazyList:
         return LazyList(self._channel, self._translator, self._variable)
 
 
 class LazyList(RemoteVariable):
     arg = Var('arg')
 
-    def __getattr__(self, attribute: str) -> 'LazyList':
+    def __getattr__(self, attribute: str) -> LazyList:
         variable = SkillCode(f"{self._variable}~>{snake_to_camel(attribute)}")
         return LazyList(self._channel, self._translator, variable)
 
@@ -155,7 +155,7 @@ class LazyList(RemoteVariable):
         parameters = ' '.join(f'arg->{f}' for f in filters)
         return SkillCode(f'and({parameters})')
 
-    def filter(self, *args: str, **kwargs: Any) -> 'LazyList':
+    def filter(self, *args: str, **kwargs: Any) -> LazyList:
         if not args and not kwargs:
             return self
 
@@ -173,13 +173,14 @@ class LazyList(RemoteVariable):
     def __getitem__(self, item: int) -> RemoteObject:
         ...  # pragma: nocover
 
-    @overload  # noqa
-    def __getitem__(self, item: slice) -> List[RemoteObject]:  # noqa
+    @overload
+    def __getitem__(self, item: slice) -> list[RemoteObject]:
         ...  # pragma: nocover
 
-    def __getitem__(  # noqa
-        self, item: Union[int, slice]
-    ) -> Union[RemoteObject, List[RemoteObject]]:
+    def __getitem__(
+        self,
+        item: int | slice,
+    ) -> RemoteObject | list[RemoteObject]:
         if isinstance(item, int):
             code = self._translator.encode_call('nth', item, Var(self._variable))
         else:
@@ -189,12 +190,12 @@ class LazyList(RemoteVariable):
             code = self._variable
 
         result = self._channel.send(code)
-        return self._translator.decode(result)  # type: ignore
+        return self._translator.decode(result)  # type: ignore[return-value]
 
     def __len__(self) -> int:
         return cast(int, self._call('length', self))
 
-    def foreach(self, func: Union['RemoteFunction', SkillCode], *args: Any) -> None:
+    def foreach(self, func: SkillCode | RemoteFunction, *args: Any) -> None:
         if isinstance(func, RemoteFunction):
             args = args or (LazyList.arg,)
             func = func.lazy(*args)
@@ -234,7 +235,7 @@ class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
         return self[Symbol(snake_to_camel(item))]
 
     def __setattr__(self, key: str, value: Skill) -> None:
-        if key in self._attributes:
+        if key in remote_variable_attributes:
             super().__setattr__(key, value)
         else:
             self[Symbol(snake_to_camel(key))] = value
@@ -242,7 +243,7 @@ class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
     def __iter__(self) -> Iterator[Skill]:
         code = self._translator.encode_getattr(self.__repr_skill__(), '?')
         result = self._channel.send(code)
-        return iter(self._translator.decode(result) or ())  # type: ignore
+        return iter(self._translator.decode(result) or ())  # type: ignore[arg-type]
 
 
 class RemoteVector(RemoteCollection):

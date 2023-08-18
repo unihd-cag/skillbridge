@@ -1,20 +1,24 @@
+from __future__ import annotations
+
 from collections import defaultdict, deque
-from typing import Any, Callable, Deque, Dict, Union
+from typing import Any, Callable
 
 from ..client.channel import Channel
 from .translator import FunctionCall
+
+_MAX_ERROR_REPORT = 100
 
 
 class DummyChannel(Channel):
     def __init__(self) -> None:
         super().__init__(0)
 
-        self.outputs: Deque[str] = deque()
-        self.inputs: Deque[str] = deque()
-        self.functions: Dict[str, Callable[..., Any]] = {}
-        self.function_outputs: Dict[str, Deque[Any]] = defaultdict(deque)
+        self.outputs: deque[str] = deque()
+        self.inputs: deque[str] = deque()
+        self.functions: dict[str, Callable[..., Any]] = {}
+        self.function_outputs: dict[str, deque[Any]] = defaultdict(deque)
 
-    def _try_function(self, data: Union[str, FunctionCall]) -> Any:
+    def _try_function(self, data: str | FunctionCall) -> Any:
         if not isinstance(data, FunctionCall):
             raise ValueError
 
@@ -26,9 +30,9 @@ class DummyChannel(Channel):
         try:
             result = self.inputs.popleft()
         except IndexError:
-            short_data = data if len(data) < 100 else data[:100] + "..."
+            short_data = data if len(data) < _MAX_ERROR_REPORT else data[:_MAX_ERROR_REPORT] + "..."
             raise RuntimeError(
-                f"No input provided for TestChannel: request was {short_data}"
+                f"No input provided for TestChannel: request was {short_data}",
             ) from None
         else:
             self.outputs.append(data)

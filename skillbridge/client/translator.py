@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from json import dumps, loads
 from re import findall, sub
-from typing import Any, Callable, Dict, Iterable, List, Match, NoReturn, Optional, Union, cast
+from typing import Any, Callable, Iterable, Match, NoReturn, cast
 from warnings import warn_explicit
 
 from .hints import Skill, SkillCode, Symbol
@@ -16,7 +18,10 @@ def _raise_error(message: str) -> NoReturn:
 
 def _show_warning(message: str, result: Any) -> Any:
     for i, line in enumerate(message.splitlines(keepends=False)):
-        warn_explicit(line.lstrip("*WARNING*"), UserWarning, "Skill response", i)
+        message = line
+        if line.startswith("*WARNING*"):
+            message = message[9:]
+        warn_explicit(message, UserWarning, "Skill response", i)
 
     return result
 
@@ -28,8 +33,11 @@ _STATIC_EVAL_CONTEXT = {
 }
 
 
-def _skill_value_to_python(string: str, eval_context: Optional[Dict[str, Any]] = None) -> Skill:
-    return eval(string, eval_context or _STATIC_EVAL_CONTEXT)  # type: ignore
+def _skill_value_to_python(string: str, eval_context: dict[str, Any] | None = None) -> Skill:
+    return eval(  # type: ignore[no-any-return]  # noqa: S307,PGH001
+        string,
+        eval_context or _STATIC_EVAL_CONTEXT,
+    )
 
 
 def _upper_without_first(match: Match[str]) -> str:
@@ -53,7 +61,7 @@ def camel_to_snake(camel: str) -> str:
 
 def python_value_to_skill(value: Skill) -> SkillCode:
     try:
-        return value.__repr_skill__()  # type: ignore
+        return value.__repr_skill__()  # type: ignore[union-attr]
     except AttributeError:
         pass
 
@@ -82,7 +90,8 @@ CaseSwitcher = Callable[[str], str]
 
 
 def build_skill_path(
-    components: Iterable[Union[str, int]], case_switcher: CaseSwitcher = snake_to_camel
+    components: Iterable[str | int],
+    case_switcher: CaseSwitcher = snake_to_camel,
 ) -> SkillCode:
     it = iter(components)
     path = case_switcher(str(next(it)))
@@ -96,15 +105,12 @@ def build_skill_path(
     return SkillCode(path)
 
 
-def build_python_path(components: Iterable[Union[str, int]]) -> SkillCode:
+def build_python_path(components: Iterable[str | int]) -> SkillCode:
     it = iter(components)
     path = str(next(it))
 
     for component in it:
-        if isinstance(component, int):
-            path = f'{path}[{component}]'
-        else:
-            path = f'{path}.{component}'
+        path = f"{path}[{component}]" if isinstance(component, int) else f"{path}.{component}"
 
     return SkillCode(path)
 
@@ -125,19 +131,21 @@ class Translator:
                 f'{obj}->?',
                 f"if( type({obj}) == 'rodObj then {obj}->systemHandleNames)",
                 f'if( type({obj}) == \'rodObj then {obj}->userHandleNames)',
-            )
+            ),
         )
         code = f'mapcar(lambda((attr) sprintf(nil "%s" attr)) nconc({parts}))'
         return SkillCode(code)
 
     @staticmethod
-    def decode_dir(code: str) -> List[str]:
+    def decode_dir(code: str) -> list[str]:
         attributes = _skill_value_to_python(code) or ()
-        return [camel_to_snake(attr) for attr in cast(List[str], attributes)]
+        return [camel_to_snake(attr) for attr in cast('list[str]', attributes)]
 
     @staticmethod
     def encode_getattr(
-        obj: SkillCode, key: str, case_switcher: CaseSwitcher = snake_to_camel
+        obj: SkillCode,
+        key: str,
+        case_switcher: CaseSwitcher = snake_to_camel,
     ) -> SkillCode:
         return build_skill_path([obj, key], case_switcher)
 
@@ -154,7 +162,7 @@ class Translator:
         return SkillCode(f'{snake_to_camel(variable)} = {encoded_value} nil')
 
     @staticmethod
-    def decode_globals(code: str) -> List[str]:
+    def decode_globals(code: str) -> list[str]:
         return [camel_to_snake(f).split('_', maxsplit=1)[1] for f in loads(code).split()]
 
     @staticmethod
@@ -164,17 +172,23 @@ class Translator:
             poport = _text help({snake_to_camel(symbol)})
             poport = stdout getOutstring(_text)
         """.replace(
-            "\n", " "
+            "\n",
+            " ",
         )
         return SkillCode(code)
 
     @staticmethod
     def decode_help(help_: str) -> str:
-        return loads(help_)  # type: ignore
+        info = loads(help_)
+        assert isinstance(info, str)
+        return info
 
     @staticmethod
     def encode_setattr(
-        obj: SkillCode, key: str, value: Any, case_switcher: CaseSwitcher = snake_to_camel
+        obj: SkillCode,
+        key: str,
+        value: Any,
+        case_switcher: CaseSwitcher = snake_to_camel,
     ) -> SkillCode:
         code = build_skill_path([obj, key], case_switcher)
         value = python_value_to_skill(value)
