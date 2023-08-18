@@ -17,6 +17,7 @@ def check_up_to_date(ref: str) -> None:
 
 
 def checkout_master() -> None:
+    check_call(['git', 'fetch'])
     check_call(['git', 'checkout', 'master'])
 
 
