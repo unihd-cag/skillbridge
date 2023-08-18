@@ -31,6 +31,6 @@ def bump_version(ref: str) -> None:
 if __name__ == '__main__':
     _, release_ref = argv
 
-    check_up_to_date(release_ref)
     checkout_master()
+    check_up_to_date(release_ref)
     bump_version(release_ref)
