@@ -235,7 +235,7 @@ def test_object_equality(server, ws):
     assert first == second
     assert first != third
     assert second != third
-    assert first != 1
+    assert not (first == 1)  # noqa: SIM201  # this tests __eq__ and the next line tests __ne__
     assert first != 1
 
 
