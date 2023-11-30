@@ -38,7 +38,37 @@ def is_jupyter_magic(attribute: str) -> bool:
     return attribute in ignore
 
 
-class RemoteObject(RemoteVariable):
+class WithAttributeAccess(RemoteVariable):
+    def __getattr__(self, key: str) -> Any:
+        if is_jupyter_magic(key):
+            raise AttributeError(key)
+
+        result = self._send(self._translator.encode_getattr(self._variable, key))
+        return self._translator.decode(result)
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in remote_variable_attributes:
+            return super().__setattr__(key, value)
+
+        result = self._send(self._translator.encode_setattr(self._variable, key, value))
+        self._translator.decode(result)
+        return None
+
+    def __dir__(self) -> Iterable[str]:
+        if self._is_open_file():
+            return super().__dir__()
+
+        response = self._send(self._translator.encode_dir(self._variable))
+        return self._translator.decode_dir(response)
+
+    def _send(self, command: SkillCode) -> Any:
+        return self._channel.send(command).strip()
+
+    def _is_open_file(self) -> bool:
+        return False
+
+
+class RemoteObject(WithAttributeAccess, RemoteVariable):
     @property
     def skill_id(self) -> int:
         address = self._variable[5:].rsplit('_', maxsplit=1)[1]
@@ -71,9 +101,6 @@ class RemoteObject(RemoteVariable):
             return typ.name[2:-4]
         return cast(str, typ)
 
-    def _send(self, command: SkillCode) -> Any:
-        return self._channel.send(command).strip()
-
     def __str__(self) -> str:
         typ = self.skill_type or self.skill_parent_type
         if typ == 'open_file':
@@ -85,31 +112,9 @@ class RemoteObject(RemoteVariable):
     def __repr__(self) -> str:
         return f"<remote object@{hex(self.skill_id)}>"
 
-    def __dir__(self) -> Iterable[str]:
-        if self._is_open_file():
-            return super().__dir__()
-
-        response = self._send(self._translator.encode_dir(self._variable))
-        return self._translator.decode_dir(response)
-
-    def __getattr__(self, key: str) -> Any:
-        if is_jupyter_magic(key):
-            raise AttributeError(key)
-
-        result = self._send(self._translator.encode_getattr(self._variable, key))
-        return self._translator.decode(result)
-
     def __getitem__(self, item: str) -> Any:
         result = self._send(self._translator.encode_getattr(self._variable, item, lambda x: x))
         return self._translator.decode(result)
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in remote_variable_attributes:
-            return super().__setattr__(key, value)
-
-        result = self._send(self._translator.encode_setattr(self._variable, key, value))
-        self._translator.decode(result)
-        return None
 
     def __setitem__(self, key: str, value: Any) -> None:
         result = self._send(
@@ -223,10 +228,6 @@ class RemoteCollection(RemoteVariable):
     def __delitem__(self, item: Skill) -> None:
         self._call('remove', item, self)
 
-    def __dir__(self) -> list[str]:
-        response = self._channel.send(self._translator.encode_dir(self._variable))
-        return self._translator.decode_dir(response)
-
 
 class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
     def __getitem__(self, item: Skill) -> Skill:
@@ -250,7 +251,7 @@ class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
         return iter(self._translator.decode(result) or ())  # type: ignore[arg-type]
 
 
-class RemoteVector(RemoteCollection):
+class RemoteVector(RemoteCollection, WithAttributeAccess):
     def __getitem__(self, item: Skill) -> Skill:
         try:
             return super().__getitem__(item)

@@ -239,3 +239,8 @@ def test_run_script_blocks_when_requested(ws: Workspace) -> None:
 def test_form_vectors_have_dir(ws: Workspace) -> None:
     form = ws.hi.get_current_form()
     assert 'button_layout' in dir(form)
+
+
+def test_form_vectors_have_getattr(ws: Workspace) -> None:
+    form = ws.hi.get_current_form()
+    assert isinstance(form.button_layout, list)
