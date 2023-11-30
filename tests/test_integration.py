@@ -17,7 +17,6 @@ def ws() -> Workspace:
     except (Exception, ValueError, AssertionError):
         warn("Skipping integration tests, because Workspace could not connect", UserWarning)
         skip()
-        raise  # this line is unreachable but mypy and pycharm don't know that
 
     return workspace
 
@@ -235,3 +234,13 @@ def test_run_script_blocks_when_requested(ws: Workspace) -> None:
     assert ws['pyRunScript'](str(here / 'script.py'), args=(variable, '42', '0.25'), block=True)
 
     assert ws['plus'](Var(variable), 1) == 43
+
+
+def test_form_vectors_have_dir(ws: Workspace) -> None:
+    form = ws.hi.get_current_form()
+    assert 'button_layout' in dir(form)
+
+
+def test_form_vectors_have_getattr(ws: Workspace) -> None:
+    form = ws.hi.get_current_form()
+    assert isinstance(form.button_layout, list)
