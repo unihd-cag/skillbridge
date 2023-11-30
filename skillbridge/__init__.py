@@ -69,6 +69,8 @@ def generate_static_completion() -> None:
         verbose=True,
         quiet=False,
         export_less=False,
+        inspect=False,
+        include_docstrings=False,
     )
 
     generate_stubs(o)
