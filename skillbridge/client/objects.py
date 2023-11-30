@@ -223,6 +223,10 @@ class RemoteCollection(RemoteVariable):
     def __delitem__(self, item: Skill) -> None:
         self._call('remove', item, self)
 
+    def __dir__(self) -> list[str]:
+        response = self._channel.send(self._translator.encode_dir(self._variable))
+        return self._translator.decode_dir(response)
+
 
 class RemoteTable(RemoteCollection, MutableMapping[Skill, Skill]):
     def __getitem__(self, item: Skill) -> Skill:
