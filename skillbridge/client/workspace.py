@@ -113,6 +113,7 @@ class Workspace:
     get: FunctionCollection
     gpe: FunctionCollection
     hdb: FunctionCollection
+    hdl: FunctionCollection
     he: FunctionCollection
     hi: FunctionCollection
     hnl: FunctionCollection
@@ -171,6 +172,7 @@ class Workspace:
     vhms: FunctionCollection
     via: FunctionCollection
     viva: FunctionCollection
+    vms: FunctionCollection
     vos: FunctionCollection
     vpa: FunctionCollection
     vsa: FunctionCollection
