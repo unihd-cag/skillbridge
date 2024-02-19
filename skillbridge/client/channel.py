@@ -187,7 +187,9 @@ if platform == 'win32':
         class WindowsChannel(TcpChannel):
             def configure(self, sock: socket) -> None:
                 try:
-                    from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore[attr-defined]
+                    from socket import (  # type: ignore[attr-defined]  # noqa: PLC0415
+                        SIO_LOOPBACK_FAST_PATH,
+                    )
 
                     sock.ioctl(  # type: ignore[attr-defined]
                         SIO_LOOPBACK_FAST_PATH,
@@ -206,7 +208,7 @@ if platform == 'win32':
 else:
 
     def create_channel_class() -> type[TcpChannel]:
-        from socket import AF_UNIX
+        from socket import AF_UNIX  # noqa: PLC0415
 
         class UnixChannel(TcpChannel):
             address_family = AF_UNIX

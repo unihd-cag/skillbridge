@@ -2,6 +2,57 @@
 requires = ["setuptools>=57", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "skillbridge"
+authors = [
+    {name = "Niels Buwen", email = "dev@niels-buwen.de"},
+    {name = "Tobias Markus", email = "tobias_markus@gmx.net"},
+]
+description = "A seamless Python remote bridge to Cadence's Skill in Virtuoso"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.8"
+dependencies = []
+urls = {Repository = "https://github.com/unihd-cag/skillbridge"}
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Information Technology",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
+    "Topic :: Software Development",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+]
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "skillbridge.version.__version__"}
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-coverage",
+    "hypothesis",
+    "mypy",
+    "ruff>=0.2.1",
+]
+doc = [
+    "sphinx"
+]
+
+[project.scripts]
+skillbridge = "skillbridge.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["skillbridge*"]
+namespaces = false
+
 [tool.black]
 skip-string-normalization = true
 target-version = ["py38"]
@@ -50,32 +101,39 @@ implicit_reexport = false
 strict_equality = true
 
 [tool.ruff]
+preview = true
 exclude = ["venv", "env", "build"]
 line-length = 100
 target-version = "py38"
+
+[tool.ruff.lint]
 select = ["ALL"]
 ignore = [
     "A003",
     "ANN10", "ANN401",
     "B028",
+    "COM812",
+    "CPY001",
     "D",
     "EM101", "EM102",
     "FBT001", "FBT002",
     "G004",
+    "ISC001",
     "N999",
     "PD901",
-    "PLR0911",
+    "PLR0911", "PLR6301",
+    "PLW1641", "PLW3201",
     "PT001", "PT013",
     "PTH123",
     "Q000",
-    "S101", "S108", "S310", "S311",
+    "S101", "S108", "S310", "S311", "S404",
     "T201",
     "TCH001", "TCH002", "TCH003",
     "TID252",
     "TRY003", "TRY004", "TRY400",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = [
     "ANN",
     "ARG001",
@@ -95,5 +153,9 @@ ignore = [
     "A001",
 ]
 
-[tool.ruff.pylint]
+[tool.ruff.lint.pylint]
 max-args = 7
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = "preserve"

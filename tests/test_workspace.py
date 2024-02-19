@@ -3,7 +3,7 @@ from typing import Any
 from skillbridge import Workspace
 from skillbridge.client.channel import Channel
 from skillbridge.client.translator import DefaultTranslator
-from skillbridge.client.workspace import _open_workspaces
+from skillbridge.client.workspace import _open_workspaces  # noqa: PLC2701
 
 
 class DummyChannel(Channel):

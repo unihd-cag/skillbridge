@@ -14,27 +14,27 @@ from .client.var import Var
 from .client.workspace import Workspace, current_workspace
 
 __all__ = [
-    'Workspace',
-    'Var',
-    'ParseError',
-    'Symbol',
-    'Key',
-    'generate_static_completion',
-    'current_workspace',
-    'keys',
-    'SkillTuple',
-    'SkillList',
-    'SkillCode',
     'Function',
+    'GlobalVar',
+    'Globals',
+    'Key',
+    'LazyList',
+    'ParseError',
+    'RemoteObject',
+    'RemoteTable',
+    'RemoteVector',
+    'SkillCode',
+    'SkillList',
+    'SkillTuple',
+    'Symbol',
+    'Var',
+    'Workspace',
+    'current_workspace',
+    'generate_static_completion',
+    'keys',
     'loop_var',
     'loop_var_i',
     'loop_var_j',
-    'Globals',
-    'GlobalVar',
-    'RemoteTable',
-    'RemoteVector',
-    'RemoteObject',
-    'LazyList',
 ]
 
 loop_var = Var('i')
@@ -43,7 +43,7 @@ loop_var_j = Var('j')
 
 
 def generate_static_completion() -> None:
-    from mypy.stubgen import Options, generate_stubs
+    from mypy.stubgen import Options, generate_stubs  # noqa: PLC0415
 
     base = Path(__file__).parent.absolute() / 'client'
     annotation = base / 'workspace.pyi'
@@ -83,7 +83,7 @@ def generate_static_completion() -> None:
     text = sub(r' {4}[a-z][a-zA-Z]+: FunctionCollection\n', '', text)
     annotation.write_text(text)
 
-    with open(annotation, 'a') as fout:
+    with open(annotation, 'a', encoding='utf-8') as fout:
         for key, value in ws.__dict__.items():
             if not isinstance(value, FunctionCollection):
                 continue

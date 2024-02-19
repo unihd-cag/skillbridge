@@ -10,7 +10,7 @@ from .var import Var
 
 
 class GlobalVar:
-    __slots__ = 'name', '_channel', '_translator'
+    __slots__ = '_channel', '_translator', 'name'
 
     def __init__(self, name: str, channel: Channel, translator: Translator) -> None:
         self.name = name

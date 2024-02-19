@@ -21,7 +21,7 @@ WorkspaceId = Union[str, int, None]
 _open_workspaces: dict[WorkspaceId, Workspace] = {}
 
 
-logger = getLogger(__file__)
+logger = getLogger(__name__)
 
 
 class _NoWorkspace:
@@ -328,7 +328,7 @@ class Workspace:
         name = camel_to_snake(function.__name__)
 
         try:
-            prefix, rest = name.split('_', maxsplit=1)
+            prefix, _ = name.split('_', maxsplit=1)
         except ValueError:
             raise RuntimeError("Function does not have a prefix.") from None
 
