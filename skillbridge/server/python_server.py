@@ -38,7 +38,7 @@ def read_from_skill(timeout: float | None) -> str:
 
 
 def create_windows_server_class(single: bool) -> type[BaseServer]:
-    from socketserver import TCPServer
+    from socketserver import TCPServer  # noqa: PLC0415
 
     class SingleWindowsServer(TCPServer):
         request_queue_size = 0
@@ -49,7 +49,9 @@ def create_windows_server_class(single: bool) -> type[BaseServer]:
 
         def server_bind(self) -> None:
             try:
-                from socket import SIO_LOOPBACK_FAST_PATH  # type: ignore[attr-defined]
+                from socket import (  # type: ignore[attr-defined]  # noqa: PLC0415
+                    SIO_LOOPBACK_FAST_PATH,
+                )
 
                 self.socket.ioctl(  # type: ignore[attr-defined]
                     SIO_LOOPBACK_FAST_PATH,
@@ -71,7 +73,7 @@ def data_windows_ready(timeout: float | None) -> bool:
 
 
 def create_unix_server_class(single: bool) -> type[BaseServer]:
-    from socketserver import UnixStreamServer
+    from socketserver import UnixStreamServer  # noqa: PLC0415
 
     class SingleUnixServer(UnixStreamServer):
         request_queue_size = 0

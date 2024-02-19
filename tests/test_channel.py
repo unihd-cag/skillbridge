@@ -48,7 +48,7 @@ def ws() -> Workspace:
         else:
             break
     else:
-        raise
+        raise RuntimeError
     yield ws
 
     ws.close()
@@ -291,7 +291,7 @@ def test_warning_is_printed(server, ws):
         result = ws.ge.get_edit_cell_view()
 
     assert len(w) == 1
-    assert w[0].category == UserWarning
+    assert w[0].category is UserWarning
     assert "This is a warning" in str(w[0].message)
 
     assert result == 1234

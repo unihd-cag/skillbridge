@@ -11,16 +11,16 @@ else:
 
 
 __all__ = [
-    'Number',
-    'Symbol',
-    'Key',
-    'SkillComponent',
-    'SkillCode',
-    'Skill',
     'Function',
-    'SkillTuple',
+    'Key',
+    'Number',
+    'Skill',
+    'SkillCode',
+    'SkillComponent',
     'SkillList',
+    'SkillTuple',
     'SupportsReprSkill',
+    'Symbol',
 ]
 
 Number = Union[int, float]
