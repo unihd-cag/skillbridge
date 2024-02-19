@@ -39,7 +39,6 @@ dev = [
     "pytest",
     "pytest-coverage",
     "hypothesis",
-    "black",
     "mypy",
     "ruff>=0.2.1",
 ]
@@ -102,6 +101,7 @@ implicit_reexport = false
 strict_equality = true
 
 [tool.ruff]
+preview = true
 exclude = ["venv", "env", "build"]
 line-length = 100
 target-version = "py38"
@@ -112,10 +112,12 @@ ignore = [
     "A003",
     "ANN10", "ANN401",
     "B028",
+    "COM812",
     "D",
     "EM101", "EM102",
     "FBT001", "FBT002",
     "G004",
+    "ISC001",
     "N999",
     "PD901",
     "PLR0911",
@@ -151,3 +153,7 @@ ignore = [
 
 [tool.ruff.lint.pylint]
 max-args = 7
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = "preserve"
