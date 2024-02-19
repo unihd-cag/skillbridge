@@ -41,7 +41,7 @@ dev = [
     "hypothesis",
     "black",
     "mypy",
-    "ruff",
+    "ruff>=0.2.1",
 ]
 doc = [
     "sphinx"
@@ -105,6 +105,8 @@ strict_equality = true
 exclude = ["venv", "env", "build"]
 line-length = 100
 target-version = "py38"
+
+[tool.ruff.lint]
 select = ["ALL"]
 ignore = [
     "A003",
@@ -127,7 +129,7 @@ ignore = [
     "TRY003", "TRY004", "TRY400",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = [
     "ANN",
     "ARG001",
@@ -147,5 +149,5 @@ ignore = [
     "A001",
 ]
 
-[tool.ruff.pylint]
+[tool.ruff.lint.pylint]
 max-args = 7

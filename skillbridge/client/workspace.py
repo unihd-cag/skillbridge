@@ -21,7 +21,7 @@ WorkspaceId = Union[str, int, None]
 _open_workspaces: dict[WorkspaceId, Workspace] = {}
 
 
-logger = getLogger(__file__)
+logger = getLogger(__name__)
 
 
 class _NoWorkspace:

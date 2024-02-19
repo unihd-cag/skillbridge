@@ -175,12 +175,10 @@ class LazyList(RemoteVariable):
         return LazyList(self._channel, self._translator, variable)
 
     @overload
-    def __getitem__(self, item: int) -> RemoteObject:
-        ...  # pragma: nocover
+    def __getitem__(self, item: int) -> RemoteObject: ...  # pragma: nocover
 
     @overload
-    def __getitem__(self, item: slice) -> list[RemoteObject]:
-        ...  # pragma: nocover
+    def __getitem__(self, item: slice) -> list[RemoteObject]: ...  # pragma: nocover
 
     def __getitem__(
         self,
