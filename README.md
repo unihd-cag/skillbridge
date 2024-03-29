@@ -92,3 +92,16 @@ or type `cell_view.<TAB>` in jupyter/ipython
 >>> print(cell_view.b_box)
 [[0, 10], [2, 8]]
 ```
+
+##### Call any SKILL function
+
+```python
+>>> ws['plus'](3, 4)
+7
+```
+
+*equivalent to:*
+
+```lisp
+(plus 3 4)
+```
