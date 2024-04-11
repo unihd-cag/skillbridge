@@ -147,6 +147,7 @@ class TcpChannel(Channel):
             ) from None
 
         if not received_length_raw:
+            breakpoint()
             raise RuntimeError("The server unexpectedly died")
         received_length = int(received_length_raw)
         response = b''.join(self._receive_all(received_length)).decode()
@@ -167,7 +168,7 @@ class TcpChannel(Channel):
 
     def close(self) -> None:
         if self.connected:
-            self.socket.sendall(b'         5close')
+            self.socket.sendall(b'         5$close')
             self.socket.close()
             self.connected = False
 
