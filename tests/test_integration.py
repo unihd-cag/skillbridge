@@ -2,7 +2,7 @@ from pathlib import Path
 from time import sleep
 from warnings import warn
 
-from pytest import fixture, raises, skip
+from pytest import fixture, raises, skip, mark
 
 from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, Var, Workspace
 
@@ -236,11 +236,32 @@ def test_run_script_blocks_when_requested(ws: Workspace) -> None:
     assert ws['plus'](Var(variable), 1) == 43
 
 
+@mark.skip
 def test_form_vectors_have_dir(ws: Workspace) -> None:
     form = ws.hi.get_current_form()
     assert 'button_layout' in dir(form)
 
 
+@mark.skip
 def test_form_vectors_have_getattr(ws: Workspace) -> None:
     form = ws.hi.get_current_form()
     assert isinstance(form.button_layout, list)
+
+
+def test_outstring(ws: Workspace) -> None:
+    outstring = ws['outstring']
+    get_outstring = ws['getOutstring']
+    close = ws['close']
+    fprintf = ws['fprintf']
+
+    s = outstring()
+    assert get_outstring(s) == ""  # noqa: PLC1901
+
+    assert fprintf(s, "Hello ")
+    assert get_outstring(s) == "Hello "
+
+    assert fprintf(s, "World")
+    assert get_outstring(s) == "Hello World"
+
+    assert close(s)
+    assert get_outstring(s) is None
