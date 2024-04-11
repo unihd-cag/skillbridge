@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import contextlib
 from keyword import iskeyword
 from os import chdir
 from pathlib import Path
 from re import fullmatch, sub
 from sys import executable, version_info
+from typing import Any
 
 from .client.functions import FunctionCollection, keys
 from .client.globals import Globals, GlobalVar
@@ -42,9 +45,19 @@ loop_var_i = loop_var
 loop_var_j = Var('j')
 
 
-def generate_static_completion() -> None:
-    from mypy.stubgen import Options, generate_stubs  # noqa: PLC0415
+def import_stub_gen() -> tuple[Any, Any]:
+    # the cpython parser wrongly parses a python3.8-valid syntax as invalid
+    # the newest mypy version uses that parser
+    # this syntax occurs in the mypy source code
+    # -> mypy detects a syntax error in its own code base
+    # this can only be ignored by hiding the import code behind an exec call
+    scope: dict[str, Any] = {}
+    exec("from mypy.stubgen import Options, generate_stubs", scope, scope)  # noqa: S102
+    return scope['Options'], scope['generate_stubs']
 
+
+def generate_static_completion() -> None:
+    options, generate_stubs = import_stub_gen()
     base = Path(__file__).parent.absolute() / 'client'
     annotation = base / 'workspace.pyi'
 
@@ -53,7 +66,7 @@ def generate_static_completion() -> None:
 
     chdir(base)
 
-    o = Options(
+    o = options(
         (version_info.major, version_info.minor),
         no_import=True,
         doc_dir='',
