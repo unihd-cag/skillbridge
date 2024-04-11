@@ -2,7 +2,7 @@ from pathlib import Path
 from time import sleep
 from warnings import warn
 
-from pytest import fixture, raises, skip, mark
+from pytest import fixture, mark, raises, skip
 
 from skillbridge import LazyList, RemoteObject, RemoteTable, SkillCode, Symbol, Var, Workspace
 
