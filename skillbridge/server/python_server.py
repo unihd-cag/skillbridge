@@ -125,7 +125,7 @@ class Handler(StreamRequestHandler):
 
         logger.debug(f"received {len(command)} bytes")
 
-        if command.startswith(b'close'):
+        if command.startswith(b'$close'):
             logger.debug(f"client {self.client_address} disconnected")
             return False
         logger.debug(f"got data {command[:1000].decode()}")
