@@ -37,15 +37,6 @@ current_workspace: Workspace
 current_workspace = _no_workspace
 
 
-def _register_well_known_functions(ws: Workspace) -> None:
-    @ws.register
-    def db_check(d_cellview: Any) -> None:
-        """
-        Checks the integrity of the database.
-        """
-        _ = d_cellview
-
-
 _unbound = Symbol('unbound')
 
 
@@ -200,8 +191,6 @@ class Workspace:
             setattr(self, key, value)
 
         self.user = FunctionCollection(channel, 'user', self._translator)
-
-        _register_well_known_functions(self)
 
     def _prepare_default_translator(self) -> DefaultTranslator:
         translator = DefaultTranslator()
