@@ -125,7 +125,6 @@ ignore = [
     "PLW1641", "PLW3201",
     "PT001", "PT013",
     "PTH123",
-    "Q000",
     "S101", "S108", "S310", "S311", "S404",
     "T201",
     "TCH001", "TCH002", "TCH003",
@@ -151,6 +150,9 @@ ignore = [
 "docs/conf.py" = [
     "INP001",
     "A001",
+]
+"*" = [
+    "Q000",
 ]
 
 [tool.ruff.lint.pylint]
