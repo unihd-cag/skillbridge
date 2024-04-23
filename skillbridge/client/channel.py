@@ -167,7 +167,7 @@ class TcpChannel(Channel):
 
     def close(self) -> None:
         if self.connected:
-            self.socket.sendall(b'         5$close')
+            self.socket.sendall(b'         6$close')
             self.socket.close()
             self.connected = False
 
