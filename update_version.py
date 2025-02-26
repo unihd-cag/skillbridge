@@ -1,6 +1,7 @@
 from pathlib import Path
 from subprocess import check_call, check_output
-from sys import argv, exit
+from sys import argv
+from sys import exit as sys_exit
 
 
 def find_hash(ref: str) -> str:
@@ -13,7 +14,7 @@ def check_up_to_date(ref: str) -> None:
 
     if master_hash != release_hash:
         print("Master and current release are different commits, cannot release")
-        exit(1)
+        sys_exit(1)
 
 
 def checkout_master() -> None:

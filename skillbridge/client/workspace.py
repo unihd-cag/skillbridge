@@ -231,7 +231,7 @@ class Workspace:
         skill_name = skill_name[0].upper() + skill_name[1:]
         arg_list = ' '.join(snake_to_camel(arg) for arg in args)
         code = f'defun(user{skill_name} ({arg_list}) {code})'
-        cast(Symbol, self._translator.decode(self._channel.send(code)))
+        cast('Symbol', self._translator.decode(self._channel.send(code)))
 
     @staticmethod
     def fix_completion() -> None:

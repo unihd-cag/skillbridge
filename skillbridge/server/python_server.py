@@ -8,7 +8,8 @@ from os import getenv
 from pathlib import Path
 from select import select
 from socketserver import BaseRequestHandler, BaseServer, StreamRequestHandler, ThreadingMixIn
-from sys import argv, exit, platform, stderr, stdin, stdout
+from sys import argv, platform, stderr, stdin, stdout
+from sys import exit as sys_exit
 from typing import Iterable
 
 LOG_DIRECTORY = Path(getenv('SKILLBRIDGE_LOG_DIRECTORY', '.'))
@@ -172,7 +173,7 @@ def main(id_: str, log_level: str, notify: bool, single: bool, timeout: float | 
 
 
 if __name__ == '__main__':
-    log_levels = "DEBUG WARNING INFO ERROR CRITICAL FATAL".split()
+    log_levels = ["DEBUG", "WARNING", "INFO", "ERROR", "CRITICAL", "FATAL"]
     argument_parser = ArgumentParser(argv[0])
     if platform == 'win32':
         argument_parser.add_argument('id', type=int)
@@ -187,7 +188,7 @@ if __name__ == '__main__':
 
     if platform == 'win32' and ns.timeout is not None:
         print("Timeout is not possible on Windows", file=stderr)
-        exit(1)
+        sys_exit(1)
 
     with contextlib.suppress(KeyboardInterrupt):
         main(ns.id, ns.log_level, ns.notify, ns.single, ns.timeout)

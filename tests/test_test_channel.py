@@ -27,16 +27,7 @@ def ws() -> DummyWorkspace:
 
 @fixture
 def passws() -> PassWorkspace:
-    w = PassWorkspace()
-
-    @w.register
-    def user_call(x) -> Any:
-        """
-        just pass
-        """
-        return x
-
-    return w
+    return PassWorkspace()
 
 
 def test_success(ws):

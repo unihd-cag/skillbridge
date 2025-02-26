@@ -26,7 +26,7 @@ def test_workspace_get_item():
 
 
 def test_reports_skill_server_correctly():
-    out = check_output('python -m skillbridge path'.split(), encoding='utf-8')
+    out = check_output(['python', '-m', 'skillbridge', 'path'], encoding='utf-8')
     assert Path(out.splitlines()[1].strip()).exists()
 
 

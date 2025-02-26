@@ -99,7 +99,7 @@ class RemoteObject(WithAttributeAccess, RemoteVariable):
             return None
         if isinstance(typ, Symbol):
             return typ.name[2:-4]
-        return cast(str, typ)
+        return cast('str', typ)
 
     def __str__(self) -> str:
         typ = self.skill_type or self.skill_parent_type
@@ -196,7 +196,7 @@ class LazyList(RemoteVariable):
         return self._translator.decode(result)  # type: ignore[return-value]
 
     def __len__(self) -> int:
-        return cast(int, self._call('length', self))
+        return cast('int', self._call('length', self))
 
     def foreach(self, func: SkillCode | RemoteFunction, *args: Any) -> None:
         if isinstance(func, RemoteFunction):
@@ -215,7 +215,7 @@ class RemoteCollection(RemoteVariable):
         return f'<remote {self._call("lsprintf", "%L", self)}>'
 
     def __len__(self) -> int:
-        return cast(int, self._call('length', self))
+        return cast('int', self._call('length', self))
 
     def __getitem__(self, item: Skill) -> Skill:
         return self._call('arrayref', self, item)

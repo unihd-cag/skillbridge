@@ -26,12 +26,12 @@ jobs:
     - name: Check with ruff format
       run: |
         pip install ruff
-        ruff format
+        ruff format --check
 
     - name: Check with ruff
       run: |
         pip install ruff
-        ruff .
+        ruff check
 
     - name: Check with mypy
       run: |
