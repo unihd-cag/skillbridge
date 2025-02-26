@@ -202,7 +202,7 @@ let((_filename _baseName _moduleFolder _logDirectory _executable _unbound)
         else
             let(((executableWithArgs lsprintf("%s %L %s" pyStartServer.exe id logLevel)))
                 if(singleMode then
-                    executableWithArgs = strcat(executableWithArgs "--single")
+                    executableWithArgs = lsprintf("%s --single" executableWithArgs)
                 )
                 if(timeout then
                     executableWithArgs = lsprintf("%s --timeout %L" executableWithArgs timeout)
