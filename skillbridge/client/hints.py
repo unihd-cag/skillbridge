@@ -48,10 +48,10 @@ if TYPE_CHECKING:  # pragma: no cover
         Number,
         str,
         bool,
-        None,
         'SkillList',
         'SkillDict',
         'SkillTuple',
+        None,
     ]
 
 else:

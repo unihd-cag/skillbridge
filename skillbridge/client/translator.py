@@ -34,7 +34,7 @@ _STATIC_EVAL_CONTEXT = {
 
 
 def _skill_value_to_python(string: str, eval_context: dict[str, Any] | None = None) -> Skill:
-    return eval(  # type: ignore[no-any-return]  # noqa: S307,PGH001
+    return eval(  # type: ignore[no-any-return]  # noqa: S307
         string,
         eval_context or _STATIC_EVAL_CONTEXT,
     )
@@ -53,7 +53,7 @@ def snake_to_camel(snake: str) -> str:
 def camel_to_snake(camel: str) -> str:
     if camel[0].isupper():
         return camel
-    parts = findall("[a-z0-9]+|[A-Z][a-z0-9]+|[A-Z]+(?=[A-Z_][a-z]|$)", camel)
+    parts = findall(r"[a-z0-9]+|[A-Z][a-z0-9]+|[A-Z]+(?=[A-Z_][a-z]|$)", camel)
     return '_'.join(
         part.lower() if not part[-1].isupper() or len(part) == 1 else part for part in parts
     )

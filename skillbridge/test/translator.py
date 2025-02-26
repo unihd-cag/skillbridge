@@ -21,4 +21,4 @@ class PassTranslator(Translator):
 
     @staticmethod
     def encode_call(func_name: str, *args: Skill, **kwargs: Skill) -> SkillCode:
-        return cast(SkillCode, FunctionCall(func_name, args, kwargs))
+        return cast("SkillCode", FunctionCall(func_name, args, kwargs))
