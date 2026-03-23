@@ -112,7 +112,14 @@ def generate_static_completion() -> None:
                     continue
 
                 lines = True
+                
+                doc_string = getattr(value, func).__str__()
+                        
                 fout.write(f'        {func}: staticmethod\n')
+                fout.write('            """')
+                fout.write(f'            {doc_string}')
+                fout.write('            """\n')
+                fout.write('            pass\n')
 
             if not lines:
                 fout.write('        pass\n')
